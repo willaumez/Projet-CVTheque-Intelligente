@@ -1,0 +1,67 @@
+
+<button class="togglebtn" mat-button (click)="toggleDrawer(drawer)" matTooltip="Nav" [class.open]="!isOpen">
+  <mat-icon>{{ isOpen ? 'close' : 'menu' }}</mat-icon>
+</button>
+
+
+<mat-drawer-container autosize><!--  mode="over"  mode="push"  mode="side" -->
+  <mat-drawer #drawer opened="true" mode="push" position="start" (openedChange)="onDrawerToggle($event)">
+    <mat-nav-list>
+      <mat-list-item>
+        <button mat-button>
+          <mat-icon>person</mat-icon>
+          <h3>Name</h3>
+        </button>
+
+      </mat-list-item>
+      <mat-list-item>
+        <button routerLink="#" mat-button
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{exact: true}"><mat-icon>person</mat-icon></button>
+      </mat-list-item>
+      <!-- Spacer pour pousser les éléments intermédiaires au centre -->
+      <div class="spacer"></div>
+      <mat-list-item>
+        <button routerLink="/cvs/home" mat-button
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{exact: true}"><mat-icon>home</mat-icon></button>
+      </mat-list-item>
+
+      <mat-list-item>
+        <button routerLink="#" mat-button
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{exact: true}"><mat-icon>file_copy</mat-icon></button>
+      </mat-list-item>
+
+      <mat-list-item>
+        <button routerLink="#" mat-button
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{exact: true}"><mat-icon>folder_special</mat-icon></button>
+      </mat-list-item>
+
+      <mat-list-item>
+        <button routerLink="/cvs/load-files" mat-button
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{exact: true}"><mat-icon>file_download</mat-icon></button>
+      </mat-list-item>
+
+      <div class="spacer"></div>
+      <mat-list-item>
+        <button routerLink="#" mat-button
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{exact: true}"><mat-icon>settings</mat-icon></button>
+      </mat-list-item>
+    </mat-nav-list>
+  </mat-drawer>
+
+  <mat-drawer-content>
+    <div class="body">
+      <h3> Home </h3>
+      <router-outlet>
+
+      </router-outlet>
+    </div>
+  </mat-drawer-content>
+
+
+</mat-drawer-container>
