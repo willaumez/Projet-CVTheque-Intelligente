@@ -20,8 +20,11 @@
     "@angular/platform-browser": "^17.3.0",
     "@angular/platform-browser-dynamic": "^17.3.0",
     "@angular/router": "^17.3.0",
+    "@ngx-loading-bar/core": "^6.0.2",
+    "@ngx-loading-bar/router": "^6.0.2",
+    "ngx-dropzone": "^3.1.0",
     "rxjs": "~7.8.0",
-    "tslib": "^2.3.0",
+    "tslib": "^2.6.3",
     "zone.js": "~0.14.3"
   },
   "devDependencies": {

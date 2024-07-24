@@ -15,6 +15,11 @@ import { LoadFilesComponent } from './Components/load-files/load-files.component
 import { TemplateScreensComponent } from './Components/template-screens/template-screens.component';
 import {MatButtonToggle} from "@angular/material/button-toggle";
 
+
+import { LoadingBarRouterModule } from '@ngx-loading-bar/router';
+import { LoadingBarModule } from '@ngx-loading-bar/core';
+import {NgxDropzoneModule} from "ngx-dropzone";
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -23,21 +28,15 @@ import {MatButtonToggle} from "@angular/material/button-toggle";
     TemplateScreensComponent
   ],
   imports: [
-    BrowserModule,
-    AppRoutingModule,
-    MatSidenavModule,
-    MatDrawer,
-    MatNavList,
-    MatListItem,
-    MatIcon,
-    MatDivider,
-    MatButton,
-    MatIconButton,
-    MatTooltip,
-    MatButtonToggle
+    BrowserModule, AppRoutingModule,
+    MatSidenavModule, MatDrawer, MatNavList, MatListItem, MatIcon, MatDivider, MatButton, MatIconButton, MatTooltip,
+    MatButtonToggle,
+    LoadingBarRouterModule, LoadingBarModule,
+    NgxDropzoneModule,
   ],
   providers: [
-    provideAnimationsAsync()
+    provideAnimationsAsync(),
+    //importProvidersFrom(LoadingBarHttpClientModule),
   ],
   bootstrap: [AppComponent]
 })

@@ -5,20 +5,13 @@
 
 
 <mat-drawer-container autosize><!--  mode="over"  mode="push"  mode="side" -->
-  <mat-drawer #drawer opened="true" mode="push" position="start" (openedChange)="onDrawerToggle($event)">
+  <mat-drawer #drawer opened="true" mode="side" position="start" (openedChange)="onDrawerToggle($event)">
     <mat-nav-list>
-      <mat-list-item>
-        <button mat-button>
+      <mat-list-item class="person">
           <mat-icon>person</mat-icon>
-          <h3>Name</h3>
-        </button>
+      </mat-list-item>
+      <h3 class="person-h3">Name</h3>
 
-      </mat-list-item>
-      <mat-list-item>
-        <button routerLink="#" mat-button
-                routerLinkActive="active"
-                [routerLinkActiveOptions]="{exact: true}"><mat-icon>person</mat-icon></button>
-      </mat-list-item>
       <!-- Spacer pour pousser les éléments intermédiaires au centre -->
       <div class="spacer"></div>
       <mat-list-item>
