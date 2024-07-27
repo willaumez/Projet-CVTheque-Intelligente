@@ -24,7 +24,7 @@ import { MatFormFieldModule} from "@angular/material/form-field";
 import { MatAutocompleteModule} from "@angular/material/autocomplete";
 import { MatInputModule} from "@angular/material/input";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
-import {AsyncPipe} from "@angular/common";
+import {AsyncPipe, NgOptimizedImage} from "@angular/common";
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {MatProgressBar} from "@angular/material/progress-bar";
 import { AddFolderComponent } from './Components/Dialog/add-folder/add-folder.component';
@@ -41,7 +41,10 @@ import {
 } from "@angular/material/table";
 import {MatCheckbox} from "@angular/material/checkbox";
 import { ListViewComponent } from './Components/ViewFiles/list-view/list-view.component';
-import { CardViewComponent } from './Components/ViewFiles/card-view/card-view.component';
+import { GridViewComponent } from './Components/ViewFiles/grid-view/grid-view.component';
+import {FlexLayoutModule} from "@angular/flex-layout";
+import {MatToolbar} from "@angular/material/toolbar";
+import {MatCardModule} from "@angular/material/card";
 
 
 @NgModule({
@@ -53,24 +56,16 @@ import { CardViewComponent } from './Components/ViewFiles/card-view/card-view.co
     AddFolderComponent,
     FilesViewComponent,
     ListViewComponent,
-    CardViewComponent
+    GridViewComponent
   ],
   imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserModule, AppRoutingModule,
+    BrowserModule, AppRoutingModule, BrowserModule, AppRoutingModule,
     MatSidenavModule, MatDrawer, MatNavList, MatListItem, MatIcon, MatDivider, MatButton, MatIconButton, MatTooltip,
-    MatButtonToggle,
-    LoadingBarRouterModule, LoadingBarModule,
-    NgxDropzoneModule,
-    FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatAutocompleteModule,
-    ReactiveFormsModule,
-    MatSlideToggleModule,
-    AsyncPipe,
-    NgbModule, MatProgressBar, MatDialogContent, MatDialogActions, MatDialogTitle, MatDialogClose, MatTable, MatColumnDef, MatHeaderCell, MatCheckbox, MatCell, MatCellDef, MatHeaderCellDef, MatHeaderRow, MatRow, MatRowDef, MatHeaderRowDef, MatNoDataRow,
+    MatButtonToggle, LoadingBarRouterModule, LoadingBarModule, NgxDropzoneModule, FormsModule, MatFormFieldModule,
+    MatInputModule, MatAutocompleteModule, ReactiveFormsModule, MatSlideToggleModule, AsyncPipe,
+    NgbModule, MatProgressBar, MatDialogContent, MatDialogActions, MatDialogTitle, MatDialogClose, MatTable,
+    MatColumnDef, MatHeaderCell, MatCheckbox, MatCell, MatCellDef, MatHeaderCellDef, MatHeaderRow, MatRow,
+    MatRowDef, MatHeaderRowDef, MatNoDataRow, FlexLayoutModule, MatToolbar, MatCardModule, NgOptimizedImage,
 
   ],
   providers: [

@@ -1,0 +1,41 @@
+.content {
+  padding: 16px;
+}
+
+.content > mat-card {
+  width: 170px;
+  justify-content: center;
+  padding: 20px;
+
+
+  .image-pdf{
+    color: black;
+  }
+}
+
+.mat-elevation-z4 {
+  height: auto;
+  border-radius: 15px;
+  background-color: transparent;
+}
+
+.mat-elevation-z4 .card-actions {
+  height: auto;
+  border-radius: 0 0 15px 15px;
+  background-color: #FFFFFF;
+  .infos-file{
+    width: 100%;
+    height: auto;
+    padding: 2px;
+  }
+}
+
+
+
+
+* {
+  //background-color: #9e9e9e;
+  box-shadow: 0 0 0 1px #80a8ff inset;
+}
+
+

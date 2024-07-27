@@ -2,9 +2,26 @@
   <h2>files-view works!</h2>
 
   <div class="view-header">
+    <div class="select-view">
+      <div class="view-footer">
+        <button mat-button (click)="toggleListView()" [disabled]="isListView">
+          <mat-icon class="view-icon">view_list</mat-icon>
+          List
+        </button>
+        <button mat-button (click)="toggleGridView()" [disabled]="isGridView">
+          <mat-icon class="view-icon">view_module</mat-icon>
+          Grid
+        </button>
+      </div>
+    </div>
   </div>
   <div class="view-content">
-    <app-list-view></app-list-view>
-
+    <ng-container *ngIf="isListView">
+      <app-list-view></app-list-view>
+    </ng-container>
+    <ng-container *ngIf="isGridView">
+      <h2>Grid list</h2>
+      <app-grid-view></app-grid-view>
+    </ng-container>
   </div>
 </div>

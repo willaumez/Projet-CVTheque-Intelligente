@@ -6,24 +6,50 @@
 
 
 
-.view-container{
+.view-container {
   width: 100%;
   height: 100%;
   padding: 10px;
-  h2{
+
+  h2 {
     margin: 0;
     text-align: center;
     justify-content: center;
   }
-  .view-header{
-    //width: 100%;
+
+  .view-header {
     height: 300px;
     margin: 12px;
-  }
-  .view-content{
-    //width: 100%;
-    height: 800px;
-    margin: 0 10px;
+
+    .select-view {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      height: 100%;
+
+      .view-footer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        background-color: #f5f5f5; /* Optionnel : pour rendre le pied de page plus visible */
+        button{
+          width: 150px;
+          height: 40px;
+          font-size: 20px;
+          margin: 0 10px;
+          mat-icon{
+            width: auto;
+            height: auto;
+            font-size: 50px;
+          }
+        }
+      }
+    }
   }
 
+  .view-content {
+    height: auto;
+    margin: 0 10px;
+  }
 }
