@@ -1,0 +1,75 @@
+.header {
+  width: 100%;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between; /* Permet de séparer les éléments à gauche et à droite */
+  align-items: center; /* Centre verticalement les éléments */
+
+  .action-container {
+    font-size: 20px;
+    //width: 500px;
+    //height: 50px;
+    margin: 0;
+    button{
+      width: auto;
+      height: auto;
+      margin: 5px;
+      mat-icon{
+        width: auto;
+        height: auto;
+        font-size: 40px;
+      }
+      .first-icon{
+        margin-right: -12px;
+      }
+    }
+    .delete-icon {
+      color: red;
+    }
+    .action-icon {
+      color: green;
+    }
+
+  }
+
+  .filter-field {
+    font-size: 20px;
+    width: 500px;
+    margin: 0;
+
+    mat-label {
+      font-size: 20px;
+    }
+
+    input {
+      border-bottom: solid 2px #004dff;
+      margin: 2px 0;
+      //padding: 5px 5px;
+    }
+  }
+}
+
+/* Exemples de styles */
+table {
+  width: 100%;
+}
+.mat-mdc-header-row {
+  font-size: 1.5em;
+  //font-weight: bold;
+}
+.mat-mdc-row{
+  font-size: 1.3em;
+}
+.mat-column-action {
+  width: 100px;
+}
+
+.action-btn {
+  width: 100%;
+  mat-icon{
+    width: auto;
+    height: auto;
+    font-size: 30px;
+    color: #004b87;
+  }
+}

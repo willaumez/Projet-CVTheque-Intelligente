@@ -1,0 +1,32 @@
+/* Ajoutez ici votre style personnalisé pour le composant */
+h2 {
+  margin: auto;
+  font-size: 1.5em;
+  font-weight: 500;
+}
+
+mat-dialog-content {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+
+  form{
+    padding: 10px;
+    mat-form-field {
+      mat-label{
+        font-size: 1.1em;
+      }
+      color: black;
+      font-size: 1.1em;
+      width: 100%;
+      margin: 10px 0;
+      padding: 0;
+    }
+  }
+}
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  width: 100%;
+}

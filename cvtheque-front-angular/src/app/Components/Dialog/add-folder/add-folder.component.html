@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>Add a new folder</h2>
+<mat-dialog-content>
+  <form [formGroup]="addFolderForm" (ngSubmit)="addFolderSubmit()">
+    <mat-form-field appearance="outline">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="folderName" placeholder="Folder name" required>
+      <mat-icon matSuffix>folder</mat-icon>
+      <mat-error *ngIf="addFolderForm.get('folderName')?.invalid && (addFolderForm.get('folderName')?.dirty || addFolderForm.get('folderName')?.touched)">
+        Folder name is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="folderDescription" cdkTextareaAutosize
+                #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="5" cdkAutosizeMaxRows="25"></textarea>
+      <mat-icon matSuffix>description</mat-icon>
+    </mat-form-field>
+
+    <mat-divider></mat-divider>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="button-container action">
+    <button mat-raised-button class="col" [mat-dialog-close]="false">Cancel</button>
+    <button mat-raised-button class="col" color="primary" type="submit" [disabled]="!isFormValid()" (click)="addFolderSubmit()">Submit</button>
+  </div>
+</mat-dialog-actions>

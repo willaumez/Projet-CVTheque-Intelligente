@@ -1,0 +1,45 @@
+<div class="container-load">
+  <div class="header-container">
+    <h2>Load PDF file(s)</h2>
+    <div class="file-count">{{ files.length }} file(s)</div>
+  </div>
+  <div class="folder-container">
+    <form class="select-form">
+      <button mat-button (click)="openAddFolder()">Add a new folder..
+        <mat-icon>add</mat-icon>
+      </button>
+      <mat-form-field class="select-full-width" appearance="outline">
+        <mat-label>Select Folder</mat-label>
+        <input matInput
+               type="text"
+               aria-label="Select Folder"
+               [matAutocomplete]="auto"
+               (focus)="onFocus()"
+               [formControl]="folderCtrl">
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let folder of filteredFolders | async" [value]="folder">
+            <mat-icon>folder</mat-icon>
+            <span>{{ folder }}</span>
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </form>
+  </div>
+  <div class="btn-upload">
+    <button mat-button (click)="uploadFiles()">Upload <mat-icon>file_upload</mat-icon></button>
+
+
+    <mat-progress-bar mode="determinate" value="{{50}}"></mat-progress-bar>
+    <span> Progress: {{50}}%</span>
+  </div>
+
+
+  <ngx-dropzone class="ngx-dropzone" (change)="onSelect($event)" [accept]="'application/pdf'" [expandable]="true">
+    <ngx-dropzone-label class="label-drop">Drop your PDF files here!</ngx-dropzone-label>
+    <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onRemove(f)">
+      <ngx-dropzone-label>{{ f.name }}</ngx-dropzone-label>
+    </ngx-dropzone-preview>
+  </ngx-dropzone>
+
+
+</div>
