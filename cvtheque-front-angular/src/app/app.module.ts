@@ -45,6 +45,8 @@ import { GridViewComponent } from './Components/ViewFiles/grid-view/grid-view.co
 import {FlexLayoutModule} from "@angular/flex-layout";
 import {MatToolbar} from "@angular/material/toolbar";
 import {MatCardModule} from "@angular/material/card";
+import {HttpClientModule} from "@angular/common/http";
+import {DragDropModule} from "@angular/cdk/drag-drop";
 
 
 @NgModule({
@@ -59,15 +61,64 @@ import {MatCardModule} from "@angular/material/card";
     GridViewComponent
   ],
   imports: [
-    BrowserModule, AppRoutingModule, BrowserModule, AppRoutingModule,
-    MatSidenavModule, MatDrawer, MatNavList, MatListItem, MatIcon, MatDivider, MatButton, MatIconButton, MatTooltip,
-    MatButtonToggle, LoadingBarRouterModule, LoadingBarModule, NgxDropzoneModule, FormsModule, MatFormFieldModule,
-    MatInputModule, MatAutocompleteModule, ReactiveFormsModule, MatSlideToggleModule, AsyncPipe,
-    NgbModule, MatProgressBar, MatDialogContent, MatDialogActions, MatDialogTitle, MatDialogClose, MatTable,
-    MatColumnDef, MatHeaderCell, MatCheckbox, MatCell, MatCellDef, MatHeaderCellDef, MatHeaderRow, MatRow,
-    MatRowDef, MatHeaderRowDef, MatNoDataRow, FlexLayoutModule, MatToolbar, MatCardModule, NgOptimizedImage,
-
+    BrowserModule,
+    AppRoutingModule,
+    MatSidenavModule,
+    MatIcon,
+    MatDivider,
+    MatButton,
+    MatTooltip,
+    MatButtonToggle,
+    LoadingBarRouterModule,
+    LoadingBarModule,
+    NgxDropzoneModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule,
+    MatSlideToggleModule,
+    AsyncPipe,
+    NgbModule,
+    MatProgressBar,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogTitle,
+    MatDialogClose,
+    MatTable,
+    MatColumnDef,
+    MatHeaderCell,
+    MatCheckbox,
+    MatCell,
+    MatCellDef,
+    MatHeaderCellDef,
+    MatHeaderRow,
+    MatRow,
+    MatRowDef,
+    MatHeaderRowDef,
+    MatNoDataRow,
+    FlexLayoutModule,
+    MatToolbar,
+    MatCardModule,
+    NgOptimizedImage,
+    HttpClientModule,
+    MatListItem,
+    MatNavList,
+    DragDropModule
   ],
+
+
+  /*  imports: [
+      BrowserModule, AppRoutingModule, BrowserModule, AppRoutingModule,
+      MatSidenavModule, MatDrawer, MatNavList, MatListItem, MatIcon, MatDivider, MatButton, MatIconButton, MatTooltip,
+      MatButtonToggle, LoadingBarRouterModule, LoadingBarModule, NgxDropzoneModule, FormsModule, MatFormFieldModule,
+      MatInputModule, MatAutocompleteModule, ReactiveFormsModule, MatSlideToggleModule, AsyncPipe,
+      NgbModule, MatProgressBar, MatDialogContent, MatDialogActions, MatDialogTitle, MatDialogClose, MatTable,
+      MatColumnDef, MatHeaderCell, MatCheckbox, MatCell, MatCellDef, MatHeaderCellDef, MatHeaderRow, MatRow,
+      MatRowDef, MatHeaderRowDef, MatNoDataRow, FlexLayoutModule, MatToolbar, MatCardModule, NgOptimizedImage,
+      HttpClientModule,
+
+    ],*/
   providers: [
     provideAnimationsAsync()
   ],

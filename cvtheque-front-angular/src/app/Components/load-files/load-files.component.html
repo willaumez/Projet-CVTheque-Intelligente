@@ -26,16 +26,18 @@
     </form>
   </div>
   <div class="btn-upload">
-    <button mat-button (click)="uploadFiles()">Upload <mat-icon>file_upload</mat-icon></button>
-
-
-    <mat-progress-bar mode="determinate" value="{{50}}"></mat-progress-bar>
-    <span> Progress: {{50}}%</span>
+    <button mat-button (click)="uploadFiles()">Upload
+      <mat-icon>file_upload</mat-icon>
+    </button>
+    <div class="progress-container" *ngIf="progress !== null">
+      <span>:  {{ progress }}  %</span>
+      <mat-progress-bar mode="determinate" value="{{progress}}"></mat-progress-bar>
+    </div>
   </div>
 
 
   <ngx-dropzone class="ngx-dropzone" (change)="onSelect($event)" [accept]="'application/pdf'" [expandable]="true">
-    <ngx-dropzone-label class="label-drop">Drop your PDF files here!</ngx-dropzone-label>
+    <ngx-dropzone-label class="label-drop"><mat-icon>cloud_upload</mat-icon> <br><span>Drop your PDF files here!</span>  </ngx-dropzone-label>
     <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onRemove(f)">
       <ngx-dropzone-label>{{ f.name }}</ngx-dropzone-label>
     </ngx-dropzone-preview>
