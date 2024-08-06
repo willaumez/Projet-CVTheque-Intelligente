@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable, throwError} from "rxjs";
 import {catchError, map} from "rxjs/operators";
+import {FileDB} from "../../Models/FileDB";
 
 @Injectable({
   providedIn: 'root'
@@ -28,6 +29,29 @@ export class FilesService {
       })
     );
   }
+
+  //Get all files
+  getAllFiles(): Observable<FileDB[]> {
+    return this.http.get<FileDB[]>(`${this.baseUrl}/file/files`);
+  }
+
+  //Read file
+  /*readFile(fileId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/file/read`, {responseType: 'blob'})
+      .pipe(
+        map((response) => {
+          return response;
+        }),
+        catchError(error => {
+          return throwError("Erreur lors de la lecture du fichier");
+        })
+      );
+  }*/
+
+  readFile(fileId: number | string) {
+    return this.http.get(`${this.baseUrl}/file/read/${fileId}`, { observe: 'response', responseType: 'blob' });
+  }
+
 
   /*uploadFiles(files: File[]): Observable<any> {
     const formData: FormData = new FormData();

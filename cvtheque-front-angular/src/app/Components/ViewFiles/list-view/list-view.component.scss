@@ -2,6 +2,7 @@
   width: 100%;
   padding: 0 20px;
   display: flex;
+  margin: 15px 0;
   justify-content: space-between; /* Permet de séparer les éléments à gauche et à droite */
   align-items: center; /* Centre verticalement les éléments */
 
@@ -51,7 +52,7 @@
 
 /* Exemples de styles */
 table {
-  width: 100%;
+  width: 90%;
 }
 .mat-mdc-header-row {
   font-size: 1.5em;
@@ -72,4 +73,34 @@ table {
     font-size: 30px;
     color: #004b87;
   }
+}
+
+// spinner and error message
+.mat-mdc-progress-spinner{
+ margin: 100px auto;
+
+
+}
+.spinner .spinner-border {
+  width: 5rem;
+  height: 5rem;
+}
+.error-message{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  //background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  color: red;
+  font-size: 2em;
+}
+  // pdf viewer
+ngx-extended-pdf-viewer{
+  width: 100%;
+  height: 100hr;
 }

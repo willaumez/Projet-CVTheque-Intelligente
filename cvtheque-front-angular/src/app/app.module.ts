@@ -47,6 +47,10 @@ import {MatToolbar} from "@angular/material/toolbar";
 import {MatCardModule} from "@angular/material/card";
 import {HttpClientModule} from "@angular/common/http";
 import {DragDropModule} from "@angular/cdk/drag-drop";
+import { ChatAIComponent } from './Components/chat-ai/chat-ai.component';
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+import { PdfViewerComponent } from './Components/Dialog/pdf-viewer/pdf-viewer.component';
 
 
 @NgModule({
@@ -58,67 +62,19 @@ import {DragDropModule} from "@angular/cdk/drag-drop";
     AddFolderComponent,
     FilesViewComponent,
     ListViewComponent,
-    GridViewComponent
+    GridViewComponent,
+    ChatAIComponent,
+    PdfViewerComponent,
   ],
   imports: [
-    BrowserModule,
-    AppRoutingModule,
-    MatSidenavModule,
-    MatIcon,
-    MatDivider,
-    MatButton,
-    MatTooltip,
-    MatButtonToggle,
-    LoadingBarRouterModule,
-    LoadingBarModule,
-    NgxDropzoneModule,
-    FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatAutocompleteModule,
-    ReactiveFormsModule,
-    MatSlideToggleModule,
-    AsyncPipe,
-    NgbModule,
-    MatProgressBar,
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogTitle,
-    MatDialogClose,
-    MatTable,
-    MatColumnDef,
-    MatHeaderCell,
-    MatCheckbox,
-    MatCell,
-    MatCellDef,
-    MatHeaderCellDef,
-    MatHeaderRow,
-    MatRow,
-    MatRowDef,
-    MatHeaderRowDef,
-    MatNoDataRow,
-    FlexLayoutModule,
-    MatToolbar,
-    MatCardModule,
-    NgOptimizedImage,
-    HttpClientModule,
-    MatListItem,
-    MatNavList,
-    DragDropModule
+    BrowserModule, AppRoutingModule, MatSidenavModule, MatIcon, MatDivider, MatButton, MatTooltip, MatButtonToggle,
+    LoadingBarRouterModule, LoadingBarModule, NgxDropzoneModule, FormsModule, MatFormFieldModule, MatInputModule,
+    MatAutocompleteModule, ReactiveFormsModule, MatSlideToggleModule, AsyncPipe, NgbModule, MatProgressBar, MatDialogContent,
+    MatDialogActions, MatDialogTitle, MatDialogClose, MatTable, MatColumnDef, MatHeaderCell, MatCheckbox, MatCell, MatCellDef, MatHeaderCellDef,
+    MatHeaderRow, MatRow, MatRowDef, MatHeaderRowDef, MatNoDataRow, FlexLayoutModule, MatToolbar, MatCardModule, NgOptimizedImage,
+    HttpClientModule, MatListItem, MatNavList, DragDropModule, MatProgressSpinnerModule, NgxExtendedPdfViewerModule,
+
   ],
-
-
-  /*  imports: [
-      BrowserModule, AppRoutingModule, BrowserModule, AppRoutingModule,
-      MatSidenavModule, MatDrawer, MatNavList, MatListItem, MatIcon, MatDivider, MatButton, MatIconButton, MatTooltip,
-      MatButtonToggle, LoadingBarRouterModule, LoadingBarModule, NgxDropzoneModule, FormsModule, MatFormFieldModule,
-      MatInputModule, MatAutocompleteModule, ReactiveFormsModule, MatSlideToggleModule, AsyncPipe,
-      NgbModule, MatProgressBar, MatDialogContent, MatDialogActions, MatDialogTitle, MatDialogClose, MatTable,
-      MatColumnDef, MatHeaderCell, MatCheckbox, MatCell, MatCellDef, MatHeaderCellDef, MatHeaderRow, MatRow,
-      MatRowDef, MatHeaderRowDef, MatNoDataRow, FlexLayoutModule, MatToolbar, MatCardModule, NgOptimizedImage,
-      HttpClientModule,
-
-    ],*/
   providers: [
     provideAnimationsAsync()
   ],

@@ -1,0 +1,134 @@
+
+.chat-ai-container{
+  width: auto;
+  height: auto;
+  h2{
+    margin: auto;
+    font-size: 1.5em;
+    font-weight: 500;
+    text-align: center;
+  }
+
+}
+
+.chat-container {
+  width: 80%;
+  height: auto;
+  margin: 0 auto;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.chat-message {
+  display: flex;
+  margin: 25px 0;
+}
+
+.bot-container-left,
+.user-container-right {
+  max-width: 70%;
+  max-height: 100%;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.bot-container-left {
+  //background-color: #f1f0f0;
+  align-self: flex-start;
+  text-align: left;
+}
+
+.user-container-right {
+  background-color: #f2f2f2;
+  align-self: flex-start;
+  border-radius: 15px;
+  text-align: left;
+  margin-left: auto; /* Pushes user message to the right */
+}
+
+.timestamp {
+  font-size: 0.8em;
+  color: #888;
+  margin-bottom: 2px;
+}
+
+.sender {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.message {
+  font-size: 1.3em;
+  white-space: pre-wrap;
+}
+
+
+////////////////////////////////////////
+.chat-input {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 10px;
+  background-color: transparent;
+  margin: 7px 0;
+  position: fixed;
+  bottom: 0;
+}
+
+.chat-input-container {
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  max-width: 1000px;
+  background-color: #f4f4f4;
+  border-radius: 26px;
+  padding: 10px;
+}
+
+.chat-textarea {
+  flex: 1;
+  resize: none;
+  border: none;
+  background-color: transparent;
+  padding: 10px;
+  font-size: 1.3em;
+  outline: none;
+  height: 40px;
+}
+
+.send-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  border: none;
+  border-radius: 50%;
+  background-color: #000000;
+  color: white;
+  cursor: pointer;
+  bottom: 0;
+  transition: background-color 0.3s;
+
+
+  &:disabled {
+    background-color: #d3d3d3;
+    cursor: not-allowed;
+
+    &:hover {
+      background-color: #d3d3d3;
+    }
+  }
+
+  mat-icon {
+    width: auto;
+    height: auto;
+    font-size: 32px;
+  }
+}
+
+
+
+

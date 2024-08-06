@@ -8,6 +8,7 @@ import {PdfFile} from "../list-view/list-view.component";
   styleUrl: './grid-view.component.scss'
 })
 export class GridViewComponent {
+  gridColumns = 10;
   filesData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
     2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
     2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
@@ -20,6 +21,9 @@ export class GridViewComponent {
     const numSelected = this.selection.selected.length;
     const numRows = this.filesData.length;
     return numSelected === numRows;
+  }
+  calcFlex(gridColumns: number): string {
+    return `${100 / gridColumns}%`;
   }
 
   checkboxLabel(row?: number): string {

@@ -1,26 +1,26 @@
-CREATE EXTENSION IF NOT EXISTS vector;
-CREATE EXTENSION IF NOT EXISTS hstore;
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+create table if not exists SPRING_AI_VECTOR (
+	id        varchar2(36) default sys_guid() primary key,
+	content   clob not null,
+    folder VARCHAR2(20),
+    filepdf VARCHAR2(20),
+	metadata  json not null,
+	embedding VECTOR annotations(Distance 'COSINE', IndexType 'IVF')
+)
 
-CREATE TABLE IF NOT EXISTS vector_store (
-    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
-    content text,
-    metadata json,
-    embedding vector(1536)  -- 4096 est la dimension que vous avez choisie
+
+-- Création de la table avec le type VECTOR
+CREATE TABLE SPRING_AI_VECTORS (
+    id        VARCHAR2(36) DEFAULT SYS_GUID() PRIMARY KEY,
+    content   CLOB NOT NULL,
+    metadata  CLOB NOT NULL, -- Notez que JSON peut être stocké en CLOB dans Oracle
+    embedding VECTOR(4096, FLOAT64)
+        ANNOTATIONS (Distance 'COSINE', IndexType 'IVF')
 );
 
-CREATE INDEX ON vector_store USING HNSW (embedding vector_cosine_ops);
-
-
-/*
-CREATE USER VECTOR_USER IDENTIFIED BY <YOUR_PASSWORD> QUOTA UNLIMITED ON USERS;
-GRANT DB_DEVELOPER_ROLE TO VECTOR_USER;
-GRANT CREATE SESSION TO VECTOR_USER;
-
-GRANT SELECT ANY TABLE ON SCHEMA VECTOR_USER TO VECTOR_USER;
-GRANT SELECT ANY TABLE ON SCHEMA VECTOR_USER TO VECTOR_USER;
-GRANT SELECT ANY TABLE ON SCHEMA VECTOR_USER TO VECTOR_USER;
-GRANT SELECT ANY TABLE ON SCHEMA VECTOR_USER TO VECTOR_USER;
-ALTER SESSION SET CURRENT_SCHEMA = VECTOR_USER;
-CREATE TABLE VECTOR_USER.ORACLE_AI_VECTOR_SEARCH_DEMO (ID NUMBER PRIMARY KEY, VECTOR_DATA VECTOR(3, FLOAT64));
-COMMIT; */
+-- Création de l'index vectoriel
+CREATE INDEX vector_index_SPRING_AI_VECTORS
+ON SPRING_AI_VECTORS (embedding)
+    ORGANIZATION NEIGHBOR PARTITIONS
+    DISTANCE COSINE
+    WITH TARGET ACCURACY 95
+    PARAMETERS (TYPE IVF, NEIGHBOR PARTITIONS 10);

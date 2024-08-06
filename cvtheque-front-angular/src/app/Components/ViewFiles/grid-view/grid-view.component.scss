@@ -4,6 +4,7 @@
   padding: 0 20px;
   margin: 15px 0;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between; /* Permet de séparer les éléments à gauche et à droite */
   align-items: center; /* Centre verticalement les éléments */
 
@@ -63,6 +64,10 @@
 ////
 .content {
   padding: 16px;
+  .grid-container{
+    width: auto;
+    margin: auto;
+  }
 }
 
 .content > mat-card {
@@ -78,6 +83,8 @@
 .mat-elevation-z4 {
   height: auto;
   border-radius: 15px;
+  margin: 20px;
+  min-width: 130px;
   background-color: transparent;
   position: relative;
   transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;

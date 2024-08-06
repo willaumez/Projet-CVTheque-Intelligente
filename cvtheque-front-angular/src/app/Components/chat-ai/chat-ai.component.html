@@ -1,0 +1,29 @@
+<div class="chat-ai-container">
+  <h2 mat-dialog-title>---- Chat with AI -----</h2>
+
+  <div class="chat-container">
+    <div *ngFor="let msg of conversation.messages" class="chat-message" [ngClass]="msg.sender">
+      <div *ngIf="msg.sender === 'BOT'" class="bot-container-left">
+        <mat-icon>chat</mat-icon>
+        <div class="message" [innerHTML]="msg.message"></div>
+      </div>
+      <div *ngIf="msg.sender === 'USER'" class="user-container-right">
+          <mat-icon>person_pin</mat-icon>
+        <div class="message" [innerHTML]="msg.message"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-input">
+    <div class="chat-input-container">
+    <textarea matInput [(ngModel)]="userMessage" cdkTextareaAutosize
+              #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="20"
+              placeholder="Message Llama3" class="chat-textarea"></textarea>
+
+      <button (click)="sendMessage()" class="send-button" [disabled]="userMessage.length === 0">
+        <mat-icon>arrow_upward</mat-icon>
+      </button>
+    </div>
+  </div>
+
+</div>

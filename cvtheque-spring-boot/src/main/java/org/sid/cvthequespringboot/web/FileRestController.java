@@ -1,11 +1,19 @@
 package org.sid.cvthequespringboot.web;
 
 import lombok.AllArgsConstructor;
+import org.sid.cvthequespringboot.entities.FileDB;
 import org.sid.cvthequespringboot.services.FileServices;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,6 +37,47 @@ public class FileRestController {
         fileServices.processAndStoreFiles(files);
         System.out.println("File stored successfully");
     }
+
+    //Get all files form the database FileDB
+    @GetMapping("/files")
+    public List<FileDB> getFiles() {
+        return fileServices.getFiles().stream().toList();
+    }
+
+/*
+    @GetMapping("/read")
+    public ResponseEntity<Resource> readFilePdf() {
+        Resource pdfFile = new ClassPathResource("files/cvfile.pdf");
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=cvfile.pdf");
+        return new ResponseEntity<>(pdfFile, headers, HttpStatus.OK);
+    }
+
+*/
+
+    @GetMapping("/read/{fileId}")
+    public ResponseEntity<Resource> readFilePdf(@PathVariable Long fileId) {
+        System.out.println("fileId: " + fileId);
+        try {
+            // Charger le fichier depuis la base de données et sauvegarder en tant que fichier temporaire
+            File tempFile = fileServices.saveReadFile(fileId);
+            System.out.println("tempFile: " + tempFile.toString());
+
+            // Créer une ressource à partir du fichier temporaire
+            Resource resource = new UrlResource(tempFile.toURI());
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + tempFile.getName());
+            return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+
+        } catch (IOException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
+
 /*
 
     @PostMapping(value = "/upload", produces = MediaType.TEXT_PLAIN_VALUE)

@@ -1,9 +1,6 @@
 import { Component } from '@angular/core';
 import {
-  CdkDrag,
   CdkDragDrop,
-  CdkDropList,
-  CdkDropListGroup,
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
@@ -14,8 +11,8 @@ import {
   styleUrl: './files-view.component.scss'
 })
 export class FilesViewComponent {
-  isListView: boolean= false;
-  isGridView: boolean= true;
+  isListView: boolean= true;
+  isGridView: boolean= false;
 
   toggleListView() {
     this.isListView = true;
@@ -44,7 +41,6 @@ export class FilesViewComponent {
       );
     }
   }
-
 
 
 }
