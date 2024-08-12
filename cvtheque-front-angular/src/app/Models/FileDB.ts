@@ -3,7 +3,16 @@ export interface FileDB {
   id: number;
   name: string;
   type: string;
-  data: Blob;
   createdAt: Date;
+  folderName: string;
+  folderId: number;
+}
+
+
+export interface Folder {
+  id: number;
+  name: string;
+  description: string | null;
+  createdAt: string;
 }
 

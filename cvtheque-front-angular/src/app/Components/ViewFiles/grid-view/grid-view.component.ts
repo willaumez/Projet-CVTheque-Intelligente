@@ -22,9 +22,6 @@ export class GridViewComponent {
     const numRows = this.filesData.length;
     return numSelected === numRows;
   }
-  calcFlex(gridColumns: number): string {
-    return `${100 / gridColumns}%`;
-  }
 
   checkboxLabel(row?: number): string {
     if (!row) {

@@ -16,17 +16,17 @@
                [matAutocomplete]="auto"
                (focus)="onFocus()"
                [formControl]="folderCtrl">
-        <mat-autocomplete #auto="matAutocomplete">
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFolder">
           <mat-option *ngFor="let folder of filteredFolders | async" [value]="folder">
             <mat-icon>folder</mat-icon>
-            <span>{{ folder }}</span>
+            <span>{{ folder.name }}</span>
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
     </form>
   </div>
   <div class="btn-upload">
-    <button mat-button (click)="uploadFiles()">Upload
+    <button mat-raised-button (click)="uploadFiles()" [disabled]="!this.folderCtrl.value || this.files.length === 0">Upload
       <mat-icon>file_upload</mat-icon>
     </button>
     <div class="progress-container" *ngIf="progress !== null">
@@ -42,6 +42,5 @@
       <ngx-dropzone-label>{{ f.name }}</ngx-dropzone-label>
     </ngx-dropzone-preview>
   </ngx-dropzone>
-
 
 </div>

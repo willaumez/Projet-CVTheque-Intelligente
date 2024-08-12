@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@CrossOrigin(origins = "*")  // pour autoriser les requêtes provenant de n'importe quelle origine
+//@CrossOrigin(origins = "*")  // pour autoriser les requêtes provenant de n'importe quelle origine
 @RestController
 @RequestMapping("/ai")
 @AllArgsConstructor

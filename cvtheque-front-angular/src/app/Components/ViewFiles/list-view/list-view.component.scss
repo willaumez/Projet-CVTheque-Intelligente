@@ -86,19 +86,16 @@ table {
   height: 5rem;
 }
 .error-message{
-  display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
   width: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  //background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
+  position: absolute;
+  text-align: center;
   color: red;
   font-size: 2em;
 }
+
+
   // pdf viewer
 ngx-extended-pdf-viewer{
   width: 100%;

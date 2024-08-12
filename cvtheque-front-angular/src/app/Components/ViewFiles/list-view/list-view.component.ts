@@ -5,6 +5,7 @@ import {FilesService} from "../../../Services/FileServices/files.service";
 import {FileDB} from "../../../Models/FileDB";
 import {MatDialog} from "@angular/material/dialog";
 import {PdfViewerComponent} from "../../Dialog/pdf-viewer/pdf-viewer.component";
+import {AddFolderComponent} from "../../Dialog/add-folder/add-folder.component";
 
 export interface PdfFile {
   name: string;
@@ -12,25 +13,6 @@ export interface PdfFile {
   note: number;
   description: string;
 }
-
-const PDF_DATA: PdfFile[] = [
-  { name: 'Document1', dateCreation: '2023-01-01', note: 5, description: 'Description of Document1' },
-  { name: 'Document2', dateCreation: '2023-02-01', note: 4, description: 'Description of Document2' },
-  { name: 'Document2', dateCreation: '2023-02-01', note: 4, description: 'Description of Document2' },
-  { name: 'Document2', dateCreation: '2023-02-01', note: 4, description: 'Description of Document2' },
-  { name: 'Document2', dateCreation: '2023-02-01', note: 4, description: 'Description of Document2' },
-  { name: 'Document2', dateCreation: '2023-02-01', note: 4, description: 'Description of Document2' },
-  { name: 'Document2', dateCreation: '2023-02-01', note: 4, description: 'Description of Document2' },
-  { name: 'Document2', dateCreation: '2023-02-01', note: 4, description: 'Description of Document2' },
-  { name: 'Document2', dateCreation: '2023-02-01', note: 4, description: 'Description of Document2' },
-  { name: 'Document2', dateCreation: '2023-02-01', note: 4, description: 'Description of Document2' },
-  { name: 'Document2', dateCreation: '2023-02-01', note: 4, description: 'Description of Document2' },
-  { name: 'Document2', dateCreation: '2023-02-01', note: 4, description: 'Description of Document2' },
-  { name: 'Document2', dateCreation: '2023-02-01', note: 4, description: 'Description of Document2' },
-
-  // Ajoutez plus de données si nécessaire
-];
-
 
 @Component({
   selector: 'app-list-view',
@@ -41,33 +23,35 @@ export class ListViewComponent implements OnInit {
   isLoading = false;
   error: string = '';
 
-  displayedColumns: string[] = ['select', 'name', 'type', 'dateCreation', 'action'];
+  displayedColumns: string[] = ['select', 'name', 'type','folder', 'dateCreation', 'action'];
   dataSource = new MatTableDataSource<FileDB>();
-  selection = new SelectionModel<FileDB>(true, []);
+  selection: number[] = [];
 
   pdfSrc = '';
 
   ngOnInit(): void {
-
-    this.getAllFiles()
-
+    this.getAllFiles();
   }
-  constructor(private _fileService: FilesService, private _dialog: MatDialog) {
-  }
+
+  constructor(private _fileService: FilesService, private _dialog: MatDialog) {}
+
   getAllFiles() {
     this.isLoading = true;
     this._fileService.getAllFiles().subscribe(
       (files: FileDB[]) => {
         this.dataSource.data = files;
-        console.log(files);
-      });
-    this.isLoading = false;
+        this.isLoading = false;
+      },
+      (error) => {
+        this.error = 'Error fetching files: ' + error;
+        this.isLoading = false;
+      }
+    );
   }
-
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    const numSelected = this.selection.selected.length;
+    const numSelected = this.selection.length;
     const numRows = this.dataSource.data.length;
     return numSelected === numRows;
   }
@@ -75,11 +59,10 @@ export class ListViewComponent implements OnInit {
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   toggleAllRows() {
     if (this.isAllSelected()) {
-      this.selection.clear();
-      return;
+      this.selection = [];
+    } else {
+      this.selection = this.dataSource.data.map(row => row.id);
     }
-
-    this.selection.select(...this.dataSource.data);
   }
 
   /** The label for the checkbox on the passed row */
@@ -87,23 +70,18 @@ export class ListViewComponent implements OnInit {
     if (!row) {
       return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
     }
-    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.name}`;
+    return `${this.selection.includes(row.id) ? 'deselect' : 'select'} row ${row.name}`;
   }
 
- /* viewDescription(fileId: any) {
-    this._fileService.readFile(fileId).subscribe(
-      (response) => {
-        let blob: Blob = response.body as Blob;
-        let url = window.URL.createObjectURL(blob);
-        this.pdfSrc= url;
-        console.log(response);
-      }
-    );
-
-    //this.pdfSrc = URL.createObjectURL("http://localhost:8080/file/read");
-    //console.log(this.pdfSrc);
+  /** Toggles the selection of a single row */
+  toggleRow(row: FileDB) {
+    const index = this.selection.indexOf(row.id);
+    if (index >= 0) {
+      this.selection.splice(index, 1);
+    } else {
+      this.selection.push(row.id);
+    }
   }
-  */
 
   viewDescription(fileId: any) {
     const data: any = fileId;
@@ -121,9 +99,6 @@ export class ListViewComponent implements OnInit {
         }
       },
     });
-
-    //this.pdfSrc = URL.createObjectURL("http://localhost:8080/file/read");
-    //console.log(this.pdfSrc);
   }
 
   applyFilter(event: Event) {
@@ -132,13 +107,37 @@ export class ListViewComponent implements OnInit {
   }
 
   deleteSelection() {
+    let conf: boolean = confirm("Are you sure to delete the selected items?")
+    if (!conf) return;
 
+    if (this.selection.length > 0) {
+      this._fileService.deleteFiles(this.selection).subscribe(
+        (response) => {
+          console.log("Files Deleted Successfully");
+          this.selection = [];
+          this.getAllFiles();
+        },
+        (error) => {
+          console.log("Error Deleting Files");
+        }
+      );
+    }
   }
+
 
   transferSelection() {
-
+    const data = this.selection;
+    const dialogRef = this._dialog.open(AddFolderComponent, {
+      data,
+    });
+    dialogRef.afterClosed().subscribe({
+      next: (val) => {
+        if (val) {
+          console.log('Files transferred to:', val);
+          this.getAllFiles();
+        }
+      },
+    });
   }
-
-
 
 }

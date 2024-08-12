@@ -3,7 +3,7 @@
     <mat-label>Filter</mat-label>
     <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input>
   </mat-form-field>
-  <div class="action-container" *ngIf="selection.hasValue()">
+  <div class="action-container" *ngIf="selection.length  !==0 ">
     <button mat-button (click)="deleteSelection()">
       <mat-icon class="delete-icon">delete_forever</mat-icon>
     </button>
@@ -14,7 +14,7 @@
   </div>
 </div>
 
-<ng-container class="spinner" *ngIf="isLoading && !error">
+<ng-container class="spinner" *ngIf="isLoading && !error && !dataSource">
   <mat-spinner></mat-spinner>
 </ng-container>
 <ng-container *ngIf="!isLoading && dataSource && dataSource.data && dataSource.data.length > 0 && !error">
@@ -22,17 +22,19 @@
     <!-- Checkbox Column -->
     <ng-container matColumnDef="select">
       <th mat-header-cell *matHeaderCellDef>
-        <mat-checkbox (change)="$event ? toggleAllRows() : null"
-                      [checked]="selection.hasValue() && isAllSelected()"
-                      [indeterminate]="selection.hasValue() && !isAllSelected()"
-                      [aria-label]="checkboxLabel()">
+        <mat-checkbox
+          (change)="$event ? toggleAllRows() : null"
+          [checked]="selection.length !==0 && isAllSelected()"
+          [indeterminate]="selection.length !==0  && !isAllSelected()"
+          [aria-label]="checkboxLabel()">
         </mat-checkbox>
       </th>
       <td mat-cell *matCellDef="let row">
-        <mat-checkbox (click)="$event.stopPropagation()"
-                      (change)="$event ? selection.toggle(row) : null"
-                      [checked]="selection.isSelected(row)"
-                      [aria-label]="checkboxLabel(row)">
+        <mat-checkbox
+          (click)="$event.stopPropagation()"
+          (change)="$event ? toggleRow(row) : null"
+          [checked]="selection.includes(row.id)"
+          [aria-label]="checkboxLabel(row)">
         </mat-checkbox>
       </td>
     </ng-container>
@@ -47,6 +49,12 @@
     <ng-container matColumnDef="type">
       <th mat-header-cell *matHeaderCellDef> Type</th>
       <td mat-cell *matCellDef="let element"> {{ element.type }}</td>
+    </ng-container>
+
+    <!-- type Column -->
+    <ng-container matColumnDef="folder">
+      <th mat-header-cell *matHeaderCellDef> Folder</th>
+      <td mat-cell *matCellDef="let element"> {{ element.folderName }}</td>
     </ng-container>
 
     <!-- Date Creation Column -->
@@ -76,10 +84,15 @@
     </tr>
   </table>
 </ng-container>
-<ng-container *ngIf="error">
+<ng-container *ngIf="error && !dataSource.data">
   <span class="error-message">An error occurred while fetching data</span>
   <span class="error-message">{{ error }}</span>
 </ng-container>
+<!--Si le datasource est vide(n'a pas d'elements)-->
+<ng-container *ngIf="!isLoading && dataSource && dataSource.data && dataSource.data.length === 0 && !error">
+  <span class="error-message">No data available</span>
+</ng-container>
+
 
 
 

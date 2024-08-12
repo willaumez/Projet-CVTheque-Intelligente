@@ -7,6 +7,9 @@ import {MatDialog} from "@angular/material/dialog";
 import {AddFolderComponent} from "../Dialog/add-folder/add-folder.component";
 import {FilesService} from "../../Services/FileServices/files.service";
 import {HttpErrorResponse, HttpEventType} from "@angular/common/http";
+import {FoldersService} from "../../Services/FolderServices/folders.service";
+import {error} from "@angular/compiler-cli/src/transformers/util";
+import {Folder} from "../../Models/FileDB";
 
 //import {FileService} from "../../Services/file-service.service";
 
@@ -24,30 +27,32 @@ export class LoadFilesComponent implements OnInit {
   //
   files: File[] = [];
 
-  folderCtrl = new FormControl('');
-  filteredFolders: Observable<string[]>;
-  folders: string[] = [
-    'Folder1', 'Folder2', 'Folder3', 'Folder4', 'Folder5', 'Folder6', 'Folder7', 'Folder8', 'Folder9', 'Folder10',
-    'Folder11', 'Folder12', 'Folder13', 'Folder14', 'Folder15', 'Folder16', 'Folder17', 'Folder18', 'Folder19', 'Folder20',
-  ];
-
-  //Dialog
-
+  folderCtrl = new FormControl<Folder | null>(null);
+  filteredFolders: Observable<Folder[]>;
+  folders: Folder[] = [];
 
   ngOnInit(): void {
     this.getFolders();
+
+    // Écoutez les changements de valeur du FormControl
+    this.folderCtrl.valueChanges.subscribe(selectedFolder => {
+      if (selectedFolder) {
+        console.log('Dossier sélectionné:', selectedFolder);
+      }
+    });
   }
 
-  constructor(private _dialog: MatDialog, private _fileService: FilesService) {
+  constructor(private _dialog: MatDialog, private _fileService: FilesService, private folderService: FoldersService) {
     this.filteredFolders = this.folderCtrl.valueChanges.pipe(
       startWith(''),
-      map(folder => (folder ? this._filterFolders(folder) : this.folders.slice())),
+      map(folder => (typeof folder === 'string' ? folder : folder?.name || '')),
+      map(name => (name ? this._filterFolders(name) : this.folders.slice())),
     );
   }
 
-  private _filterFolders(value: string): string[] {
+  private _filterFolders(value: string): Folder[] {
     const filterValue = value.toLowerCase();
-    return this.folders.filter(folder => folder.toLowerCase().includes(filterValue));
+    return this.folders.filter(folder => folder.name.toLowerCase().includes(filterValue));
   }
 
   onFocus(): void {
@@ -55,20 +60,54 @@ export class LoadFilesComponent implements OnInit {
   }
 
   getFolders(): void {
-
+    this.folderService.getAllFolders().subscribe({
+      next: (folders: Folder[]) => {
+        this.folders = folders;
+        console.log('Folders fetched:', folders);
+      },
+      error: (error) => {
+        console.error('Error fetching folders:', error);
+      }
+    });
   }
 
+  displayFolder(folder: Folder): string {
+    return folder ? folder.name : '';
+  }
+
+
+  // Ouvrir la boîte de dialogue pour ajouter un dossier
   openAddFolder() {
     this.folderCtrl.setValue(null); // Réinitialiser la valeur
-    this.folderCtrl.disable(); // Désactiver le champ de formulaire
+    //this.folderCtrl.disable(); // Désactiver le champ de formulaire
     const dialogRef = this._dialog.open(AddFolderComponent, {});
     dialogRef.afterClosed().subscribe({
       next: (val) => {
         if (val) {
-          this.getFolders();
-          console.log('Folder added:', this.folderCtrl.value);
+          this.setFolder(val);
+          console.log('Folder added:', val);
         }
       },
+    });
+  }
+
+  private setFolder(folderName: string): void {
+    this.folderService.getAllFolders().subscribe({
+      next: (folders: Folder[]) => {
+        this.folders = folders;
+        // Rechercher et sélectionner le dossier correspondant à `folderName`
+        //console.log('Folders:', folders);
+        let matchingFolder = folders.find(folder => folder.name === folderName);
+        //console.log('Matching folder:', matchingFolder);
+        if (matchingFolder) {
+          this.folderCtrl.setValue(matchingFolder);
+        } else {
+          console.error('Folder not found:', folderName);
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching folders:', error);
+      }
     });
   }
 
@@ -86,37 +125,85 @@ export class LoadFilesComponent implements OnInit {
 /////// Upload
 
 
-  uploadFiles() {
-    if (this.files.length === 0) {
-      console.log('No files to upload.');
+  /*uploadFiles() {
+    if (this.files.length === 0  || !this.folderCtrl.value) {
+      console.log('No files or folder data available.');
       return;
     }
     this.progress = 0;
-    console.log('Uploading files:', this.files);
 
-    this._fileService.uploadFiles(this.files).pipe(map((event: any) => {
-        switch (event.type) {
-          case HttpEventType.UploadProgress:
-            // Calculer et mettre à jour la progression de l'upload
-            console.log('Upload Progress:', event.loaded, event.total);
-            this.progress = Math.round(((event.loaded-this.files.length) * 100 / event.total));
-            break;
-          case HttpEventType.Response:
-            // Réinitialiser la progression après la réponse
-            console.log('Files successfully uploaded:');
-            this.files = [];
-            this.progress = null;
-            break;
-        }
-      }), catchError((error: HttpErrorResponse) => {
-        this.progress = null;
-        return of('Upload failed: ' + error.message);
-      })).subscribe((event: any) => {
-        if (typeof event === 'string') {
-          console.error(event);
-        }
+    this._fileService.uploadFiles(this.files, this.folderCtrl.value).pipe(map((event: any) => {
+      switch (event.type) {
+        case HttpEventType.UploadProgress:
+          // Calculer et mettre à jour la progression de l'upload
+          console.log('Upload Progress:', event.loaded, event.total);
+          this.progress = Math.round(((event.loaded - this.files.length) * 100 / event.total));
+          break;
+        case HttpEventType.Response:
+          // Réinitialiser la progression après la réponse
+          console.log('Files successfully uploaded:');
+          this.files = [];
+          this.progress = null;
+          this.folderCtrl.setValue(null);
+          break;
+      }
+    }), catchError((error: HttpErrorResponse) => {
+      this.progress = null;
+      return of('Upload failed: ' + error.message);
+    })).subscribe((event: any) => {
+      if (typeof event === 'string') {
+        console.error(event);
+      }
+    });
+  }*/
+
+  uploadFiles() {
+    if (this.files.length === 0 || !this.folderCtrl.value) {
+      console.log('No files or folder data available.');
+      return;
+    }
+
+    const nbFiles = this.files.length;
+    let filesUploaded = 0;
+    this.progress = 0;
+
+    // Parcourir les fichiers et les envoyer un par un
+    this.files.forEach(file => {
+      this._fileService.uploadFile(file, this.folderCtrl.value).pipe(
+        map((event: any) => {
+          switch (event.type) {
+            case HttpEventType.UploadProgress:
+              // Calculer et mettre à jour la progression de l'upload
+              if (event.total) {
+                const fileProgress = Math.round((100 / event.total) * event.loaded);
+                this.progress = Math.round((filesUploaded + fileProgress / 100) * 100 / nbFiles);
+                console.log('Upload Progress:', this.progress, '%');
+              }
+              break;
+            case HttpEventType.Response:
+              // Incrémenter le nombre de fichiers uploadés et mettre à jour la progression globale
+              filesUploaded++;
+              this.progress = Math.round((filesUploaded * 100) / nbFiles);
+              console.log('File successfully uploaded:', event.body);
+
+              // Si tous les fichiers sont uploadés, réinitialiser les valeurs
+              if (filesUploaded === nbFiles) {
+                this.progress = null;
+                this.files = [];
+                this.folderCtrl.setValue(null);
+              }
+              break;
+          }
+        }),
+        catchError((error: HttpErrorResponse) => {
+          this.progress = null;
+          console.error('Upload failed:', error.message);
+          return of('Upload failed: ' + error.message);
+        })
+      ).subscribe();
     });
   }
+
 
   // Méthode pour gérer l'upload des fichiers
   /*uploadFiles() {

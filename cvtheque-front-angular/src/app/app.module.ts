@@ -51,6 +51,7 @@ import { ChatAIComponent } from './Components/chat-ai/chat-ai.component';
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { PdfViewerComponent } from './Components/Dialog/pdf-viewer/pdf-viewer.component';
+import {MatSelect} from "@angular/material/select";
 
 
 @NgModule({
@@ -66,15 +67,15 @@ import { PdfViewerComponent } from './Components/Dialog/pdf-viewer/pdf-viewer.co
     ChatAIComponent,
     PdfViewerComponent,
   ],
-  imports: [
-    BrowserModule, AppRoutingModule, MatSidenavModule, MatIcon, MatDivider, MatButton, MatTooltip, MatButtonToggle,
-    LoadingBarRouterModule, LoadingBarModule, NgxDropzoneModule, FormsModule, MatFormFieldModule, MatInputModule,
-    MatAutocompleteModule, ReactiveFormsModule, MatSlideToggleModule, AsyncPipe, NgbModule, MatProgressBar, MatDialogContent,
-    MatDialogActions, MatDialogTitle, MatDialogClose, MatTable, MatColumnDef, MatHeaderCell, MatCheckbox, MatCell, MatCellDef, MatHeaderCellDef,
-    MatHeaderRow, MatRow, MatRowDef, MatHeaderRowDef, MatNoDataRow, FlexLayoutModule, MatToolbar, MatCardModule, NgOptimizedImage,
-    HttpClientModule, MatListItem, MatNavList, DragDropModule, MatProgressSpinnerModule, NgxExtendedPdfViewerModule,
+    imports: [
+        BrowserModule, AppRoutingModule, MatSidenavModule, MatIcon, MatDivider, MatButton, MatTooltip, MatButtonToggle,
+        LoadingBarRouterModule, LoadingBarModule, NgxDropzoneModule, FormsModule, MatFormFieldModule, MatInputModule,
+        MatAutocompleteModule, ReactiveFormsModule, MatSlideToggleModule, AsyncPipe, NgbModule, MatProgressBar, MatDialogContent,
+        MatDialogActions, MatDialogTitle, MatDialogClose, MatTable, MatColumnDef, MatHeaderCell, MatCheckbox, MatCell, MatCellDef, MatHeaderCellDef,
+        MatHeaderRow, MatRow, MatRowDef, MatHeaderRowDef, MatNoDataRow, FlexLayoutModule, MatToolbar, MatCardModule, NgOptimizedImage,
+        HttpClientModule, MatListItem, MatNavList, DragDropModule, MatProgressSpinnerModule, NgxExtendedPdfViewerModule, MatSelect,
 
-  ],
+    ],
   providers: [
     provideAnimationsAsync()
   ],
