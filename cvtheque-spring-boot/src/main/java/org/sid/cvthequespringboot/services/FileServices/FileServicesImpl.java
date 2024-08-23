@@ -77,7 +77,7 @@ public class FileServicesImpl implements FileServices {
             vectorStore.add(documents);
         }
     }*/
-
+    @Override
     public void processAndStoreFiles(MultipartFile file, FolderDto folderDto) throws IOException {
         Folder folder = fileMappers.fromFolderDto(folderDto);
         if (folder.getId() == null) {
@@ -104,8 +104,7 @@ public class FileServicesImpl implements FileServices {
     }
 
 
-
-
+    @Override
     public FileDB storeFiles(MultipartFile file, Folder folder) throws IOException {
         System.out.println("=================================folder; " + folder.getId());
         FileDB fileDB = FileDB.builder()
@@ -118,6 +117,7 @@ public class FileServicesImpl implements FileServices {
         return filesRepository.save(fileDB);
     }
 
+    @Override
     public List<FileDbDto> getFiles() {
         // Récupérer tous les fichiers depuis le repository
         List<FileDB> fileDBS = filesRepository.findAll();
@@ -127,6 +127,7 @@ public class FileServicesImpl implements FileServices {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public File saveReadFile(Long fileId) throws IOException {
         // Récupérer le fichier depuis la base de données
         FileDB fileDB = filesRepository.findById(fileId).orElseThrow(() -> new RuntimeException("File not found"));
@@ -155,7 +156,7 @@ public class FileServicesImpl implements FileServices {
         return targetFilePath.toFile();
     }
 
-
+    @Override
     @Transactional
     public void deleteFiles(List<Long> filesIds) {
         for (Long fileId : filesIds) {
@@ -164,6 +165,7 @@ public class FileServicesImpl implements FileServices {
         }
     }
 
+    @Override
     @Transactional
     public void transferFiles(List<Long> fileIds, Long folderId) {
         // Vérifier si le dossier cible existe

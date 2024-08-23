@@ -16,3 +16,22 @@
   //background-color: #9e9e9e;
   box-shadow: 0 0 0 1px #00192c inset;
 }
+
+
+.spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.29); /* Semi-transparent pour obscurcir le reste de la page */
+  z-index: 1000; /* Au-dessus des autres composants */
+  pointer-events: all; /* Permet de capturer les clics */
+}
+
+.spinner-load {
+  z-index: 1100; /* Assurez-vous que le spinner est au-dessus de l'overlay */
+}

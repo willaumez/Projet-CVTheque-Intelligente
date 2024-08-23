@@ -1,63 +1,154 @@
-<div class="header">
-  <mat-form-field appearance="fill" class="filter-field">
-    <mat-label>Filter</mat-label>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input>
-  </mat-form-field>
-  <div class="action-container" *ngIf="selection.hasValue()">
-    <button mat-button (click)="deleteSelection()"> Delete
-      <mat-icon class="delete-icon">delete_forever</mat-icon>
-    </button>
-    <button mat-button (click)="transferSelection()"> Transfer to (folder)
-      <mat-icon class="action-icon first-icon">subdirectory_arrow_right</mat-icon>
-      <mat-icon class="action-icon">folder_special</mat-icon>
-    </button>
+<ng-container *ngIf="!isResult">
+  <div class="spinner" *ngIf="isLoading && !error">
+    <mat-spinner></mat-spinner>
   </div>
-  <div class="select-all"> Select all :
-    <mat-checkbox
-      (change)="$event ? toggleAllGrid() : null"
-      [checked]="selection.hasValue() && isAllSelected()"
-      [indeterminate]="selection.hasValue() && !isAllSelected()"
-      [aria-label]="checkboxLabel()">
-    </mat-checkbox>
+  <div class="spinner-overlay" *ngIf="inOperation">
+    <mat-spinner class="spinner-load"></mat-spinner>
   </div>
-</div>
 
-<div class="content">
+  <ng-container *ngIf="!isLoading && dataSource && dataSource.length > 0 && !error">
+    <div class="header">
+      <mat-form-field appearance="fill" class="filter-field">
+        <mat-label>Filter</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input>
+      </mat-form-field>
+      <div class="action-container" *ngIf="selection.hasValue()">
+        <button mat-button (click)="deleteSelection()"> Delete
+          <mat-icon class="delete-icon">delete_forever</mat-icon>
+        </button>
+        <button mat-button (click)="transferSelection()"> Transfer to (folder)
+          <mat-icon class="action-icon first-icon">subdirectory_arrow_right</mat-icon>
+          <mat-icon class="action-icon">folder_special</mat-icon>
+        </button>
+      </div>
+      <div class="select-all"> Select all :
+        <mat-checkbox
+          (change)="$event ? toggleAllGrid() : null"
+          [checked]="selection.hasValue() && isAllSelected()"
+          [indeterminate]="selection.hasValue() && !isAllSelected()"
+          [aria-label]="checkboxLabel()">
+        </mat-checkbox>
+      </div>
+    </div>
 
-  <div fxLayout="row wrap" fxLayoutGap="grid" class="grid-container">
-    <div [fxFlex]="(100 / gridColumns) + '%'"
-         [fxFlex.xs]="100 + '%'"
-         [fxFlex.sm]="(100 / 4) + '%'"
-         [fxFlex.md]="(100 / 5) + '%'"
-         [fxFlex.lg]="(100 / 7) + '%'"
-         [fxFlex.xl]="(100 / 12) + '%'"
-         [fxFlex.gt-xs]="(100 / 3) + '%'"
-         [fxFlex.gt-sm]="(100 / 4) + '%'"
-         [fxFlex.gt-md]="(100 / 5) + '%'"
-         [fxFlex.gt-lg]="(100 / 6) + '%'"
-         [fxFlex.lt-sm]="(100 / 2) + '%'"
-         [fxFlex.lt-md]="(100 / 3) + '%'"
-         [fxFlex.lt-lg]="(100 / 4) + '%'"
-         [fxFlex.lt-xl]="(100 / 6) + '%'"
+    <div class="content">
 
-         *ngFor="let num of filesData">
-      <mat-card class="mat-elevation-z4" (dblclick)="handleCardClick(num)">
-        <div class="checkbox-container" (click)="$event.stopPropagation()">
-          <mat-checkbox (change)="$event ? toggleSelection(num) : null"
-                        [checked]="selection.isSelected(num)"
-                        [aria-label]="checkboxLabel(num)">
-          </mat-checkbox>
+      <div fxLayout="row wrap" fxLayoutGap="grid" class="grid-container">
+        <div [fxFlex]="(100 / gridColumns) + '%'"
+             [fxFlex.xs]="100 + '%'"
+             [fxFlex.sm]="(100 / 4) + '%'"
+             [fxFlex.md]="(100 / 5) + '%'"
+             [fxFlex.lg]="(100 / 7) + '%'"
+             [fxFlex.xl]="(100 / 10) + '%'"
+             [fxFlex.gt-xs]="(100 / 3) + '%'"
+             [fxFlex.gt-sm]="(100 / 4) + '%'"
+             [fxFlex.gt-md]="(100 / 5) + '%'"
+             [fxFlex.gt-lg]="(100 / 6) + '%'"
+             [fxFlex.lt-sm]="(100 / 2) + '%'"
+             [fxFlex.lt-md]="(100 / 3) + '%'"
+             [fxFlex.lt-lg]="(100 / 4) + '%'"
+             [fxFlex.lt-xl]="(100 / 6) + '%'"
+
+             *ngFor="let file of dataSource">
+          <mat-card class="mat-elevation-z4" (dblclick)="handleCardClick(file)">
+            <div class="checkbox-container" (click)="$event.stopPropagation()">
+              <mat-checkbox (change)="$event ? toggleSelection(file.id) : null"
+                            [checked]="selection.isSelected(file.id)"
+                            [aria-label]="checkboxLabel(file.id)">
+              </mat-checkbox>
+            </div>
+            <img mat-card-image src="assets/PDF_file_icon.svg" alt="pdf photos" class="image-pdf"/>
+            <div class="card-actions">
+              <div class="infos-file">
+                <h3 class="word">{{ file.name }}</h3>
+                <span class="word">{{ file.folderName }}</span>
+                <span class="word">{{ file.createdAt | date: 'yyyy-MM-dd' }}</span>
+              </div>
+            </div>
+            <mat-card-actions class="card-results" *ngIf="file.acceptCriteria?.length || file.rejectCriteria?.length">
+              <!--*ngIf="file.acceptCriteria?.length || file.rejectCriteria?.length"-->
+              <button mat-button class="criteria-container"
+                      (click)="criteriaInfos(file)">
+                <mat-icon>info</mat-icon>
+                <span class="criteria-accept" style="color: green">{{file.acceptCriteria?.length || 0}}</span>
+                <sub>/{{(file.acceptCriteria?.length || 0) + (file.rejectCriteria?.length || 0)}}</sub>
+                --
+                <span class="criteria-reject" style="color: red">{{file.rejectCriteria?.length || 0}}</span>
+                <sub>/{{(file.acceptCriteria?.length || 0) + (file.rejectCriteria?.length || 0)}}</sub>
+              </button>
+            </mat-card-actions>
+          </mat-card>
         </div>
-        <img mat-card-image src="assets/PDF_file_icon.svg" alt="pdf photos" class="image-pdf"/>
-        <mat-card-actions class="card-actions">
-          <div class="infos-file">
-            <h3>Name of {{ num }}</h3>
-            create date
-          </div>
-        </mat-card-actions>
-      </mat-card>
+      </div>
+
+    </div>
+
+  </ng-container>
+  <ng-container *ngIf="error">
+    <span class="error-message">{{ error }}</span>
+  </ng-container>
+  <!--Si le datasource est vide(n'a pas d'elements)-->
+  <ng-container *ngIf="!isLoading && dataSource && dataSource.length === 0 && !error">
+    <span class="error-message">No data available</span>
+  </ng-container>
+
+</ng-container>
+
+<ng-container *ngIf="isResult">
+  <div class="body-viewer">
+    <div class="pdf-viewer">
+      <ngx-extended-pdf-viewer
+        [src]="pdfSrc"
+        useBrowserLocale="true"
+        [textLayer]="true"
+        [showHandToolButton]="true"
+        class="ngx-viewer">
+      </ngx-extended-pdf-viewer>
+    </div>
+
+    <div class="result-container" *ngIf="this.resultData">
+      <div class="return-button">
+        <button mat-raised-button (click)="returnToFilesView()">
+          <mat-icon>arrow_back</mat-icon>
+          Return
+        </button>
+      </div>
+      <div class="result-text">
+        <h2 class="accepted">Accepted Criteria:</h2>
+        <ng-container *ngIf="resultData?.acceptCriteria?.length; else noAcceptCriteria">
+          <ul>
+            <li *ngFor="let criteria of resultData.acceptCriteria">
+              <h3 style="color:#007e40;">{{ criteria.name }}</h3>
+              <p>{{ criteria.message }}</p>
+            </li>
+          </ul>
+        </ng-container>
+
+        <!-- Affichage d'un message si aucun critère accepté n'est présent -->
+        <ng-template #noAcceptCriteria>
+          <p>No accepted criteria.</p>
+        </ng-template>
+
+        <mat-divider class="divider-criteria"></mat-divider>
+        <!-- Affichage des critères rejetés -->
+        <h2 class="rejected">Rejected Criteria: </h2>
+        <ng-container *ngIf="resultData?.rejectCriteria?.length; else noRejectCriteria">
+          <ul>
+            <li *ngFor="let criteria of resultData.rejectCriteria">
+              <h3 style="color:#fb0000;">{{ criteria.name }}</h3>
+              <p>{{ criteria.message }}</p>
+            </li>
+          </ul>
+        </ng-container>
+
+        <!-- Affichage d'un message si aucun critère rejeté n'est présent -->
+        <ng-template #noRejectCriteria>
+          <p>No rejected criteria.</p>
+        </ng-template>
+
+      </div>
+
     </div>
   </div>
 
-
-</div>
+</ng-container>

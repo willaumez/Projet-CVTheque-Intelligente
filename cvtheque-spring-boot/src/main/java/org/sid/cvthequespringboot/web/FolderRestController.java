@@ -19,11 +19,19 @@ public class FolderRestController {
 
     private FolderServices folderService;
 
-    @PostMapping(value = "/save", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
+    /*@PostMapping(value = "/save", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
     public void upload(@RequestBody Folder folder) throws IOException {
         // Process and store the folder
         folderService.save(folder);
         System.out.println("Folder stored successfully: " + folder.getName()+ " " + folder.getDescription());
+    }*/
+
+    @PostMapping(value = "/save")
+    public FolderDto upload(@RequestBody Folder folder) throws IOException {
+        // Process and store the folder
+        FolderDto folderDto = folderService.save(folder);
+        System.out.println("Folder stored successfully: " + folder.getName()+ " " + folder.getDescription());
+        return folderDto;
     }
 
     @GetMapping("/folders")

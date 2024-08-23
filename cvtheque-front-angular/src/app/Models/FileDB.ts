@@ -6,6 +6,8 @@ export interface FileDB {
   createdAt: Date;
   folderName: string;
   folderId: number;
+  acceptCriteria?: Criteria[];
+  rejectCriteria?: Criteria[];
 }
 
 
@@ -16,3 +18,13 @@ export interface Folder {
   createdAt: string;
 }
 
+
+interface Criteria{
+  name: string;
+  message: string;
+}
+
+export interface ResultCriteria{
+  acceptCriteria?: Criteria[];
+  rejectCriteria?: Criteria[];
+}

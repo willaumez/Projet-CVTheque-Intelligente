@@ -1,13 +1,17 @@
 package org.sid.cvthequespringboot.dtos;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 import java.util.Date;
 import java.util.List;
 
-@Getter  @Setter
-public class FileDbDto {
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class FileAiCriteria {
     private Long id;
     private String name;
     private String type;

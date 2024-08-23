@@ -1,99 +1,179 @@
-<div class="header">
-  <mat-form-field appearance="fill" class="filter-field">
-    <mat-label>Filter</mat-label>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input>
-  </mat-form-field>
-  <div class="action-container" *ngIf="selection.length  !==0 ">
-    <button mat-button (click)="deleteSelection()">
-      <mat-icon class="delete-icon">delete_forever</mat-icon>
-    </button>
-    <button mat-button (click)="transferSelection()">
-      <mat-icon class="action-icon first-icon">subdirectory_arrow_right</mat-icon>
-      <mat-icon class="action-icon">folder_special</mat-icon>
-    </button>
+<ng-container *ngIf="!isResult">
+  <div class="spinner" *ngIf="isLoading && !error">
+    <mat-spinner></mat-spinner>
   </div>
-</div>
+  <div class="spinner-overlay" *ngIf="inOperation">
+    <mat-spinner class="spinner-load"></mat-spinner>
+  </div>
 
-<ng-container class="spinner" *ngIf="isLoading && !error && !dataSource">
-  <mat-spinner></mat-spinner>
-</ng-container>
-<ng-container *ngIf="!isLoading && dataSource && dataSource.data && dataSource.data.length > 0 && !error">
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-    <!-- Checkbox Column -->
-    <ng-container matColumnDef="select">
-      <th mat-header-cell *matHeaderCellDef>
-        <mat-checkbox
-          (change)="$event ? toggleAllRows() : null"
-          [checked]="selection.length !==0 && isAllSelected()"
-          [indeterminate]="selection.length !==0  && !isAllSelected()"
-          [aria-label]="checkboxLabel()">
-        </mat-checkbox>
-      </th>
-      <td mat-cell *matCellDef="let row">
-        <mat-checkbox
-          (click)="$event.stopPropagation()"
-          (change)="$event ? toggleRow(row) : null"
-          [checked]="selection.includes(row.id)"
-          [aria-label]="checkboxLabel(row)">
-        </mat-checkbox>
-      </td>
-    </ng-container>
-
-    <!-- Name Column -->
-    <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef> Name</th>
-      <td mat-cell *matCellDef="let element"> {{ element.name }}</td>
-    </ng-container>
-
-    <!-- type Column -->
-    <ng-container matColumnDef="type">
-      <th mat-header-cell *matHeaderCellDef> Type</th>
-      <td mat-cell *matCellDef="let element"> {{ element.type }}</td>
-    </ng-container>
-
-    <!-- type Column -->
-    <ng-container matColumnDef="folder">
-      <th mat-header-cell *matHeaderCellDef> Folder</th>
-      <td mat-cell *matCellDef="let element"> {{ element.folderName }}</td>
-    </ng-container>
-
-    <!-- Date Creation Column -->
-    <ng-container matColumnDef="dateCreation">
-      <th mat-header-cell *matHeaderCellDef> Date Creation</th>
-      <td mat-cell *matCellDef="let element">
-        {{ element.createdAt | date: 'yyyy-MM-dd' }}   |   {{ element.createdAt | date: 'HH:mm:ss' }}
-      </td>
-    </ng-container>
-
-    <!-- Action Column -->
-    <ng-container matColumnDef="action">
-      <th mat-header-cell *matHeaderCellDef></th>
-      <td mat-cell *matCellDef="let element">
-        <button mat-button class="action-btn" (click)="viewDescription(element.id)">
-          <mat-icon>picture_as_pdf</mat-icon>
+  <div *ngIf="!isLoading && dataSource && dataSource.data && dataSource.data.length > 0 && !error">
+    <div class="header">
+      <mat-form-field appearance="fill" class="filter-field">
+        <mat-label>Filter</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input>
+      </mat-form-field>
+      <div class="action-container" *ngIf="selection.length  !==0 ">
+        <button mat-button (click)="deleteSelection()">
+          <mat-icon class="delete-icon">delete_forever</mat-icon>
         </button>
-      </td>
-    </ng-container>
+        <button mat-button (click)="transferSelection()">
+          <mat-icon class="action-icon first-icon">subdirectory_arrow_right</mat-icon>
+          <mat-icon class="action-icon">folder_special</mat-icon>
+        </button>
+      </div>
+    </div>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;">
-    </tr>
-    <!-- Row shown when there is no matching data. -->
-    <tr class="mat-row" *matNoDataRow>
-      <td class="mat-cell" colspan="4">No data matching the filter "{{ input.value }}"</td>
-    </tr>
-  </table>
-</ng-container>
-<ng-container *ngIf="error && !dataSource.data">
-  <span class="error-message">An error occurred while fetching data</span>
-  <span class="error-message">{{ error }}</span>
-</ng-container>
-<!--Si le datasource est vide(n'a pas d'elements)-->
-<ng-container *ngIf="!isLoading && dataSource && dataSource.data && dataSource.data.length === 0 && !error">
-  <span class="error-message">No data available</span>
-</ng-container>
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      <!-- Checkbox Column -->
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-checkbox
+            (change)="$event ? toggleAllRows() : null"
+            [checked]="selection.length !==0 && isAllSelected()"
+            [indeterminate]="selection.length !==0  && !isAllSelected()"
+            [aria-label]="checkboxLabel()">
+          </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <mat-checkbox
+            (click)="$event.stopPropagation()"
+            (change)="$event ? toggleRow(row) : null"
+            [checked]="selection.includes(row.id)"
+            [aria-label]="checkboxLabel(row)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Name</th>
+        <td mat-cell *matCellDef="let element"> {{ element.name }}</td>
+      </ng-container>
+
+      <!-- type Column -->
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef> Type</th>
+        <td mat-cell *matCellDef="let element"> {{ element.type }}</td>
+      </ng-container>
+
+      <!-- type Column -->
+      <ng-container matColumnDef="folder">
+        <th mat-header-cell *matHeaderCellDef> Folder</th>
+        <td mat-cell *matCellDef="let element"> {{ element.folderName }}</td>
+      </ng-container>
+
+      <!-- Date Creation Column -->
+      <ng-container matColumnDef="dateCreation">
+        <th mat-header-cell *matHeaderCellDef> Date Creation</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.createdAt | date: 'yyyy-MM-dd' }}   |   {{ element.createdAt | date: 'HH:mm:ss' }}
+        </td>
+      </ng-container>
+
+      <!-- Results Column -->
+      <ng-container matColumnDef="results">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element" style="text-align: center">
+          <button mat-button class="criteria-container"
+                  *ngIf="element.acceptCriteria?.length || element.rejectCriteria?.length"
+                  (click)="criteriaInfos(element)">
+            <mat-icon>info</mat-icon>
+            <span class="criteria-accept" style="color: green">{{element.acceptCriteria?.length || 0}}</span>
+            <sub>/{{(element.acceptCriteria?.length || 0) + (element.rejectCriteria?.length || 0)}}</sub>
+            --
+            <span class="criteria-reject" style="color: red">{{element.rejectCriteria?.length || 0}}</span>
+            <sub>/{{(element.acceptCriteria?.length || 0) + (element.rejectCriteria?.length || 0)}}</sub>
+          </button>
+        </td>
+      </ng-container>
+
+      <!-- Action Column -->
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-button class="action-btn" (click)="viewDescription(element.id)">
+            <mat-icon>picture_as_pdf</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+      </tr>
+      <!-- Row shown when there is no matching data. -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No data matching the filter "{{ input.value }}"</td>
+      </tr>
+    </table>
+  </div>
+  <ng-container *ngIf="error">
+    <span class="error-message">{{ error }}</span>
+  </ng-container>
+  <!--Si le datasource est vide(n'a pas d'elements)-->
+  <ng-container *ngIf="!isLoading && dataSource && dataSource.data && dataSource.data.length === 0 && !error">
+    <span class="error-message">No data available</span>
+  </ng-container>
 
 
+</ng-container>
+<ng-container *ngIf="isResult">
+  <div class="body-viewer">
+    <div class="pdf-viewer">
+      <ngx-extended-pdf-viewer
+        [src]="pdfSrc"
+        useBrowserLocale="true"
+        [textLayer]="true"
+        [showHandToolButton]="true"
+        class="ngx-viewer">
+      </ngx-extended-pdf-viewer>
+    </div>
+
+    <div class="result-container" *ngIf="this.resultData">
+      <div class="return-button">
+        <button mat-raised-button (click)="returnToFilesView()">
+          <mat-icon>arrow_back</mat-icon>
+          Return
+        </button>
+      </div>
+      <div class="result-text">
+          <h2 class="accepted">Accepted Criteria:</h2>
+          <ng-container *ngIf="resultData?.acceptCriteria?.length; else noAcceptCriteria">
+            <ul>
+              <li *ngFor="let criteria of resultData.acceptCriteria">
+                <h3 style="color:#007e40;">{{ criteria.name }}</h3>
+                <p>{{ criteria.message }}</p>
+              </li>
+            </ul>
+          </ng-container>
+
+          <!-- Affichage d'un message si aucun critère accepté n'est présent -->
+          <ng-template #noAcceptCriteria>
+            <p>No accepted criteria.</p>
+          </ng-template>
+
+        <mat-divider class="divider-criteria"></mat-divider>
+          <!-- Affichage des critères rejetés -->
+          <h2 class="rejected">Rejected Criteria: </h2>
+          <ng-container *ngIf="resultData?.rejectCriteria?.length; else noRejectCriteria">
+            <ul>
+              <li *ngFor="let criteria of resultData.rejectCriteria">
+                <h3 style="color:#fb0000;">{{ criteria.name }}</h3>
+                <p>{{ criteria.message }}</p>
+              </li>
+            </ul>
+          </ng-container>
+
+          <!-- Affichage d'un message si aucun critère rejeté n'est présent -->
+          <ng-template #noRejectCriteria>
+            <p>No rejected criteria.</p>
+          </ng-template>
+
+      </div>
+
+    </div>
+  </div>
+
+</ng-container>
 
 
 <!--<app-example-pdf-viewer></app-example-pdf-viewer>-->

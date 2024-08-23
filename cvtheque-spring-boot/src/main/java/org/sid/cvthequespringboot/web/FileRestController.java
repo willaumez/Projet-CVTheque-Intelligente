@@ -44,7 +44,7 @@ public class FileRestController {
         // Convertir le JSON en FolderDto
         FolderDto folderDto = objectMapper.readValue(folderJson, FolderDto.class);
         //afficher au format JSON
-        System.out.println("folderDto: " + objectMapper.writeValueAsString(folderDto));
+        //System.out.println("folderDto: " + objectMapper.writeValueAsString(folderDto));
 
         // Appeler le service pour traiter et stocker le fichier
         fileServices.processAndStoreFiles(file, folderDto);
@@ -59,7 +59,7 @@ public class FileRestController {
     @GetMapping("/files")
     public List<FileDbDto> getFiles() {
         List<FileDbDto> fileDbDtos = fileServices.getFiles().stream().toList();
-        System.out.println("fileDbDtos: " + fileDbDtos);
+        //System.out.println("fileDbDtos: " + fileDbDtos);
         return fileDbDtos;
     }
 

@@ -82,32 +82,16 @@ export class LoadFilesComponent implements OnInit {
     //this.folderCtrl.disable(); // Désactiver le champ de formulaire
     const dialogRef = this._dialog.open(AddFolderComponent, {});
     dialogRef.afterClosed().subscribe({
-      next: (val) => {
+      next: (val: Folder) => {
         if (val) {
-          this.setFolder(val);
-          console.log('Folder added:', val);
+          this.folders.push(val);
+          this.folderCtrl.setValue(val);
+          this.onFocus();
+          this.displayFolder(val);
+          //this.setFolder(val);
+          //console.log('----- Folder added:', val);
         }
       },
-    });
-  }
-
-  private setFolder(folderName: string): void {
-    this.folderService.getAllFolders().subscribe({
-      next: (folders: Folder[]) => {
-        this.folders = folders;
-        // Rechercher et sélectionner le dossier correspondant à `folderName`
-        //console.log('Folders:', folders);
-        let matchingFolder = folders.find(folder => folder.name === folderName);
-        //console.log('Matching folder:', matchingFolder);
-        if (matchingFolder) {
-          this.folderCtrl.setValue(matchingFolder);
-        } else {
-          console.error('Folder not found:', folderName);
-        }
-      },
-      error: (error) => {
-        console.error('Error fetching folders:', error);
-      }
     });
   }
 
@@ -123,40 +107,6 @@ export class LoadFilesComponent implements OnInit {
 
 
 /////// Upload
-
-
-  /*uploadFiles() {
-    if (this.files.length === 0  || !this.folderCtrl.value) {
-      console.log('No files or folder data available.');
-      return;
-    }
-    this.progress = 0;
-
-    this._fileService.uploadFiles(this.files, this.folderCtrl.value).pipe(map((event: any) => {
-      switch (event.type) {
-        case HttpEventType.UploadProgress:
-          // Calculer et mettre à jour la progression de l'upload
-          console.log('Upload Progress:', event.loaded, event.total);
-          this.progress = Math.round(((event.loaded - this.files.length) * 100 / event.total));
-          break;
-        case HttpEventType.Response:
-          // Réinitialiser la progression après la réponse
-          console.log('Files successfully uploaded:');
-          this.files = [];
-          this.progress = null;
-          this.folderCtrl.setValue(null);
-          break;
-      }
-    }), catchError((error: HttpErrorResponse) => {
-      this.progress = null;
-      return of('Upload failed: ' + error.message);
-    })).subscribe((event: any) => {
-      if (typeof event === 'string') {
-        console.error(event);
-      }
-    });
-  }*/
-
   uploadFiles() {
     if (this.files.length === 0 || !this.folderCtrl.value) {
       console.log('No files or folder data available.');

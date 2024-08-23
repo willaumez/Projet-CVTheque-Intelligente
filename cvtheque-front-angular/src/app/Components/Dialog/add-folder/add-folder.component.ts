@@ -16,6 +16,8 @@ export class AddFolderComponent implements OnInit {
   folders: Folder[] = [];
   selectedFolder: number | null = null;
 
+  inOperation: boolean = false;
+
   @ViewChild('autosize') autosize: CdkTextareaAutosize | undefined;
 
   constructor(private fb: FormBuilder, private _dialogRef: MatDialogRef<AddFolderComponent>, private _folderService: FoldersService,
@@ -39,48 +41,57 @@ export class AddFolderComponent implements OnInit {
     if (this.addFolderForm.valid) {
       const formData = this.addFolderForm.value;
       this._folderService.saveFolder(formData).subscribe(
-        (response) => {
-          console.log('Folder ajouté avec succès:', response);
+        (response: Folder) => {
+          console.log('----- Folder added:', response);
+          this._dialogRef.close(response);
         },
         (error) => {
           console.error('Erreur lors de l\'ajout du dossier:', error);
         }
       );
 
-      this._dialogRef.close(this.addFolderForm.value.name);
+      this._dialogRef.close();
       // Ajouter votre logique de soumission ici (ex: appeler un service pour sauvegarder les données)
     } else {
       console.log('Formulaire invalide');
     }
   }
 // Méthode pour vérifier si le formulaire est valide
+
   isFormValid(): boolean {
     return this.addFolderForm.valid;
   }
 
 
   getFolders(): void {
+    this.inOperation = true;
     this.folderService.getAllFolders().subscribe({
       next: (folders: Folder[]) => {
         this.folders = folders;
+        this.inOperation = false;
       },
       error: (error) => {
+        this.inOperation = true;
         console.error('Error fetching folders:', error);
       }
     });
   }
 
   transferSubmit() {
+    this.inOperation = true;
     if (this.selectedFolder && this.data && this.data.length > 0) {
       this._fileService.transferFiles(this.data, this.selectedFolder).subscribe(
         (response) => {
+          this.inOperation = false;
           this._dialogRef.close(true);
         },
         (error) => {
+          this.inOperation = false;
           console.error("Error transferring files", error);
         }
       );
     } else {
+      this.inOperation = false;
       console.warn("No folder selected or no files to transfer");
     }
   }

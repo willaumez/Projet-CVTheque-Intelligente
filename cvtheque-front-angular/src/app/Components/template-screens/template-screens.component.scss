@@ -30,8 +30,8 @@
 //Nav button
 .togglebtn {
   position: absolute;
-  top: 3px;
-  left: 135px;
+  top: 0;
+  left: 90px;
   z-index: 1000;
   height: 60px;
   width: 60px;
@@ -49,7 +49,7 @@
   }
 
   &.open {
-    left: 3px;
+    left: 0;
   }
 }
 
@@ -61,7 +61,7 @@
   height: 100%;
 
   .mat-drawer {
-    width: 135px;
+    width: 90px;
     padding: 30px 0;
     border-radius: 0 0 15px 0;
     background-color: #262626;

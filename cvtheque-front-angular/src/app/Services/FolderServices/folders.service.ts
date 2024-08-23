@@ -14,8 +14,8 @@ export class FoldersService {
   }
 
   //Save folder
-  saveFolder(folder: Folder): Observable<any> {
-    return this.http.post(`${this.baseUrl}/folder/save`, folder).pipe(
+  saveFolder(folder: Folder): Observable<Folder> {
+    return this.http.post<Folder>(`${this.baseUrl}/folder/save`, folder).pipe(
       map((response) => {
         return response;
       })

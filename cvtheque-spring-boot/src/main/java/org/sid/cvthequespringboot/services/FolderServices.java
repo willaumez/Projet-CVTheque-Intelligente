@@ -21,9 +21,15 @@ public class FolderServices {
         this.fileMappers = fileMappers;
     }
 
-    public void save(Folder folder) {
+    /*public void save(Folder folder) {
         folder.setCreatedAt(new Date());
         folderRepository.save(folder);
+    }*/
+
+    public FolderDto save(Folder folder) {
+        folder.setCreatedAt(new Date());
+        Folder newFolder = folderRepository.save(folder);
+        return fileMappers.fromFolder(newFolder);
     }
 
     public List<FolderDto> getFolders() {
