@@ -4,8 +4,7 @@ package org.sid.cvthequespringboot.web;
 import lombok.AllArgsConstructor;
 import org.sid.cvthequespringboot.dtos.FolderDto;
 import org.sid.cvthequespringboot.entities.Folder;
-import org.sid.cvthequespringboot.services.FolderServices;
-import org.springframework.http.MediaType;
+import org.sid.cvthequespringboot.services.FolderServices.FolderServices;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;

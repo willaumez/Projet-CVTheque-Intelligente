@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FilesRepository extends JpaRepository<FileDB, Long> {
 
+    Long countByFolderId(Long id);
+
 }

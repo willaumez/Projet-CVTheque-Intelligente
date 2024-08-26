@@ -1,10 +1,19 @@
 <div class="view-container">
-  <h2>files-view works!</h2>
-
-
   <div class="view-header">
     <div class="main">
       <div class="main-1">
+        <div class="add-criteria">
+          <div class="form-container">
+            <mat-form-field appearance="outline" class="input-field">
+              <mat-label>Add a new Criteria</mat-label>
+              <input matInput type="text" placeholder="" [(ngModel)]="inputValue" (keydown.enter)="onIconClick()">
+            </mat-form-field>
+            <button mat-icon-button [disabled]="!inputValue" (click)="onIconClick()">
+              <mat-icon>add_circle</mat-icon>
+            </button>
+          </div>
+
+        </div>
         <div cdkDropListGroup>
           <div class="example-container">
             <h2>Available Criteria</h2>

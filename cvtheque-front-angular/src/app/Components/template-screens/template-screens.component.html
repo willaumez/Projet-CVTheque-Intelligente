@@ -1,10 +1,86 @@
+  <mat-toolbar>
+    <button class="togglebtn" mat-button (click)="toggleDrawer(drawer)" matTooltip="Nav" [class.open]="!isOpen">
+      <mat-icon>menu</mat-icon>
+<!--      <mat-icon>{{ isOpen ? 'close' : 'menu' }}</mat-icon>-->
+    </button>
+    <span class="example-spacer"></span>
+    <button mat-button class="example-icon" aria-label="Example icon-button with share icon">
+      <span class="username">User</span>
+      <mat-icon>person</mat-icon>
+    </button>
+  </mat-toolbar>
 
-<button class="togglebtn" mat-button (click)="toggleDrawer(drawer)" matTooltip="Nav" [class.open]="!isOpen">
-  <mat-icon>{{ isOpen ? 'close' : 'menu' }}</mat-icon>
-</button>
+  <mat-drawer-container autosize><!--&lt;!&ndash;  mode="over"  mode="push"  mode="side" &ndash;&gt;-->
+    <mat-drawer #drawer opened="true" mode="side" position="start" (openedChange)="onDrawerToggle($event)">
+      <mat-nav-list>
+        <div class="logo-app">
+          <img mat-card-image src="/assets/images/logo.png" alt="logo" class="image-pdf" width="170" height="60"/>
+        </div>
+        <div class="spacer"></div>
+        <mat-list-item>
+          <button routerLink="/cvs/home" mat-button
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{exact: true}"><mat-icon>home</mat-icon> Home </button>
+        </mat-list-item>
+
+        <mat-list-item>
+          <button routerLink="/cvs/files-view" mat-button
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{exact: false}"><mat-icon>file_copy</mat-icon> Files </button>
+        </mat-list-item>
+
+        <mat-list-item>
+          <button routerLink="/cvs/folders" mat-button
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{exact: true}"><mat-icon>folder_special</mat-icon> Folders </button>
+        </mat-list-item>
+
+        <mat-list-item>
+          <button routerLink="/cvs/load-files" mat-button
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{exact: true}"><mat-icon>file_download</mat-icon> Load files</button>
+        </mat-list-item>
+        <div class="spacer"></div>
+        <mat-list-item>
+          <button routerLink="#" mat-button
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{exact: true}"><mat-icon>settings</mat-icon>Settings</button>
+        </mat-list-item>
+        <mat-list-item>
+          <button routerLink="#" mat-button><mat-icon>logout</mat-icon>Logout</button>
+        </mat-list-item>
+      </mat-nav-list>
+    </mat-drawer>
+
+    <mat-drawer-content>
+      <div class="body">
+        <router-outlet>
+
+        </router-outlet>
+      </div>
+    </mat-drawer-content>
 
 
-<mat-drawer-container autosize><!--  mode="over"  mode="push"  mode="side" -->
+  </mat-drawer-container>
+
+
+<!--
+<mat-toolbar>
+  <button class="togglebtn" mat-button (click)="toggleDrawer(drawer)" matTooltip="Nav" [class.open]="!isOpen">
+    <mat-icon>{{ isOpen ? 'close' : 'menu' }}</mat-icon>
+  </button>
+
+  <span class="example-spacer"></span>
+  <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
+    <mat-icon>settings</mat-icon>
+  </button>
+  <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
+    <mat-icon>person</mat-icon>
+  </button>
+</mat-toolbar>
+
+
+<mat-drawer-container autosize>&lt;!&ndash;  mode="over"  mode="push"  mode="side" &ndash;&gt;
   <mat-drawer #drawer opened="true" mode="side" position="start" (openedChange)="onDrawerToggle($event)">
     <mat-nav-list>
       <mat-list-item class="person">
@@ -12,12 +88,12 @@
       </mat-list-item>
       <h3 class="person-h3">Name</h3>
 
-      <!-- Spacer pour pousser les éléments intermédiaires au centre -->
+      &lt;!&ndash; Spacer pour pousser les éléments intermédiaires au centre &ndash;&gt;
       <div class="spacer"></div>
       <mat-list-item>
         <button routerLink="/cvs/home" mat-button
                 routerLinkActive="active"
-                [routerLinkActiveOptions]="{exact: true}"><mat-icon>home</mat-icon></button>
+                [routerLinkActiveOptions]="{exact: true}"><mat-icon>home</mat-icon></button> Home
       </mat-list-item>
 
       <mat-list-item>
@@ -27,7 +103,7 @@
       </mat-list-item>
 
       <mat-list-item>
-        <button routerLink="#" mat-button
+        <button routerLink="/cvs/folders" mat-button
                 routerLinkActive="active"
                 [routerLinkActiveOptions]="{exact: true}"><mat-icon>folder_special</mat-icon></button>
       </mat-list-item>
@@ -57,3 +133,4 @@
 
 
 </mat-drawer-container>
+-->

@@ -1,0 +1,154 @@
+/*
+
+* {
+  box-shadow: 0 0 0 1px #80a8ff inset;
+}
+*/
+.folders-container {
+
+
+  .header-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #f5f5f5;
+
+    h3 {
+      font-size: 30px;
+      margin: 0;
+      font-weight: bold;
+      color: #004985;
+    }
+    mat-slide-toggle{
+      font-size: 50px;
+    }
+  }
+
+
+  .content {
+    padding: 16px;
+    margin: 15px;
+
+    .grid-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      width: 100%;
+      margin: auto;
+    }
+
+    mat-card.mat-elevation-z4 {
+      width: 100%;
+      height: auto;
+      padding: 2px;
+      position: relative;
+      border-radius: 15px;
+
+      mat-card-actions {
+        background-color: #FFFFFF;
+      }
+
+      .checkbox-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        //background-color: #fdca7f;
+        border-radius: 50%;
+        padding: 2px;
+      }
+
+      &:hover {
+        color: #000;
+        box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+        //border-radius: 90px 0 90px 90px;
+        img {
+          background-color: #004985;
+          border-radius: 12px 0 12px 12px;
+        }
+
+        .card-actions {
+          color: #030061;
+        }
+      }
+
+      &:active {
+        background-color: #e0e0e0;
+        color: #333;
+      }
+
+      .image-pdf {
+        width: 100%;
+        height: auto;
+      }
+
+      .card-actions {
+        position: absolute;
+        right: 5%;
+        top: 20%;
+        display: flex;
+        flex-direction: column;
+        //align-items: center;
+        //justify-content: center;
+        //height: auto;
+        text-align: center;
+
+        .word {
+          display: block;
+          color: #030060;
+          word-break: break-word;
+          margin: 10px 0;
+          padding: 5px;
+          font-size: 1.1rem;
+
+          white-space: nowrap; // Empêche le retour à la ligne
+          overflow: hidden; // Cache le texte qui dépasse les limites
+          text-overflow: ellipsis; // Ajoute des points de suspension si le texte est trop long
+        }
+
+        .word-count {
+          display: block;
+          color: #030060;
+          font-size: 1.5rem;
+        }
+      }
+
+      .name-folder {
+        position: absolute;
+        right: 1%;
+        left: 10%;
+        bottom: 1%;
+        height: 40%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        text-align: right;
+        justify-content: center;
+
+        .word-action {
+
+          display: block; /* Assure que le span se comporte comme un bloc pour permettre les styles suivants */
+          width: 100%; /* Prend toute la largeur disponible */
+          white-space: normal; /* Permet le retour à la ligne */
+          word-wrap: break-word; /* Permet de couper les mots longs */
+          overflow: hidden; /* Cache le texte qui dépasse */
+          text-overflow: ellipsis; /* Facultatif : ajoute des points de suspension si le texte dépasse */
+        }
+      }
+    }
+
+    @media (max-width: 768px) {
+      .grid-container {
+        flex-direction: column;
+      }
+
+      mat-card.mat-elevation-z4 {
+        width: 100%;
+      }
+    }
+  }
+}
+

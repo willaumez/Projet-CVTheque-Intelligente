@@ -16,6 +16,7 @@ export interface Folder {
   name: string;
   description: string | null;
   createdAt: string;
+  fileCount?: number;
 }
 
 

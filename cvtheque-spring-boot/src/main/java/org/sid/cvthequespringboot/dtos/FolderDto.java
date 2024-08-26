@@ -12,4 +12,5 @@ public class FolderDto {
     private String name;
     private String description;
     private Date createdAt = new Date();
+    private Long fileCount;
 }

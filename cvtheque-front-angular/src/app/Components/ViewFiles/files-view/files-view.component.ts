@@ -16,6 +16,7 @@ import {HttpEventType} from "@angular/common/http";
 })
 
 export class FilesViewComponent {
+  inputValue: string = '';
   isListView: boolean = true;
   isGridView: boolean = false;
 
@@ -85,6 +86,14 @@ export class FilesViewComponent {
     this.selectedCriteria = [];
     this.jobDescription = '';
     this.data$.next([]);
+  }
+
+
+  //protected readonly event = event;
+
+  onIconClick() {
+    this.selectedCriteria.push(this.inputValue);
+    this.inputValue = '';
   }
 
 

@@ -21,13 +21,16 @@
           <mat-icon class="action-icon">folder_special</mat-icon>
         </button>
       </div>
-      <div class="select-all"> Select all :
-        <mat-checkbox
-          (change)="$event ? toggleAllGrid() : null"
-          [checked]="selection.hasValue() && isAllSelected()"
-          [indeterminate]="selection.hasValue() && !isAllSelected()"
-          [aria-label]="checkboxLabel()">
-        </mat-checkbox>
+      <div class="select-all">
+        <div style="display: inline; margin-right: 10px" *ngIf="isChecked">Select all :
+          <mat-checkbox
+            (change)="$event ? toggleAllGrid() : null"
+            [checked]="selection.hasValue() && isAllSelected()"
+            [indeterminate]="selection.hasValue() && !isAllSelected()"
+            [aria-label]="checkboxLabel()" >
+          </mat-checkbox></div>
+
+        <mat-slide-toggle class="example-margin" [(ngModel)]="isChecked">Select</mat-slide-toggle>
       </div>
     </div>
 
@@ -50,14 +53,14 @@
              [fxFlex.lt-xl]="(100 / 6) + '%'"
 
              *ngFor="let file of dataSource">
-          <mat-card class="mat-elevation-z4" (dblclick)="handleCardClick(file)">
-            <div class="checkbox-container" (click)="$event.stopPropagation()">
+          <mat-card class="mat-elevation-z4" (dblclick)="viewDescription(file.id)">
+            <div class="checkbox-container" (click)="$event.stopPropagation()" >
               <mat-checkbox (change)="$event ? toggleSelection(file.id) : null"
                             [checked]="selection.isSelected(file.id)"
-                            [aria-label]="checkboxLabel(file.id)">
+                            [aria-label]="checkboxLabel(file.id)" *ngIf="isChecked">
               </mat-checkbox>
             </div>
-            <img mat-card-image src="assets/PDF_file_icon.svg" alt="pdf photos" class="image-pdf"/>
+            <img mat-card-image src="/assets/images/PDF_file_icon.svg" alt="pdf photos" class="image-pdf"/>
             <div class="card-actions">
               <div class="infos-file">
                 <h3 class="word">{{ file.name }}</h3>

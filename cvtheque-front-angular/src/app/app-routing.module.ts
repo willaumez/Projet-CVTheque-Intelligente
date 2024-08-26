@@ -5,6 +5,7 @@ import {HomeComponent} from "./Components/home/home.component";
 import {TemplateScreensComponent} from "./Components/template-screens/template-screens.component";
 import {FilesViewComponent} from "./Components/ViewFiles/files-view/files-view.component";
 import {ChatAIComponent} from "./Components/chat-ai/chat-ai.component";
+import {FolderViewComponent} from "./Components/ViewFiles/folder-view/folder-view.component";
 
 
 const routes: Routes = [
@@ -18,6 +19,7 @@ const routes: Routes = [
       {path: "files-view", component: FilesViewComponent},
       {path: "files-view/chat", component: ChatAIComponent},
       {path: "load-files", component: LoadFilesComponent},
+      {path: "folders", component: FolderViewComponent},
     ],
   },
 ];

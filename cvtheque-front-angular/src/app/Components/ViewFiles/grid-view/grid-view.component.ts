@@ -6,6 +6,7 @@ import {Event} from "@angular/router";
 import {FilesService} from "../../../Services/FileServices/files.service";
 import {AddFolderComponent} from "../../Dialog/add-folder/add-folder.component";
 import {MatDialog} from "@angular/material/dialog";
+import {PdfViewerComponent} from "../../Dialog/pdf-viewer/pdf-viewer.component";
 
 @Component({
   selector: 'app-grid-view',
@@ -14,10 +15,7 @@ import {MatDialog} from "@angular/material/dialog";
 })
 export class GridViewComponent implements OnInit, OnChanges {
   gridColumns = 10;
-  /*filesData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-    2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-    2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-    2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];*/
+  isChecked = false;
 
   dataSource: FileDB[] = [];
   filteredData = this.dataSource;
@@ -83,7 +81,7 @@ export class GridViewComponent implements OnInit, OnChanges {
 
   toggleSelection(fileId: number) {
     this.selection.toggle(fileId);
-    console.log(this.selection.selected);
+    //console.log(this.selection.selected);
   }
 
   toggleAllGrid() {
@@ -179,6 +177,25 @@ export class GridViewComponent implements OnInit, OnChanges {
   returnToFilesView() {
     this.isResult = false;
     this.resultData = undefined;
+  }
+
+  //Real File
+  viewDescription(fileId: any) {
+    const data: any = fileId;
+    const dialogRef = this._dialog.open(PdfViewerComponent, {
+      data,
+      height: "calc(95% - 20px)",
+      minWidth: "calc(55% - 30px)",
+      maxWidth: "100%",
+      maxHeight: "100%"
+    });
+    dialogRef.afterClosed().subscribe({
+      next: (val) => {
+        if (val) {
+          this.getAllFiles();
+        }
+      },
+    });
   }
 
 }

@@ -1,0 +1,50 @@
+<div class="folders-container">
+  <div class="header-container">
+    <h3>Folders : {{ dataSource.length }}</h3>
+  </div>
+  <div class="header-container">
+    <section class="example-section">
+      <mat-slide-toggle class="example-margin" [(ngModel)]="isChecked">Select</mat-slide-toggle>
+    </section>
+
+  </div>
+
+  <div class="content">
+    <div fxLayout="row wrap" fxLayoutGap="grid" class="grid-container">
+      <div [fxFlex]="(100 / gridColumns) + '%'"
+           [fxFlex.xs]="100 + '%'"
+           [fxFlex.sm]="(100 / 4) + '%'"
+           [fxFlex.md]="(100 / 5) + '%'"
+           [fxFlex.lg]="(100 / 8) + '%'"
+           [fxFlex.xl]="(100 / 11) + '%'"
+           [fxFlex.gt-xs]="(100 / 3) + '%'"
+           [fxFlex.gt-sm]="(100 / 5) + '%'"
+           [fxFlex.gt-md]="(100 / 5) + '%'"
+           [fxFlex.gt-lg]="(100 / 6) + '%'"
+           [fxFlex.lt-sm]="(100 / 2) + '%'"
+           [fxFlex.lt-md]="(100 / 3) + '%'"
+           [fxFlex.lt-lg]="(100 / 4) + '%'"
+           [fxFlex.lt-xl]="(100 / 6) + '%'"
+
+           *ngFor="let folder of dataSource">
+        <mat-card class="mat-elevation-z4" (dblclick)="handleCardClick(folder)">
+          <div class="checkbox-container" (click)="$event.stopPropagation()" *ngIf="isChecked">
+            <mat-checkbox (change)="$event ? toggleSelection(folder.id) : null"
+                          [checked]="selection.isSelected(folder.id)"
+                          [aria-label]="checkboxLabel(folder.id)">
+            </mat-checkbox>
+          </div>
+          <img mat-card-image src="/assets/images/folder.svg" alt="pdf photos" class="image-pdf"/>
+          <div class="card-actions">
+            <span class="word-count">{{ folder.fileCount }} </span>
+            <span class="word" style="margin-top: 15px">{{ folder.createdAt | date: 'yyyy-MM-dd' }}</span>
+          </div>
+          <div class="name-folder">
+            <span class="word-action">{{ folder.name }}</span>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+
+</div>

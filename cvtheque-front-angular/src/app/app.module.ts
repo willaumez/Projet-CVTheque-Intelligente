@@ -54,6 +54,7 @@ import {PdfViewerComponent} from './Components/Dialog/pdf-viewer/pdf-viewer.comp
 import {MatSelect} from "@angular/material/select";
 import {MatLine} from "@angular/material/core";
 import {MatSort, MatSortModule} from "@angular/material/sort";
+import { FolderViewComponent } from './Components/ViewFiles/folder-view/folder-view.component';
 
 
 @NgModule({
@@ -68,6 +69,7 @@ import {MatSort, MatSortModule} from "@angular/material/sort";
     GridViewComponent,
     ChatAIComponent,
     PdfViewerComponent,
+    FolderViewComponent,
   ],
   imports: [
     BrowserModule, AppRoutingModule, MatSidenavModule, MatIcon, MatDivider, MatButton, MatTooltip, MatButtonToggle,
@@ -76,7 +78,7 @@ import {MatSort, MatSortModule} from "@angular/material/sort";
     MatDialogActions, MatDialogTitle, MatDialogClose, MatTable, MatColumnDef, MatHeaderCell, MatCheckbox, MatCell, MatCellDef, MatHeaderCellDef,
     MatHeaderRow, MatRow, MatRowDef, MatHeaderRowDef, MatNoDataRow, FlexLayoutModule, MatToolbar, MatCardModule, NgOptimizedImage,
     HttpClientModule, MatListItem, MatNavList, DragDropModule, MatProgressSpinnerModule, NgxExtendedPdfViewerModule, MatSelect,
-    MatListModule, MatLine, MatSortModule
+    MatListModule, MatLine, MatSortModule, MatIconButton,
   ],
   providers: [
     provideAnimationsAsync()
