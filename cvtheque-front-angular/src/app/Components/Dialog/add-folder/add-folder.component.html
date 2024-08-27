@@ -1,4 +1,4 @@
-<ng-container *ngIf="!data">
+<ng-container *ngIf="!isTransfer">
   <h2 mat-dialog-title>Add a new folder</h2>
   <mat-dialog-content>
     <form [formGroup]="addFolderForm" (ngSubmit)="addFolderSubmit()">
@@ -32,7 +32,7 @@
   </mat-dialog-actions>
 </ng-container>
 
-<ng-container *ngIf="data">
+<ng-container *ngIf="isTransfer">
   <h2 mat-dialog-title>Select a folder</h2>
   <mat-dialog-content>
     <mat-form-field class="select-field">
@@ -48,7 +48,10 @@
     <div class="button-container action">
       <button mat-raised-button class="col" [mat-dialog-close]="false">Cancel</button>
       <button mat-raised-button class="col" color="primary" type="submit" [disabled]="!selectedFolder"
-              (click)="transferSubmit()">Submit
+              (click)="transferSubmit()" *ngIf="!data.transferFromFolder">Submit
+      </button>
+      <button mat-raised-button class="col" color="primary" type="submit" [disabled]="!selectedFolder"
+              (click)="transferFromIdSubmit()" *ngIf="data.transferFromFolder">Submit
       </button>
     </div>
   </mat-dialog-actions>

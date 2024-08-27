@@ -1,0 +1,44 @@
+h2 {
+  margin: auto;
+  font-size: 1.5em;
+  font-weight: 500;
+}
+
+mat-dialog-content {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  .container-p{
+    width: 100%;
+    height: auto;
+    p{
+      text-align: center;
+      color: red;
+      font-size: 1.5rem;
+      margin: 50px 0;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+}
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  width: 100%;
+}
+.spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  pointer-events: all;
+}
+

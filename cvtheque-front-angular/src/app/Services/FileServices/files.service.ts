@@ -3,13 +3,13 @@ import {HttpClient, HttpEvent} from "@angular/common/http";
 import {Observable, throwError} from "rxjs";
 import {catchError, map} from "rxjs/operators";
 import {FileDB, Folder} from "../../Models/FileDB";
+import {environment} from "../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class FilesService {
 
-  private baseUrl = 'http://localhost:8080';
 
   constructor(private http: HttpClient) {
   }
@@ -36,7 +36,7 @@ export class FilesService {
     formData.append('file', file);
     formData.append('folder', JSON.stringify(folder));
 
-    return this.http.post(`${this.baseUrl}/file/upload`, formData, {
+    return this.http.post(environment.backEndHost+"/file/upload", formData, {
       reportProgress: true,
       observe: 'events',
       responseType: 'text'
@@ -46,7 +46,7 @@ export class FilesService {
 
   //Get all files
   getAllFiles(): Observable<FileDB[]> {
-    return this.http.get<FileDB[]>(`${this.baseUrl}/file/files`).pipe(
+    return this.http.get<FileDB[]>(environment.backEndHost+"/file/files").pipe(
       catchError(error => {
         return throwError(error);
       })
@@ -55,12 +55,12 @@ export class FilesService {
 
   //Read file
   readFile(fileId: number | string) {
-    return this.http.get(`${this.baseUrl}/file/read/${fileId}`, {observe: 'response', responseType: 'blob'});
+    return this.http.get(environment.backEndHost+`/file/read/${fileId}`, {observe: 'response', responseType: 'blob'});
   }
 
   //Delete all selected files
   deleteFiles(fileIds: number[]): Observable<any> {
-    return this.http.delete(this.baseUrl + "/file/delete/" + fileIds)
+    return this.http.delete(environment.backEndHost + "/file/delete/" + fileIds)
       .pipe(
         catchError(error => {
           return throwError(error);
@@ -75,12 +75,13 @@ export class FilesService {
       formData.append('fileIds', fileId.toString());
     });
     formData.append('folderId', selectedFolder.toString());
-    return this.http.post(`${this.baseUrl}/file/transfer`, formData, {
+    return this.http.post(environment.backEndHost+ "/file/transfer", formData, {
       reportProgress: true,
       observe: 'events',
       responseType: 'text'
     });
   }
+
 
 
 }

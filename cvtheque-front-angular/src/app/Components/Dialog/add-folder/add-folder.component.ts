@@ -14,6 +14,7 @@ import {FilesService} from "../../../Services/FileServices/files.service";
 export class AddFolderComponent implements OnInit {
   addFolderForm: FormGroup;
   folders: Folder[] = [];
+  isTransfer: boolean = false;
   selectedFolder: number | null = null;
 
   inOperation: boolean = false;
@@ -31,8 +32,20 @@ export class AddFolderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.data) {
-      this.getFolders()
+    if (this.data && this.data?.id) {
+      this.addFolderForm = this.fb.group({
+        id: this.data.id,
+        name: this.data.name,
+        description: this.data.description,
+        createdAt: this.data.createdAt,
+      });
+    } else if (this.data?.transferFromFolder!){
+      this.isTransfer = true;
+      this.getFolders();
+      this.selectedFolder = this.data.folderId;
+    }else if (this.data) {
+      this.getFolders();
+      this.isTransfer = true;
     }
   }
 
@@ -56,6 +69,7 @@ export class AddFolderComponent implements OnInit {
       console.log('Formulaire invalide');
     }
   }
+
 // Méthode pour vérifier si le formulaire est valide
 
   isFormValid(): boolean {
@@ -83,18 +97,40 @@ export class AddFolderComponent implements OnInit {
       this._fileService.transferFiles(this.data, this.selectedFolder).subscribe(
         (response) => {
           this.inOperation = false;
+          this.isTransfer = false;
           this._dialogRef.close(true);
         },
         (error) => {
           this.inOperation = false;
-          console.error("Error transferring files", error);
+          this.isTransfer = false;
+          //console.error("Error transferring files", error);
         }
       );
     } else {
       this.inOperation = false;
-      console.warn("No folder selected or no files to transfer");
+      this.isTransfer = false;
+      //console.warn("No folder selected or no files to transfer");
     }
   }
-
-
+  transferFromIdSubmit() {
+    this.inOperation = true;
+    if (this.selectedFolder && this.data && this.data.transferFromFolder) {
+      this.folderService.transferFilesFromId(this.data.folderId, this.selectedFolder).subscribe(
+        (response) => {
+          this.inOperation = false;
+          this.isTransfer = false;
+          this._dialogRef.close(true);
+        },
+        (error) => {
+          this.inOperation = false;
+          this.isTransfer = false;
+          //console.error("Error transferring files", error);
+        }
+      );
+    } else {
+      this.inOperation = false;
+      this.isTransfer = false;
+      //console.warn("No folder selected or no files to transfer");
+    }
+  }
 }

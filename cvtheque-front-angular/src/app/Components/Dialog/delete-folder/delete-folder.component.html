@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>Delete folder</h2>
+<mat-dialog-content>
+  <div class="container-p" *ngIf="selection.length === 0">
+    <p>
+      You are about to permanently delete this folder. Please note that this action will also remove all files contained within the folder. Once deleted, the folder and its contents cannot be recovered.
+    </p>
+    <p>
+      If you are sure you want to proceed, click "Delete". Otherwise, click "Cancel" to keep the folder and its contents intact.
+    </p>
+  </div>
+
+  <div class="container-p" *ngIf="selection.length>0">
+    <p>
+      You are about to permanently delete these folders. Please note that this action will also remove all files contained within each folder. Once deleted, the folders and their contents cannot be recovered.
+    </p>
+    <p>
+      If you are sure you want to proceed, click "Delete". Otherwise, click "Cancel" to keep the folders and their contents intact.
+    </p>
+  </div>
+
+  <mat-divider></mat-divider>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <div class="button-container action">
+    <button mat-raised-button class="col" [mat-dialog-close]="false">Cancel</button>
+    <button mat-raised-button class="col" color="primary" type="submit" *ngIf="selection.length === 0"
+            (click)="deleteSubmit()">Delete
+    </button>
+    <button mat-raised-button class="col" color="primary" type="submit"
+            (click)="deleteSelection()" *ngIf="selection.length>0">Delete
+    </button>
+  </div>
+</mat-dialog-actions>
+
+<div class="spinner-overlay" *ngIf="inOperation">
+  <mat-spinner class="spinner-load"></mat-spinner>
+</div>

@@ -9,5 +9,8 @@ import java.util.List;
 @Service
 public interface FolderServices {
     FolderDto save(Folder folder);
-    List<FolderDto> getFolders();
+    List<FolderDto> getFolders(String kw);
+    void transferFiles(Long fromId, Long toId);
+
+    boolean deleteFolder(Long folderId);
 }

@@ -45,8 +45,8 @@ export class GridViewComponent implements OnInit, OnChanges {
       this.dataSource = this.data;
       this.sortDataByAcceptCriteriaLength();
       this.dataLoaded = true;
-      console.log('Data received in files-view this.dat: ', this.data);
-      console.log('Data received in files-view changes[data] : ', changes['data']);
+      //console.log('Data received in files-view this.dat: ', this.data);
+      //console.log('Data received in files-view changes[data] : ', changes['data']);
       //console.log('Données reçues dans app-list-view : ', JSON.stringify(this.data, null, 2));
     }else {
       this.getAllFiles();
@@ -191,11 +191,16 @@ export class GridViewComponent implements OnInit, OnChanges {
     });
     dialogRef.afterClosed().subscribe({
       next: (val) => {
-        if (val) {
+        if (val && this.dataLoaded) {
           this.getAllFiles();
         }
       },
     });
   }
 
+  checkedClick() {
+    if (this.isChecked) {
+      this.selection.clear();
+    }
+  }
 }

@@ -17,8 +17,8 @@ import {HttpEventType} from "@angular/common/http";
 
 export class FilesViewComponent {
   inputValue: string = '';
-  isListView: boolean = true;
-  isGridView: boolean = false;
+  isListView: boolean = false;
+  isGridView: boolean = true;
 
   loading = false;
   error: string = '';

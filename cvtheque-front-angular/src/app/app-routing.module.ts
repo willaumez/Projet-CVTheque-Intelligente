@@ -20,6 +20,7 @@ const routes: Routes = [
       {path: "files-view/chat", component: ChatAIComponent},
       {path: "load-files", component: LoadFilesComponent},
       {path: "folders", component: FolderViewComponent},
+      { path: "folders/files/:id", component: FilesViewComponent},
     ],
   },
 ];

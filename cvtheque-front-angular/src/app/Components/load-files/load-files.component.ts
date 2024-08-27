@@ -33,13 +33,6 @@ export class LoadFilesComponent implements OnInit {
 
   ngOnInit(): void {
     this.getFolders();
-
-    // Écoutez les changements de valeur du FormControl
-    this.folderCtrl.valueChanges.subscribe(selectedFolder => {
-      if (selectedFolder) {
-        console.log('Dossier sélectionné:', selectedFolder);
-      }
-    });
   }
 
   constructor(private _dialog: MatDialog, private _fileService: FilesService, private folderService: FoldersService) {
@@ -63,7 +56,7 @@ export class LoadFilesComponent implements OnInit {
     this.folderService.getAllFolders().subscribe({
       next: (folders: Folder[]) => {
         this.folders = folders;
-        console.log('Folders fetched:', folders);
+        //console.log('Folders fetched:', folders);
       },
       error: (error) => {
         console.error('Error fetching folders:', error);
@@ -109,7 +102,7 @@ export class LoadFilesComponent implements OnInit {
 /////// Upload
   uploadFiles() {
     if (this.files.length === 0 || !this.folderCtrl.value) {
-      console.log('No files or folder data available.');
+      //console.log('No files or folder data available.');
       return;
     }
 
@@ -127,14 +120,14 @@ export class LoadFilesComponent implements OnInit {
               if (event.total) {
                 const fileProgress = Math.round((100 / event.total) * event.loaded);
                 this.progress = Math.round((filesUploaded + fileProgress / 100) * 100 / nbFiles);
-                console.log('Upload Progress:', this.progress, '%');
+                //console.log('Upload Progress:', this.progress, '%');
               }
               break;
             case HttpEventType.Response:
               // Incrémenter le nombre de fichiers uploadés et mettre à jour la progression globale
               filesUploaded++;
               this.progress = Math.round((filesUploaded * 100) / nbFiles);
-              console.log('File successfully uploaded:', event.body);
+              //console.log('File successfully uploaded:', event.body);
 
               // Si tous les fichiers sont uploadés, réinitialiser les valeurs
               if (filesUploaded === nbFiles) {
@@ -147,58 +140,12 @@ export class LoadFilesComponent implements OnInit {
         }),
         catchError((error: HttpErrorResponse) => {
           this.progress = null;
-          console.error('Upload failed:', error.message);
+          //console.error('Upload failed:', error.message);
           return of('Upload failed: ' + error.message);
         })
       ).subscribe();
     });
   }
-
-
-  // Méthode pour gérer l'upload des fichiers
-  /*uploadFiles() {
-    if (this.files.length === 0) {
-      console.log('No files to upload.');
-      return;
-    }
-
-    this.progress = 1;
-    console.log('Uploading files:', this.files);
-
-    this._fileService.uploadFiles(this.files).subscribe({
-      next: (event: any) => {
-        if (event.type === HttpEventType.UploadProgress) {
-          // Calculer et mettre à jour la progression de l'upload
-            this.progress = Math.round((100 / event.total) * event.loaded);
-        } else if (event.type === HttpEventType.Response) {
-          // Réinitialiser la progression après la réponse
-          this.progress = null;
-          console.log('Files successfully uploaded:', event.body);
-          this.files = [];
-        }
-      },
-      error: (error: any) => {
-        this.progress = null;
-        console.error('Upload failed:', error);
-      }
-    });
-  }*/
-
-
-  /*
-    uploadFiles() {
-      console.log('Uploading files:', this.files);
-      this._fileService.uploadFiles(this.files).subscribe({
-        next: (event: any) => {
-          console.log(event);
-          this.files = [];
-        },
-        error: (error) => {
-          console.error(error);
-        }
-      });
-    }
-  */
 
 
 }

@@ -12,7 +12,7 @@
         <mat-label>Filter</mat-label>
         <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input>
       </mat-form-field>
-      <div class="action-container" *ngIf="selection.hasValue()">
+      <div class="action-container" *ngIf="selection.hasValue() && isChecked" >
         <button mat-button (click)="deleteSelection()"> Delete
           <mat-icon class="delete-icon">delete_forever</mat-icon>
         </button>
@@ -28,9 +28,10 @@
             [checked]="selection.hasValue() && isAllSelected()"
             [indeterminate]="selection.hasValue() && !isAllSelected()"
             [aria-label]="checkboxLabel()" >
-          </mat-checkbox></div>
+          </mat-checkbox>
+        </div>
 
-        <mat-slide-toggle class="example-margin" [(ngModel)]="isChecked">Select</mat-slide-toggle>
+        <mat-slide-toggle class="example-margin" [(ngModel)]="isChecked" (click)="checkedClick()">Select</mat-slide-toggle>
       </div>
     </div>
 

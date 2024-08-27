@@ -170,6 +170,7 @@ export class ListViewComponent implements OnInit, OnChanges {
       next: (val) => {
         if (val) {
           //console.log('Files transferred to:', val);
+          this.selection = [];
           this.getAllFiles();
         }
       },

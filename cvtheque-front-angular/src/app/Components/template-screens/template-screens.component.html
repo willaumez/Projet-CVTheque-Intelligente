@@ -14,7 +14,7 @@
     <mat-drawer #drawer opened="true" mode="side" position="start" (openedChange)="onDrawerToggle($event)">
       <mat-nav-list>
         <div class="logo-app">
-          <img mat-card-image src="/assets/images/logo.png" alt="logo" class="image-pdf" width="170" height="60"/>
+          <img mat-card-image src="/assets/images/logo.svg" alt="logo" class="image-pdf" width="170" height="60"/>
         </div>
         <div class="spacer"></div>
         <mat-list-item>
@@ -32,7 +32,7 @@
         <mat-list-item>
           <button routerLink="/cvs/folders" mat-button
                   routerLinkActive="active"
-                  [routerLinkActiveOptions]="{exact: true}"><mat-icon>folder_special</mat-icon> Folders </button>
+                  [routerLinkActiveOptions]="{exact: false}"><mat-icon>folder_special</mat-icon> Folders </button>
         </mat-list-item>
 
         <mat-list-item>

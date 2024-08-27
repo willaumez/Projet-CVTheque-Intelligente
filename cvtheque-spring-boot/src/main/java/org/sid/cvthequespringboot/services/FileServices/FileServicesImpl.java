@@ -179,7 +179,7 @@ public class FileServicesImpl implements FileServices {
             file.setFolder(folder);
             filesRepository.save(file); // Enregistrer les changements
 
-            FileVectorStore fileVectorStore = fileStoreRepository.findByFileDB_Id(fileId);
+            FileVectorStore fileVectorStore = fileStoreRepository.findByFileDBId(fileId);
             fileVectorStore.setFolder(folder);
             fileStoreRepository.save(fileVectorStore);
         }
