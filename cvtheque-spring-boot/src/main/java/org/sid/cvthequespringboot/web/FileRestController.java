@@ -57,11 +57,17 @@ public class FileRestController {
 
     //Get all files form the database FileDB
     @GetMapping("/files")
-    public List<FileDbDto> getFiles() {
-        List<FileDbDto> fileDbDtos = fileServices.getFiles().stream().toList();
-        //System.out.println("fileDbDtos: " + fileDbDtos);
+    public List<FileDbDto> getFiles(@RequestParam(value = "folderId", required = false) Long folderId) {
+        List<FileDbDto> fileDbDtos;
+
+        if (folderId != null) {
+            fileDbDtos = fileServices.getFilesByFolderId(folderId).stream().toList();
+        } else {
+            fileDbDtos = fileServices.getFiles().stream().toList();
+        }
         return fileDbDtos;
     }
+
 
     //Read a file from the database FileDB
     @GetMapping("/read/{fileId}")

@@ -128,6 +128,15 @@ public class FileServicesImpl implements FileServices {
     }
 
     @Override
+    public List<FileDbDto> getFilesByFolderId(Long folderId) {
+        List<FileDB> fileDBS = filesRepository.findAllByFolderId(folderId);
+        // Conversion de FileDB à FileDbDto
+        return fileDBS.stream()
+                .map(fileMappers::fromFileDB)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public File saveReadFile(Long fileId) throws IOException {
         // Récupérer le fichier depuis la base de données
         FileDB fileDB = filesRepository.findById(fileId).orElseThrow(() -> new RuntimeException("File not found"));

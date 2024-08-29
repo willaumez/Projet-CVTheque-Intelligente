@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {SelectionModel} from "@angular/cdk/collections";
 import {PdfFile} from "../list-view/list-view.component";
-import {FileDB, ResultCriteria} from "../../../Models/FileDB";
+import {FileDB, ResultCriteria, ResultKeywords} from "../../../Models/FileDB";
 import {Event} from "@angular/router";
 import {FilesService} from "../../../Services/FileServices/files.service";
 import {AddFolderComponent} from "../../Dialog/add-folder/add-folder.component";
@@ -20,13 +20,15 @@ export class GridViewComponent implements OnInit, OnChanges {
   dataSource: FileDB[] = [];
   filteredData = this.dataSource;
   isLoading = false;
-  inOperation: boolean= false;
+  inOperation: boolean = false;
   error: string = '';
   pdfSrc = '';
   resultData: ResultCriteria | undefined;
+  resultKeyword: ResultKeywords | undefined;
 
   selection = new SelectionModel<number>(true, []);
   @Input() data!: FileDB[] | null;
+  @Input() folderId!: number;
   isResult: boolean = false;
   dataLoaded: boolean = false;
 
@@ -39,20 +41,31 @@ export class GridViewComponent implements OnInit, OnChanges {
 
   constructor(private _fileService: FilesService, private _dialog: MatDialog, private cdr: ChangeDetectorRef) {
   }
+
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['data'].currentValue.length>0) {
+    if (changes['data'].currentValue.length > 0) {
       // @ts-ignore
       this.dataSource = this.data;
-      this.sortDataByAcceptCriteriaLength();
+      //this.sortDataByAcceptCriteriaLength();
+      if (this.data?.some(item => item.acceptCriteria && item.acceptCriteria.length > 0)) {
+        this.sortData('acceptCriteria');
+        console.log('Sorting by acceptCriteria');
+      } else if (this.data?.some(item => item.existWords && item.existWords.length > 0)) {
+        this.sortData('existWords');
+        console.log('Sorting by existWords');
+      } else {
+        console.warn('No valid criteria found for sorting.');
+      }
       this.dataLoaded = true;
       //console.log('Data received in files-view this.dat: ', this.data);
       //console.log('Data received in files-view changes[data] : ', changes['data']);
       //console.log('Données reçues dans app-list-view : ', JSON.stringify(this.data, null, 2));
-    }else {
+    } else {
       this.getAllFiles();
     }
   }
-  sortDataByAcceptCriteriaLength() {
+
+/*  sortDataByAcceptCriteriaLength() {
     // Vérifier si dataSource est un tableau avant de trier
     if (this.dataSource !== null && Array.isArray(this.dataSource)) {
       this.dataSource = [...this.dataSource].sort((a, b) => {
@@ -61,7 +74,20 @@ export class GridViewComponent implements OnInit, OnChanges {
         return bLength - aLength; // Trier en ordre décroissant
       });
     } else {
-      console.log("Datasource: "+this.dataSource);
+      console.log("Datasource: " + this.dataSource);
+      console.error('dataSource is not an array');
+    }
+  }*/
+
+  sortData(criteriaType: 'acceptCriteria' | 'existWords') {
+    if (this.dataSource !== null && Array.isArray(this.dataSource)) {
+      this.dataSource = [...this.dataSource].sort((a, b) => {
+        const aLength = criteriaType === 'acceptCriteria' ? (a.acceptCriteria?.length || 0) : (a.existWords?.length || 0);
+        const bLength = criteriaType === 'acceptCriteria' ? (b.acceptCriteria?.length || 0) : (b.existWords?.length || 0);
+        return bLength - aLength;
+      });
+    } else {
+      console.log("Datasource: " + this.dataSource);
       console.error('dataSource is not an array');
     }
   }
@@ -102,13 +128,14 @@ export class GridViewComponent implements OnInit, OnChanges {
   }
 
   deleteSelection() {
-    let conf: boolean = confirm("Are you sure to delete the selected items?")
+    let conf: boolean = confirm("Are you sure to delete the selected items?");
     if (!conf) return;
-    this.inOperation = true;
+
+    this.inOperation = true; // Début de l'opération
+
     if (this.selection.selected.length > 0) {
       this._fileService.deleteFiles(this.selection.selected).subscribe(
         (response) => {
-          console.log("Files Deleted Successfully");
           this.selection.clear();
           this.getAllFiles();
           this.inOperation = false;
@@ -118,6 +145,8 @@ export class GridViewComponent implements OnInit, OnChanges {
           this.inOperation = false;
         }
       );
+    } else {
+      this.inOperation = false;
     }
   }
 
@@ -145,17 +174,33 @@ export class GridViewComponent implements OnInit, OnChanges {
   //-----------------------------------------------------------------------
   getAllFiles() {
     this.isLoading = true;
-    this._fileService.getAllFiles().subscribe(
-      (files: FileDB[]) => {
-        this.dataSource = files;
-        this.isLoading = false;
-      },
-      (error) => {
-        this.error = 'Error fetching files: ' + error.message;
-        this.isLoading = false;
-      }
-    );
+
+    // Vérifier si folderId existe et appeler la méthode appropriée dans le service
+    if (this.folderId !== undefined) {
+      this._fileService.getAllFiles(this.folderId).subscribe(
+        (files: FileDB[]) => {
+          this.dataSource = files;
+          this.isLoading = false;
+        },
+        (error) => {
+          this.error = 'Error fetching files: ' + error.message;
+          this.isLoading = false;
+        }
+      );
+    } else {
+      this._fileService.getAllFiles().subscribe(
+        (files: FileDB[]) => {
+          this.dataSource = files;
+          this.isLoading = false;
+        },
+        (error) => {
+          this.error = 'Error fetching files: ' + error.message;
+          this.isLoading = false;
+        }
+      );
+    }
   }
+
   viewFile(fileId: any) {
     this._fileService.readFile(fileId).subscribe(
       (response) => {
@@ -174,9 +219,20 @@ export class GridViewComponent implements OnInit, OnChanges {
       rejectCriteria: file.rejectCriteria
     }
   }
+
+  keywordsInfos(file: FileDB) {
+    this.isResult = true;
+    this.viewFile(file.id);
+    this.resultKeyword = {
+      existWords: file.existWords,
+      noExistWords: file.noExistWords
+    }
+  }
+
   returnToFilesView() {
     this.isResult = false;
     this.resultData = undefined;
+    this.resultKeyword = undefined;
   }
 
   //Real File
@@ -203,4 +259,21 @@ export class GridViewComponent implements OnInit, OnChanges {
       this.selection.clear();
     }
   }
+
+  calculateAcceptancePercentage(first: any, second: any): string {
+    const acceptLength = first || 0;
+    const rejectLength = second || 0;
+    const total = acceptLength + rejectLength;
+    if (total === 0) {
+      return '0';
+    }
+    const percentage = (acceptLength / total) * 100;
+    return percentage.toFixed(0);
+  }
+
+  getCriteriaColor(first: any, second: any): string {
+    const percentage = parseFloat(this.calculateAcceptancePercentage(first, second));
+    return percentage >= 50 ? 'green' : 'red';
+  }
+
 }

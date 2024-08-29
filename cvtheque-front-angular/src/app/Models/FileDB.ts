@@ -8,6 +8,8 @@ export interface FileDB {
   folderId: number;
   acceptCriteria?: Criteria[];
   rejectCriteria?: Criteria[];
+  existWords?: string[];
+  noExistWords?: string[];
 }
 
 
@@ -28,4 +30,9 @@ interface Criteria{
 export interface ResultCriteria{
   acceptCriteria?: Criteria[];
   rejectCriteria?: Criteria[];
+}
+
+export interface ResultKeywords{
+  existWords?: string[];
+  noExistWords?: string[];
 }

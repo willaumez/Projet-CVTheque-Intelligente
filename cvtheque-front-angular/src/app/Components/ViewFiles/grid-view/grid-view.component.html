@@ -12,7 +12,7 @@
         <mat-label>Filter</mat-label>
         <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input>
       </mat-form-field>
-      <div class="action-container" *ngIf="selection.hasValue() && isChecked" >
+      <div class="action-container" *ngIf="selection.hasValue() && isChecked">
         <button mat-button (click)="deleteSelection()"> Delete
           <mat-icon class="delete-icon">delete_forever</mat-icon>
         </button>
@@ -27,11 +27,12 @@
             (change)="$event ? toggleAllGrid() : null"
             [checked]="selection.hasValue() && isAllSelected()"
             [indeterminate]="selection.hasValue() && !isAllSelected()"
-            [aria-label]="checkboxLabel()" >
+            [aria-label]="checkboxLabel()">
           </mat-checkbox>
         </div>
 
-        <mat-slide-toggle class="example-margin" [(ngModel)]="isChecked" (click)="checkedClick()">Select</mat-slide-toggle>
+        <mat-slide-toggle class="example-margin" [(ngModel)]="isChecked" (click)="checkedClick()">Select
+        </mat-slide-toggle>
       </div>
     </div>
 
@@ -55,7 +56,7 @@
 
              *ngFor="let file of dataSource">
           <mat-card class="mat-elevation-z4" (dblclick)="viewDescription(file.id)">
-            <div class="checkbox-container" (click)="$event.stopPropagation()" >
+            <div class="checkbox-container" (click)="$event.stopPropagation()">
               <mat-checkbox (change)="$event ? toggleSelection(file.id) : null"
                             [checked]="selection.isSelected(file.id)"
                             [aria-label]="checkboxLabel(file.id)" *ngIf="isChecked">
@@ -69,17 +70,49 @@
                 <span class="word">{{ file.createdAt | date: 'yyyy-MM-dd' }}</span>
               </div>
             </div>
-            <mat-card-actions class="card-results" *ngIf="file.acceptCriteria?.length || file.rejectCriteria?.length">
-              <!--*ngIf="file.acceptCriteria?.length || file.rejectCriteria?.length"-->
-              <button mat-button class="criteria-container"
-                      (click)="criteriaInfos(file)">
-                <mat-icon>info</mat-icon>
-                <span class="criteria-accept" style="color: green">{{file.acceptCriteria?.length || 0}}</span>
-                <sub>/{{(file.acceptCriteria?.length || 0) + (file.rejectCriteria?.length || 0)}}</sub>
-                --
-                <span class="criteria-reject" style="color: red">{{file.rejectCriteria?.length || 0}}</span>
-                <sub>/{{(file.acceptCriteria?.length || 0) + (file.rejectCriteria?.length || 0)}}</sub>
-              </button>
+            <mat-card-actions class="card-results" *ngIf="file.acceptCriteria?.length || file.rejectCriteria?.length || file.existWords?.length || file.noExistWords?.length">
+              <div *ngIf="file.acceptCriteria?.length || file.rejectCriteria?.length">
+                <button mat-button class="criteria-container" (click)="criteriaInfos(file)">
+                <span
+                  class="criteria-accept"
+                  [ngStyle]="{ 'color': getCriteriaColor(file.acceptCriteria?.length, file.rejectCriteria?.length) }"
+                  style="margin-right: 10px">
+              {{ calculateAcceptancePercentage(file.acceptCriteria?.length, file.rejectCriteria?.length) }}%
+            </span>
+                </button>
+
+                <button mat-button class="criteria-container"
+                        (click)="criteriaInfos(file)">
+                  <mat-icon>info</mat-icon>
+                  <span class="criteria-accept" style="color: green">{{ file.acceptCriteria?.length || 0 }}</span>
+                  <sub>/{{ (file.acceptCriteria?.length || 0) + (file.rejectCriteria?.length || 0) }}</sub>
+                  --
+                  <span class="criteria-reject" style="color: red">{{ file.rejectCriteria?.length || 0 }}</span>
+                  <sub>/{{ (file.acceptCriteria?.length || 0) + (file.rejectCriteria?.length || 0) }}</sub>
+                </button>
+              </div>
+
+
+              <div *ngIf="file.existWords?.length || file.noExistWords?.length">
+                <button mat-button class="criteria-container"
+                        (click)="keywordsInfos(file)">
+              <span
+                class="criteria-accept"
+                [ngStyle]="{ 'color': getCriteriaColor(file.existWords?.length , file.noExistWords?.length) }"
+                style="margin-right: 10px">
+              {{ calculateAcceptancePercentage(file.existWords?.length, file.noExistWords?.length) }}%
+              </span>
+                </button>
+                <button mat-button class="criteria-container"
+                        (click)="keywordsInfos(file)">
+                  <mat-icon>info</mat-icon>
+                  <span class="criteria-accept" style="color: green">{{ file.existWords?.length || 0 }}</span>
+                  <sub>/{{ (file.existWords?.length || 0) + (file.noExistWords?.length || 0) }}</sub>
+                  --
+                  <span class="criteria-reject" style="color: red">{{ file.noExistWords?.length || 0 }}</span>
+                  <sub>/{{ (file.existWords?.length || 0) + (file.noExistWords?.length || 0) }}</sub>
+                </button>
+              </div>
             </mat-card-actions>
           </mat-card>
         </div>

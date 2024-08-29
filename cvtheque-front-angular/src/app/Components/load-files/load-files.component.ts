@@ -81,8 +81,6 @@ export class LoadFilesComponent implements OnInit {
           this.folderCtrl.setValue(val);
           this.onFocus();
           this.displayFolder(val);
-          //this.setFolder(val);
-          //console.log('----- Folder added:', val);
         }
       },
     });

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 //@CrossOrigin(origins = "*")
@@ -88,8 +89,6 @@ public class FolderRestController {
         List<Long> ids = Arrays.stream(folderIds.split(","))
                 .map(Long::parseLong)
                 .toList();
-        System.out.println("ids: " + ids);
-
         try {
             // Boucle pour supprimer chaque dossier
             for (Long id : ids) {
@@ -101,6 +100,20 @@ public class FolderRestController {
             return ResponseEntity.ok("Folders deleted successfully");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error deleting folders: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/folders/{folderId}")
+    public ResponseEntity<?> getFolderById(@PathVariable Long folderId) {
+        try {
+            Optional<Folder> folder = folderService.findFolderById(folderId);
+            if (folder.isPresent()) {
+                return ResponseEntity.ok(folder.get());
+            } else {
+                return ResponseEntity.status(404).body("Folder with ID " + folderId + " not found.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error retrieving folder: " + e.getMessage());
         }
     }
 

@@ -122,5 +122,10 @@ public class FolderServicesImpl implements FolderServices {
         }
     }
 
+    @Override
+    public Optional<Folder> findFolderById(Long folderId) {
+        return folderRepository.findById(folderId);
+    }
+
 
 }

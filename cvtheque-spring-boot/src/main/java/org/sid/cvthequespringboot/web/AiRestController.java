@@ -3,7 +3,7 @@ package org.sid.cvthequespringboot.web;
 
 import lombok.AllArgsConstructor;
 import org.sid.cvthequespringboot.dtos.Criteria;
-import org.sid.cvthequespringboot.dtos.FileAiCriteria;
+import org.sid.cvthequespringboot.dtos.FileAiResults;
 import org.sid.cvthequespringboot.services.AiServices.AiServices;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,6 @@ public class AiRestController {
 
     @GetMapping(value = "/chat", produces = MediaType.TEXT_PLAIN_VALUE)
     public String ask(String question) {
-        System.out.println("question: " + question);
         return aiService.generalChat(question);
     }
 
@@ -39,12 +38,34 @@ public class AiRestController {
         }
     }*/
 
+    /*@PostMapping("/criteria")
+    public ResponseEntity<?> selectedCriteria(
+            @RequestParam("selectedCriteria") List<String> selectedCriteria,
+            @RequestParam("jobDescription") String jobDescription,
+            @RequestParam(value = "folderId", required = false) Long folderId) {
+
+        try {
+            List<FileAiCriteria> fileAiCriteria;
+            if (folderId != null) {
+                fileAiCriteria = aiService.selectedCriteria(selectedCriteria, jobDescription, folderId);
+            } else {
+                fileAiCriteria = aiService.selectedCriteria(selectedCriteria, jobDescription);
+            }
+
+            return ResponseEntity.ok(fileAiCriteria);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error transferring files: " + e.getMessage());
+        }
+    }*/
+
     @PostMapping("/criteria")
     public ResponseEntity<?> selectedCriteria(
             @RequestParam("selectedCriteria") List<String> selectedCriteria,
-            @RequestParam("jobDescription") String jobDescription) {
+            @RequestParam("jobDescription") String jobDescription,
+            @RequestParam(value = "folderId", required = false) Long folderId) { // Ajout de folderId facultatif
+
         try {
-            List<FileAiCriteria> fileAiCriteriaList = new ArrayList<>();
+            List<FileAiResults> fileAiResultsList = new ArrayList<>();
 
             // Boucle pour initialiser 10 objets FileAiCriteria
             for (int i = 1; i <= 10; i++) {
@@ -59,20 +80,91 @@ public class AiRestController {
                 rejectCriteria.add(new Criteria("Criteria " + i + "-B", "Reject message for criteria " + i + "-B"));
 
                 // Initialiser un objet FileAiCriteria
-                FileAiCriteria fileAiCriteria = new FileAiCriteria();
-                fileAiCriteria.setId((long) i);
-                fileAiCriteria.setName("File " + i);
-                fileAiCriteria.setType("Type " + i);
-                fileAiCriteria.setCreatedAt(new Date());
-                fileAiCriteria.setFolderId(100L + i);
-                fileAiCriteria.setFolderName("Folder " + i);
-                fileAiCriteria.setAcceptCriteria(acceptCriteria);
-                fileAiCriteria.setRejectCriteria(rejectCriteria);
+                FileAiResults fileAiResults = new FileAiResults();
+                fileAiResults.setId((long) i);
+                fileAiResults.setName("File " + i);
+                fileAiResults.setType("Type " + i);
+                fileAiResults.setCreatedAt(new Date());
+                fileAiResults.setFolderId(100L + i);
+                fileAiResults.setFolderName("Folder " + i);
+                fileAiResults.setAcceptCriteria(acceptCriteria);
+                fileAiResults.setRejectCriteria(rejectCriteria);
 
                 // Ajouter l'objet à la liste
-                fileAiCriteriaList.add(fileAiCriteria);
+                fileAiResultsList.add(fileAiResults);
             }
-            return ResponseEntity.ok(fileAiCriteriaList);
+            return ResponseEntity.ok(fileAiResultsList);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error transferring files: " + e.getMessage());
+        }
+    }
+/*
+    @PostMapping("/keywords")
+    public ResponseEntity<?> selectedKeywords(
+            @RequestParam("keywords") List<String> keywords,
+            @RequestParam(value = "folderId", required = false) Long folderId) {
+
+        try {
+            List<FileAiResults> fileAiCriteria;
+            if (folderId != null) {
+                fileAiCriteria = aiService.selectedKeywords(keywords, folderId);
+            } else {
+                fileAiCriteria = aiService.selectedKeywords(keywords);
+            }
+
+            return ResponseEntity.ok(fileAiCriteria);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error transferring files: " + e.getMessage());
+        }
+    }*/
+
+    @PostMapping("/keywords")
+    public ResponseEntity<?> selectedKeywords(
+            @RequestParam("keywords") List<String> keywords,
+            @RequestParam(value = "folderId", required = false) Long folderId) {
+
+        try {
+            List<FileAiResults> fileAiResultsList = new ArrayList<>();
+
+            // Boucle pour initialiser 10 objets FileAiCriteria
+            for (int i = 1; i <= 10; i++) {
+                // Créer des critères d'acceptation
+                List<String> existWords = List.of(
+                        "acceptKeyword 1",
+                        "acceptKeyword 2",
+                        "acceptKeyword 3",
+                        "acceptKeyword 4",
+                        "acceptKeyword 5",
+                        "acceptKeyword 6",
+                        "acceptKeyword 7",
+                        "acceptKeyword 8",
+                        "acceptKeyword 9",
+                        "acceptKeyword 10",
+                        "acceptKeyword 11"
+                );
+                List<String> noExistWords = List.of(
+                        "noExistWords 1",
+                        "noExistWords 2",
+                        "noExistWords 3",
+                        "noExistWords 4",
+                        "noExistWords 5",
+                        "noExistWords 6"
+                );
+                // Initialiser un objet FileAiCriteria
+                FileAiResults fileAiResults = new FileAiResults();
+                fileAiResults.setId((long) i);
+                fileAiResults.setName("File " + i);
+                fileAiResults.setType("Type " + i);
+                fileAiResults.setCreatedAt(new Date());
+                fileAiResults.setFolderId(100L + i);
+                fileAiResults.setFolderName("Folder " + i);
+                fileAiResults.setExistWords(existWords);
+                fileAiResults.setNoExistWords(noExistWords);
+
+                // Ajouter l'objet à la liste
+                fileAiResultsList.add(fileAiResults);
+            }
+            return ResponseEntity.ok(fileAiResultsList);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error transferring files: " + e.getMessage());
         }

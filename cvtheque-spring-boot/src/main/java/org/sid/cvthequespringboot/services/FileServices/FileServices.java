@@ -8,14 +8,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 public interface FileServices {
     void processAndStoreFiles(MultipartFile file, FolderDto folderDto) throws IOException ;
     FileDB storeFiles(MultipartFile file, Folder folder) throws IOException;
     List<FileDbDto> getFiles();
+    List<FileDbDto> getFilesByFolderId(Long folderId);
     File saveReadFile(Long fileId) throws IOException;
     void deleteFiles(List<Long> filesIds);
 
     void transferFiles(List<Long> fileIds, Long folderId);
+
+
 }

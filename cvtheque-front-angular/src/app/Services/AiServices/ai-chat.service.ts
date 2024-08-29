@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpEvent} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {FileDB} from "../../Models/FileDB";
+import {environment} from "../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -21,18 +22,41 @@ export class AiChatService {
   }
 
 
-  selectWithCriteria(selectedCriteria: string[], jobDescription: string): Observable<HttpEvent<Observable<FileDB[]>>> {
+  selectWithCriteria(criteria: { selectedCriteria: string[], jobDescription: string, folderId?: number }): Observable<HttpEvent<Observable<FileDB[]>>> {
     const formData: FormData = new FormData();
-    selectedCriteria.forEach((criteria: any) => {
-      formData.append('selectedCriteria', criteria);
+
+    criteria.selectedCriteria.forEach((criteriaItem: string) => {
+      formData.append('selectedCriteria', criteriaItem);
     });
-    formData.append('jobDescription', jobDescription);
-    return this.http.post<Observable<FileDB[]>>(`${this.baseUrl}/ai/criteria`, formData, {
+
+    formData.append('jobDescription', criteria.jobDescription);
+    if (criteria.folderId !== undefined) {
+      formData.append('folderId', criteria.folderId.toString());
+    }
+    return this.http.post<Observable<FileDB[]>>(environment.backEndHost+ "/ai/criteria", formData, {
       reportProgress: true,
       observe: 'events',
       responseType: 'text' as 'json'
     });
   }
+
+  selectWithKeywords(keywords: { keywords: string[]; folderId?: number }) {
+    const formData: FormData = new FormData();
+
+    keywords.keywords.forEach((criteriaItem: string) => {
+      formData.append('keywords', criteriaItem);
+    });
+    if (keywords.folderId !== undefined) {
+      formData.append('folderId', keywords.folderId.toString());
+    }
+    return this.http.post<Observable<FileDB[]>>(environment.backEndHost+ "/ai/keywords", formData, {
+      reportProgress: true,
+      observe: 'events',
+      responseType: 'text' as 'json'
+    });
+
+  }
+
 
 
 }

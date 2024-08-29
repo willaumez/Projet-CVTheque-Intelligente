@@ -74,16 +74,47 @@
       <ng-container matColumnDef="results">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let element" style="text-align: center">
-          <button mat-button class="criteria-container"
-                  *ngIf="element.acceptCriteria?.length || element.rejectCriteria?.length"
-                  (click)="criteriaInfos(element)">
-            <mat-icon>info</mat-icon>
-            <span class="criteria-accept" style="color: green">{{element.acceptCriteria?.length || 0}}</span>
-            <sub>/{{(element.acceptCriteria?.length || 0) + (element.rejectCriteria?.length || 0)}}</sub>
-            --
-            <span class="criteria-reject" style="color: red">{{element.rejectCriteria?.length || 0}}</span>
-            <sub>/{{(element.acceptCriteria?.length || 0) + (element.rejectCriteria?.length || 0)}}</sub>
-          </button>
+          <div *ngIf="element.acceptCriteria?.length || element.rejectCriteria?.length">
+            <button mat-button class="criteria-container"
+                    (click)="criteriaInfos(element)">
+            <span
+              class="criteria-accept"
+              [ngStyle]="{ 'color': getCriteriaColor(element.acceptCriteria?.length, element.rejectCriteria?.length) }"
+              style="margin-right: 10px">
+              {{ calculateAcceptancePercentage(element.acceptCriteria?.length, element.rejectCriteria?.length) }}%
+            </span>
+            </button>
+            <button mat-button class="criteria-container"
+                    (click)="criteriaInfos(element)">
+              <mat-icon>info</mat-icon>
+              <span class="criteria-accept" style="color: green">{{ element.acceptCriteria?.length || 0 }}</span>
+              <sub>/{{ (element.acceptCriteria?.length || 0) + (element.rejectCriteria?.length || 0) }}</sub>
+              --
+              <span class="criteria-reject" style="color: red">{{ element.rejectCriteria?.length || 0 }}</span>
+              <sub>/{{ (element.acceptCriteria?.length || 0) + (element.rejectCriteria?.length || 0) }}</sub>
+            </button>
+          </div>
+
+          <div *ngIf="element.existWords?.length || element.noExistWords?.length">
+            <button mat-button class="criteria-container"
+                    (click)="keywordsInfos(element)">
+              <span
+                class="criteria-accept"
+                [ngStyle]="{ 'color': getCriteriaColor(element.existWords?.length , element.noExistWords?.length) }"
+                style="margin-right: 10px">
+              {{ calculateAcceptancePercentage(element.existWords?.length, element.noExistWords?.length) }}%
+              </span>
+            </button>
+            <button mat-button class="criteria-container"
+                    (click)="keywordsInfos(element)">
+              <mat-icon>info</mat-icon>
+              <span class="criteria-accept" style="color: green">{{ element.existWords?.length || 0 }}</span>
+              <sub>/{{ (element.existWords?.length || 0) + (element.noExistWords?.length || 0) }}</sub>
+              --
+              <span class="criteria-reject" style="color: red">{{ element.noExistWords?.length || 0 }}</span>
+              <sub>/{{ (element.existWords?.length || 0) + (element.noExistWords?.length || 0) }}</sub>
+            </button>
+          </div>
         </td>
       </ng-container>
 
@@ -98,13 +129,16 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;">
-      </tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       <!-- Row shown when there is no matching data. -->
       <tr class="mat-row" *matNoDataRow>
         <td class="mat-cell" colspan="4">No data matching the filter "{{ input.value }}"</td>
       </tr>
     </table>
+    <mat-paginator [pageSizeOptions]="[10, 30, 60, 120]"
+                   showFirstLastButtons
+                   aria-label="Select page of periodic elements" class="list-pagination">
+    </mat-paginator>
   </div>
   <ng-container *ngIf="error">
     <span class="error-message">{{ error }}</span>
@@ -128,47 +162,80 @@
       </ngx-extended-pdf-viewer>
     </div>
 
-    <div class="result-container" *ngIf="this.resultData">
+    <div class="result-container" *ngIf="this.resultData || this.resultKeyword">
       <div class="return-button">
         <button mat-raised-button (click)="returnToFilesView()">
           <mat-icon>arrow_back</mat-icon>
           Return
         </button>
       </div>
-      <div class="result-text">
-          <h2 class="accepted">Accepted Criteria:</h2>
-          <ng-container *ngIf="resultData?.acceptCriteria?.length; else noAcceptCriteria">
-            <ul>
-              <li *ngFor="let criteria of resultData.acceptCriteria">
-                <h3 style="color:#007e40;">{{ criteria.name }}</h3>
-                <p>{{ criteria.message }}</p>
-              </li>
-            </ul>
-          </ng-container>
+      <div class="result-text" *ngIf="this.resultData">
+        <h2 class="accepted">Accepted Criteria:</h2>
+        <ng-container *ngIf="resultData?.acceptCriteria?.length; else noAcceptCriteria">
+          <ul>
+            <li *ngFor="let criteria of resultData.acceptCriteria">
+              <h3 style="color:#007e40;">{{ criteria.name }}</h3>
+              <p>{{ criteria.message }}</p>
+            </li>
+          </ul>
+        </ng-container>
 
-          <!-- Affichage d'un message si aucun critère accepté n'est présent -->
-          <ng-template #noAcceptCriteria>
-            <p>No accepted criteria.</p>
-          </ng-template>
+        <!-- Affichage d'un message si aucun critère accepté n'est présent -->
+        <ng-template #noAcceptCriteria>
+          <p>No accepted criteria.</p>
+        </ng-template>
 
         <mat-divider class="divider-criteria"></mat-divider>
-          <!-- Affichage des critères rejetés -->
-          <h2 class="rejected">Rejected Criteria: </h2>
-          <ng-container *ngIf="resultData?.rejectCriteria?.length; else noRejectCriteria">
-            <ul>
-              <li *ngFor="let criteria of resultData.rejectCriteria">
-                <h3 style="color:#fb0000;">{{ criteria.name }}</h3>
-                <p>{{ criteria.message }}</p>
-              </li>
-            </ul>
-          </ng-container>
+        <!-- Affichage des critères rejetés -->
+        <h2 class="rejected">Rejected Criteria: </h2>
+        <ng-container *ngIf="resultData?.rejectCriteria?.length; else noRejectCriteria">
+          <ul>
+            <li *ngFor="let criteria of resultData.rejectCriteria">
+              <h3 style="color:#fb0000;">{{ criteria.name }}</h3>
+              <p>{{ criteria.message }}</p>
+            </li>
+          </ul>
+        </ng-container>
 
-          <!-- Affichage d'un message si aucun critère rejeté n'est présent -->
-          <ng-template #noRejectCriteria>
-            <p>No rejected criteria.</p>
-          </ng-template>
+        <!-- Affichage d'un message si aucun critère rejeté n'est présent -->
+        <ng-template #noRejectCriteria>
+          <p>No rejected criteria.</p>
+        </ng-template>
 
       </div>
+
+      <div class="result-text" *ngIf="this.resultKeyword">
+        <h2 class="accepted">Keywords found:</h2>
+        <ng-container *ngIf="resultKeyword?.existWords?.length; else noExistWords">
+          <ul>
+            <li *ngFor="let criteria of resultKeyword.existWords">
+              <h3 style="color:#007e40;">{{ criteria }}</h3>
+            </li>
+          </ul>
+        </ng-container>
+
+        <!-- Affichage d'un message si aucun critère accepté n'est présent -->
+        <ng-template #noExistWords>
+          <p>no keywords found.</p>
+        </ng-template>
+
+        <mat-divider class="divider-criteria"></mat-divider>
+        <!-- Affichage des critères rejetés -->
+        <h2 class="rejected">keywords that were not found: </h2>
+        <ng-container *ngIf="resultKeyword?.noExistWords?.length; else noNoExistWords">
+          <ul>
+            <li *ngFor="let keyword of resultKeyword.noExistWords">
+              <h3 style="color:#fb0000;">{{ keyword }}</h3>
+            </li>
+          </ul>
+        </ng-container>
+
+        <ng-template #noNoExistWords>
+          <p>no keywords exist.</p>
+        </ng-template>
+
+      </div>
+
 
     </div>
   </div>

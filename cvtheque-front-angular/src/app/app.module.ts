@@ -57,6 +57,9 @@ import {MatSort, MatSortModule} from "@angular/material/sort";
 import { FolderViewComponent } from './Components/ViewFiles/folder-view/folder-view.component';
 import {MatMenuModule} from "@angular/material/menu";
 import { DeleteFolderComponent } from './Components/Dialog/delete-folder/delete-folder.component';
+import {MatPaginatorModule} from "@angular/material/paginator";
+import {MatExpansionModule} from "@angular/material/expansion";
+import {MatChipsModule} from "@angular/material/chips";
 
 
 @NgModule({
@@ -81,7 +84,7 @@ import { DeleteFolderComponent } from './Components/Dialog/delete-folder/delete-
     MatDialogActions, MatDialogTitle, MatDialogClose, MatTable, MatColumnDef, MatHeaderCell, MatCheckbox, MatCell, MatCellDef, MatHeaderCellDef,
     MatHeaderRow, MatRow, MatRowDef, MatHeaderRowDef, MatNoDataRow, FlexLayoutModule, MatToolbar, MatCardModule, NgOptimizedImage,
     HttpClientModule, MatListItem, MatNavList, DragDropModule, MatProgressSpinnerModule, NgxExtendedPdfViewerModule, MatSelect,
-    MatListModule, MatLine, MatSortModule, MatIconButton,MatMenuModule,
+    MatListModule, MatLine, MatSortModule, MatIconButton,MatMenuModule,MatPaginatorModule, MatExpansionModule,MatChipsModule,
   ],
   providers: [
     provideAnimationsAsync()

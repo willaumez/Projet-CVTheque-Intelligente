@@ -1,65 +1,165 @@
+<div class="header-container" *ngIf="folder">
+  <span>
+  <a routerLink="/cvs/folders">Folders</a> -->
+  <a [routerLink]="['/cvs/folders/files', folder.id]">{{ folder.name }}</a>
+</span>
+
+</div>
 <div class="view-container">
   <div class="view-header">
-    <div class="main">
-      <div class="main-1">
-        <div class="add-criteria">
-          <div class="form-container">
-            <mat-form-field appearance="outline" class="input-field">
-              <mat-label>Add a new Criteria</mat-label>
-              <input matInput type="text" placeholder="" [(ngModel)]="inputValue" (keydown.enter)="onIconClick()">
-            </mat-form-field>
-            <button mat-icon-button [disabled]="!inputValue" (click)="onIconClick()">
-              <mat-icon>add_circle</mat-icon>
+    <!--test-->
+    <div class="function-container">
+      <div class="function-content">
+        <div class="function-content-content" *ngIf="selectedItem === 'Criteria'">
+          <mat-accordion>
+            <mat-expansion-panel [expanded]="true">
+              <mat-expansion-panel-header>
+                <mat-panel-title> Select criteria *</mat-panel-title>
+                <mat-panel-description>Select the criteria with which you want to evaluate the CVs.</mat-panel-description>
+              </mat-expansion-panel-header>
+              <div class="main-1">
+                <div class="add-criteria">
+                  <div class="form-container first-container">
+                    <mat-form-field appearance="outline" class="input-field">
+                      <mat-label>Select Profile</mat-label>
+                      <input matInput
+                             type="text"
+                             aria-label="Select Profile"
+                             [matAutocomplete]="auto"
+                             (focus)="onFocus()"
+                             [formControl]="profileCtrl">
+                      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayProfile">
+                        <mat-option *ngFor="let profile of filteredProfiles | async" [value]="profile">
+                          <mat-icon>person</mat-icon>
+                          <span>{{ profile.name }}</span>
+                        </mat-option>
+                      </mat-autocomplete>
+                    </mat-form-field>
+                  </div>
+                  <div class="form-container second-container">
+                    <mat-form-field appearance="outline" class="input-field">
+                      <mat-label>Add a new Criteria</mat-label>
+                      <input matInput type="text" placeholder="" [(ngModel)]="inputValue" (keydown.enter)="onIconClick()">
+                    </mat-form-field>
+                    <button mat-icon-button [disabled]="!inputValue" (click)="onIconClick()">
+                      <mat-icon>add_circle</mat-icon>
+                    </button>
+                  </div>
+                </div>
+                <div cdkDropListGroup>
+                  <div class="example-container">
+                    <h2>Available Criteria</h2>
+                    <div
+                      cdkDropList
+                      [cdkDropListData]="criteria$"
+                      class="example-list"
+                      cdkDropListSortingDisabled
+                      (cdkDropListDropped)="drop($event)">
+                      @for (item of criteria$; track item) {
+                        <div class="example-box" cdkDrag>{{ item }}</div>
+                      }
+                    </div>
+                  </div>
+                  <div class="example-container">
+                    <h2>Selected Criteria <sup style="color: #004985">editable</sup></h2>
+                    <div
+                      cdkDropList
+                      [cdkDropListData]="selectedCriteria"
+                      class="example-list"
+                      (cdkDropListDropped)="drop($event)">
+                      <div *ngFor="let item of selectedCriteria; let i = index" class="example-box" (dblclick)="enableEdit(i, item)" cdkDrag>
+                        <div *ngIf="!editMode[i]">
+                          {{ item }}
+                        </div>
+                        <mat-form-field *ngIf="editMode[i]" class="edit-mode" appearance="outline">
+                          <input matInput type="text" [(ngModel)]="editValue" (blur)="cancelEdit(i)" (keydown.enter)="saveEdit(i)" />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title> Job Description (Optional) </mat-panel-title>
+                <mat-panel-description>
+                  Write the job description
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <div class="main-2">
+                <div class="main-2-1">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Job Description</mat-label>
+                    <textarea matInput [(ngModel)]="jobDescription" cdkTextareaAutosize
+                              #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="7" cdkAutosizeMaxRows="7"></textarea>
+                    <mat-icon matSuffix>description</mat-icon>
+                  </mat-form-field>
+                </div>
+              </div>
+            </mat-expansion-panel>
+            <button class="criteria-button" mat-raised-button (click)="evaluateByCriteria()"
+                    [disabled]="!selectedCriteria.length"
+                    [ngClass]="{'active': selectedCriteria.length > 0}">
+              Evaluate by the criteria
             </button>
-          </div>
 
+          </mat-accordion>
         </div>
-        <div cdkDropListGroup>
-          <div class="example-container">
-            <h2>Available Criteria</h2>
-            <div
-              cdkDropList
-              [cdkDropListData]="criteria"
-              class="example-list"
-              cdkDropListSortingDisabled
-              (cdkDropListDropped)="drop($event)">
-              @for (item of criteria; track item) {
-                <div class="example-box" cdkDrag>{{ item }}</div>
-              }
-            </div>
-          </div>
-
-          <div class="example-container">
-            <h2>selected Criteria</h2>
-            <div
-              cdkDropList
-              [cdkDropListData]="selectedCriteria"
-              class="example-list"
-              (cdkDropListDropped)="drop($event)">
-              @for (item of selectedCriteria; track item) {
-                <div class="example-box" cdkDrag>{{ item }}</div>
-              }
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="main-2">
-        <div class="main-2-1">
-          <mat-form-field appearance="outline">
-            <mat-label>Job Description</mat-label>
-            <textarea matInput [(ngModel)]="jobDescription" cdkTextareaAutosize
-                      #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="7" cdkAutosizeMaxRows="7"></textarea>
-            <mat-icon matSuffix>description</mat-icon>
+        <div class="function-content-content" *ngIf="selectedItem === 'keywords'">
+          <mat-form-field class="full-width" appearance="outline">
+            <mat-label>Keywords</mat-label>
+            <mat-chip-grid #chipGrid aria-label="Enter keywords">
+              <mat-chip-row *ngFor="let keyword of keywords" (removed)="removeKeyword(keyword)">
+                {{ keyword }}
+                <button matChipRemove [attr.aria-label]="'remove ' + keyword">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip-row>
+              <input
+                placeholder="New keyword..."
+                [matChipInputFor]="chipGrid"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                [matChipInputAddOnBlur]="addOnBlur"
+                (matChipInputTokenEnd)="addKeyword($event)"
+              />
+            </mat-chip-grid>
           </mat-form-field>
-
-        </div>
-        <div class="main-2-2">
-          <button mat-raised-button (click)="click()" [disabled]="!selectedCriteria.length">
-            SEARCH
+          <button class="criteria-button" mat-raised-button (click)="evaluateKeywords()"
+                  [disabled]="!keywords.length"
+                  [ngClass]="{'active': keywords.length > 0}">
+            evaluate by keywords
           </button>
         </div>
       </div>
+
+      <div class="function-menu">
+        <div mat-subheader class="function-menu-title">Evaluation</div>
+        <mat-list>
+          <mat-list-item>
+            <button matListItemTitle class="list-button" mat-button [ngClass]="{'active': selectedItem === 'Criteria'}" (click)="selectItem('Criteria')">
+              Criteria
+            </button>
+          </mat-list-item>
+
+          <mat-list-item>
+            <button matListItemTitle class="list-button" mat-button [ngClass]="{'active': selectedItem === 'keywords'}" (click)="selectItem('keywords')">
+              keywords
+            </button>
+          </mat-list-item>
+
+          <mat-list-item>
+            <button matListItemTitle class="list-button" mat-button [ngClass]="{'active': selectedItem === 'Scoring'}" (click)="selectItem('Scoring')">
+              Scoring
+            </button>
+          </mat-list-item>
+
+        </mat-list>
+      </div>
     </div>
+
+
+    <!--test-->
 
 
     <div class="select-view">
@@ -84,9 +184,6 @@
         </div>
       </div>
       <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
-      <div class="spinner-overlay" *ngIf="loading">
-        <mat-spinner class="spinner-load"></mat-spinner>
-      </div>
 
       <span *ngIf="error" style="color: red; font-size: 1.2rem">{{error}}</span>
     </div>
@@ -94,14 +191,12 @@
 
     <div class="view-content">
       <ng-container *ngIf="isListView">
-        <app-list-view [data]="data$ | async"></app-list-view>
+        <app-list-view [data]="data$ | async" [folderId]="folderId"></app-list-view>
       </ng-container>
       <ng-container *ngIf="isGridView">
-        <app-grid-view [data]="data$ | async"></app-grid-view>
+        <app-grid-view [data]="data$ | async" [folderId]="folderId"></app-grid-view>
       </ng-container>
     </div>
-
-
 
   </div>
 </div>

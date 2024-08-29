@@ -66,10 +66,6 @@ mat-toolbar {
 
         &:hover {
           background-color: #0049ff;
-
-          button {
-            background-color: transparent;
-          }
         }
 
         .active {
@@ -80,7 +76,6 @@ mat-toolbar {
           mat-icon {
             color: #004985;
           }
-
           &:hover {
             background-color: #ffffff;
             color: #004985;

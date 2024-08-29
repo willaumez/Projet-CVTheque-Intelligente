@@ -57,6 +57,17 @@
           color: red;
         }
       }
+      .add-folder{
+        font-size: 1.1rem;
+        margin: 0 10px;
+
+        mat-icon {
+          width: auto;
+          height: auto;
+          font-size: 35px;
+          color: #004985;
+        }
+      }
       .example-margin {
         margin: 0 20px;
         transform: scale(1.2);

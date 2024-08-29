@@ -181,5 +181,14 @@ export class FolderViewComponent implements OnInit {
     );
   }
 
+  openAddFolder() {
+    const dialogRef = this._dialog.open(AddFolderComponent, {});
+    dialogRef.afterClosed().subscribe({
+      next: (val: Folder) => {
+        this.getAllFolders();
+      },
+    });
+  }
+
 
 }

@@ -29,8 +29,10 @@
           [aria-label]="checkboxLabel()">
         </mat-checkbox>
       </div>
-      <mat-slide-toggle class="example-margin" [(ngModel)]="isChecked" (click)="checkedClick()">Select
-      </mat-slide-toggle>
+      <mat-slide-toggle class="example-margin" [(ngModel)]="isChecked" (click)="checkedClick()">Select</mat-slide-toggle>
+
+      <button mat-button class="add-folder" (click)="openAddFolder()"><mat-icon>add</mat-icon></button>
+
     </div>
   </div>
 

@@ -45,13 +45,18 @@ export class FilesService {
 
 
   //Get all files
-  getAllFiles(): Observable<FileDB[]> {
-    return this.http.get<FileDB[]>(environment.backEndHost+"/file/files").pipe(
+  getAllFiles(folderId?: number): Observable<FileDB[]> {
+    let url = environment.backEndHost + "/file/files";
+    if (folderId !== undefined) {
+      url += `?folderId=${folderId}`;
+    }
+    return this.http.get<FileDB[]>(url).pipe(
       catchError(error => {
-        return throwError(error);
+        return throwError(() => new Error(error.message || 'Error fetching files'));
       })
     );
   }
+
 
   //Read file
   readFile(fileId: number | string) {

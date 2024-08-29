@@ -5,6 +5,7 @@ import org.sid.cvthequespringboot.entities.Folder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public interface FolderServices {
@@ -13,4 +14,6 @@ public interface FolderServices {
     void transferFiles(Long fromId, Long toId);
 
     boolean deleteFolder(Long folderId);
+
+    Optional<Folder> findFolderById(Long folderId);
 }

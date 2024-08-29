@@ -1,8 +1,17 @@
-import {AfterViewInit, Component, inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {
+  AfterViewChecked,
+  Component,
+  inject,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
-import {SelectionModel} from '@angular/cdk/collections';
+import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {FilesService} from "../../../Services/FileServices/files.service";
-import {FileDB, ResultCriteria} from "../../../Models/FileDB";
+import {FileDB, ResultCriteria, ResultKeywords} from "../../../Models/FileDB";
 import {MatDialog} from "@angular/material/dialog";
 import {PdfViewerComponent} from "../../Dialog/pdf-viewer/pdf-viewer.component";
 import {AddFolderComponent} from "../../Dialog/add-folder/add-folder.component";
@@ -19,7 +28,7 @@ export interface PdfFile {
   templateUrl: './list-view.component.html',
   styleUrl: './list-view.component.scss'
 })
-export class ListViewComponent implements OnInit, OnChanges {
+export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked  {
   isLoading = false;
   inOperation: boolean = false;
   error: string = '';
@@ -29,10 +38,13 @@ export class ListViewComponent implements OnInit, OnChanges {
   selection: number[] = [];
   dataLoaded: boolean = false;
 
+  @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
+
   @Input() data: FileDB[] | null = [];
+  @Input() folderId!: number;
   isResult: boolean = false;
   resultData: ResultCriteria | undefined;
-  //resultData = resultCriteriaExample;
+  resultKeyword: ResultKeywords | undefined;
   pdfSrc = '';
 
 
@@ -41,9 +53,16 @@ export class ListViewComponent implements OnInit, OnChanges {
       //console.log('Data received in app-list-view : ', changes['data']);
       // @ts-ignore
       this.dataSource.data = this.data;
-      console.log('ListViewComponent', this.data);
-      console.log('ListViewComponent', changes['data']);
-      this.sortDataByAcceptCriteriaLength();
+      //this.sortDataByAcceptCriteriaLength();
+      if (this.data?.some(item => item.acceptCriteria && item.acceptCriteria.length > 0)) {
+        this.sortData('acceptCriteria');
+        console.log('Sorting by acceptCriteria');
+      } else if (this.data?.some(item => item.existWords && item.existWords.length > 0)) {
+        this.sortData('existWords');
+        console.log('Sorting by existWords');
+      } else {
+        console.warn('No valid criteria found for sorting.');
+      }
       this.dataLoaded = true;
       //console.log('Données reçues dans app-list-view : ', JSON.stringify(this.data, null, 2));
     }else {
@@ -60,27 +79,50 @@ export class ListViewComponent implements OnInit, OnChanges {
   constructor(private _fileService: FilesService, private _dialog: MatDialog) {
   }
 
+  ngAfterViewChecked() {
+    if (this.paginator && this.dataSource.paginator !== this.paginator) {
+      this.dataSource.paginator = this.paginator;
+    }
+  }
+
+
+
 // Fonction de tri personnalisée
-  sortDataByAcceptCriteriaLength() {
+  sortData(criteriaType: 'acceptCriteria' | 'existWords') {
     this.dataSource.data = this.dataSource.data.sort((a, b) => {
-      const aLength = a.acceptCriteria?.length || 0;
-      const bLength = b.acceptCriteria?.length || 0;
-      return bLength - aLength; // Trier en ordre décroissant
+      const aLength = criteriaType === 'acceptCriteria' ? (a.acceptCriteria?.length || 0) : (a.existWords?.length || 0);
+      const bLength = criteriaType === 'acceptCriteria' ? (b.acceptCriteria?.length || 0) : (b.existWords?.length || 0);
+      return bLength - aLength;
     });
   }
 
   getAllFiles() {
     this.isLoading = true;
-    this._fileService.getAllFiles().subscribe(
-      (files: FileDB[]) => {
-        this.dataSource.data = files;
-        this.isLoading = false;
-      },
-      (error) => {
-        this.error = 'Error fetching files: ' + error.message;
-        this.isLoading = false;
-      }
-    );
+
+    // Vérifier si folderId existe et appeler la méthode appropriée dans le service
+    if (this.folderId !== undefined) {
+      this._fileService.getAllFiles(this.folderId).subscribe(
+        (files: FileDB[]) => {
+          this.dataSource.data = files;
+          this.isLoading = false;
+        },
+        (error) => {
+          this.error = 'Error fetching files: ' + error.message;
+          this.isLoading = false;
+        }
+      );
+    } else {
+      this._fileService.getAllFiles().subscribe(
+        (files: FileDB[]) => {
+          this.dataSource.data = files;
+          this.isLoading = false;
+        },
+        (error) => {
+          this.error = 'Error fetching files: ' + error.message;
+          this.isLoading = false;
+        }
+      );
+    }
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -141,25 +183,28 @@ export class ListViewComponent implements OnInit, OnChanges {
   }
 
   deleteSelection() {
-    let conf: boolean = confirm("Are you sure to delete the selected items?")
+    let conf: boolean = confirm("Are you sure to delete the selected items?");
     if (!conf) return;
-    this.inOperation = true;
+
+    this.inOperation = true; // Début de l'opération
 
     if (this.selection.length > 0) {
       this._fileService.deleteFiles(this.selection).subscribe(
         (response) => {
-          console.log("Files Deleted Successfully");
           this.selection = [];
           this.getAllFiles();
+          this.inOperation = false;
         },
         (error) => {
           this.error = 'Error Deleting Files: ' + error.message;
-          console.log("Error Deleting Files");
+          this.inOperation = false;
         }
       );
+    } else {
+      this.inOperation = false;
     }
-    this.inOperation = false;
   }
+
 
   transferSelection() {
     const data = this.selection;
@@ -189,10 +234,19 @@ export class ListViewComponent implements OnInit, OnChanges {
       rejectCriteria: file.rejectCriteria
     }
   }
+  keywordsInfos(file: FileDB) {
+    this.isResult = true;
+    this.viewFile(file.id);
+    this.resultKeyword = {
+      existWords: file.existWords,
+      noExistWords: file.noExistWords
+    }
+  }
 
   returnToFilesView() {
     this.isResult = false;
     this.resultData = undefined;
+    this.resultKeyword = undefined;
   }
 
   //Real File
@@ -205,6 +259,21 @@ export class ListViewComponent implements OnInit, OnChanges {
         this.pdfSrc = url;
         //console.log(response);
       });
+  }
+
+  calculateAcceptancePercentage(first: any, second: any): string {
+    const acceptLength = first || 0;
+    const rejectLength = second || 0;
+    const total = acceptLength + rejectLength;
+    if (total === 0) {
+      return '0';
+    }
+    const percentage = (acceptLength / total) * 100;
+    return percentage.toFixed(0);
+  }
+  getCriteriaColor(first: any, second: any): string {
+    const percentage = parseFloat(this.calculateAcceptancePercentage(first, second));
+    return percentage >= 50 ? 'green' : 'red';
   }
 
 

@@ -168,23 +168,24 @@
 .card-results {
   background-color: #FFFFFF;
   border-radius: 0 0 15px 15px;
+  flex-direction: column;
 }
 
 .criteria-container {
   font-weight: bold;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   text-align: center;
   width: 100%;
   margin: auto;
 
   .criteria-accept {
     color: #007e40;
-    margin-left: 7px;
+    margin-left: 5px;
   }
 
   .criteria-Reject {
     color: #fb0000;
-    margin-left: 11px;
+    margin-left: 8px;
   }
 }
 
