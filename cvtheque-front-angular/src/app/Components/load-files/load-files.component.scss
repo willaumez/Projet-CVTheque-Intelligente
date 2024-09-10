@@ -1,67 +1,49 @@
 
-.input:-webkit-autofill {
-  transition: background-color 5000s ease-in-out 0s;
+/*
+* {
+  //background-color: #9e9e9e;
+  box-shadow: 0 0 0 1px #80a8ff inset;
 }
+*/
+
 
 .container-load {
-  height: 100%;
-  margin: 25px;
-  padding: 25px;
-
   .header-container {
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
-    margin-bottom: 50px;
     padding: 20px;
 
-    h3 {
-      font-size: 30px;
+    h3, span {
+      font-size: 20px;
       margin: 0;
       font-weight: bold;
       color: #004985;
     }
 
-    .file-count {
-      position: absolute;
-      right: 0;
-      font-size: 25px;
-      color: black;
-    }
   }
-
-  //=================================================================================
 
   .folder-container {
     width: 100%;
-    //height: 300px;
-    //background-color: #80a8ff;
-    margin: 50px 0;
-
     display: flex;
     align-items: center;
 
     .select-form {
-      min-width: 250px;
-      max-width: 500px;
-      width: 100%;
-      margin-left: auto; // Pour aligner à droite
-      align-self: flex-start; // Pour aligner au début
+      max-width: 450px;
+      margin-left: auto;
     }
 
     .select-full-width {
       width: 100%;
-      margin: 3px 0;
-
+      margin: 5px 0 -20px 0;
       mat-label {
-        //color: #FFFFFF;
-        margin: 20px 0;
         font-size: 20px;
+
       }
 
       input {
-        font-size: 25px;
+        font-size: 20px;
       }
     }
 
@@ -69,19 +51,16 @@
       margin: 0;
       width: 100%;
       color: #0023a3;
-      font-size: 18px;
+      font-size: 20px;
       border-top: solid 2px #80a8ff;
       border-right: solid 2px #80a8ff;
       border-left: solid 2px #80a8ff;
-
     }
   }
 
   .btn-upload {
-    margin: 30px 0;
-    padding: 15px 0;
+    padding: 8px 0;
     width: 100%;
-    height: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -95,15 +74,13 @@
       font-size: 18px;
       border: solid 2px #80a8ff;
     }
-    .progress-container{
+    .progress-container {
       width: 100%;
-      height: auto;
       margin: 15px 0;
       position: relative;
-      span{
+
+      span {
         margin: auto;
-        //position: absolute;
-        //bottom: -15px;
         width: 100%;
         color: black;
         font-size: 1.3em;
@@ -115,21 +92,11 @@
         margin: 5px 0;
         width: 100%;
         font-size: 50px;
-
       }
     }
-
   }
 
-  //=================================================================================
-
-
-  ngx-dropzone,
-  .custom-dropzone {
-    margin: auto;
-  }
-
-  .ngx-dropzone {
+  ngx-dropzone {
     min-height: 450px;
     max-height: 100%;
     background: #e4e4e4;
@@ -138,41 +105,24 @@
     border: 5px dashed #005127;
     border-radius: 5px;
     font-size: 16px;
-    max-font-size: 20px;
     font-style: italic;
 
     .label-drop {
       font-size: 20px;
-      mat-icon{
+
+      mat-icon {
         height: auto;
         width: auto;
-        font-size: 150px;
+        font-size: 100px;
       }
     }
+    .word-break-all {
+      word-wrap: break-word;
+      word-break: break-all;
+      overflow-wrap: break-word;
+      white-space: normal;
+    }
   }
-}
-
-
-/*
-.custom-dropzone {
-  height: 250px;
-  background: #333;
-  color: #fff;
-  border: 5px dashed rgb(235, 79, 79);
-  border-radius: 5px;
-  font-size: 20px;
-}
-
-.custom-dropzone.ngx-dz-hovered {
-  border: 5px solid rgb(235, 79, 79);
-}
-*/
-
-
-
-* {
-  //background-color: #9e9e9e;
-  box-shadow: 0 0 0 1px #80a8ff inset;
 }
 
 

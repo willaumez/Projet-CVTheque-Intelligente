@@ -1,3 +1,4 @@
+<!--
 <div class="folders-container">
   <div class="header-container">
     <h3>Folders : {{ dataSource.length }}</h3>
@@ -74,7 +75,7 @@
                   <span>Rename</span>
                 </button>
 
-                <!-- Menu avec sous-menu pour "Delete" -->
+                &lt;!&ndash; Menu avec sous-menu pour "Delete" &ndash;&gt;
                 <button mat-menu-item [matMenuTriggerFor]="deleteMenu">
                   <mat-icon>delete_forever</mat-icon>
                   <span>Delete</span>
@@ -86,7 +87,7 @@
                 </button>
               </mat-menu>
 
-              <!-- Sous-menu pour "Delete" -->
+              &lt;!&ndash; Sous-menu pour "Delete" &ndash;&gt;
               <mat-menu #deleteMenu="matMenu">
                 <button mat-menu-item (click)="transferToDelete(folder.id)" [disabled]="folder.fileCount === 0">
                   <span>Transfer and Delete</span>
@@ -116,9 +117,123 @@
   <ng-container *ngIf="error">
     <span class="error-message">{{ error }}</span>
   </ng-container>
-  <!--Si le datasource est vide(n'a pas d'elements)-->
+  &lt;!&ndash;Si le datasource est vide(n'a pas d'elements)&ndash;&gt;
   <ng-container *ngIf="!isLoading && dataSource && dataSource.length === 0 && !error">
     <span class="error-message">No data available</span>
   </ng-container>
 
 </div>
+-->
+
+<div class="folders-container container-fluid">
+  <div class="header-container text-center my-3 p-3 bg-light">
+    <h3>Folders: {{ dataSource.length }}</h3>
+  </div>
+
+  <div class="spinner d-flex justify-content-center" *ngIf="isLoading && !error">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div class="header-container-2 row align-items-center mb-3 p-3 bg-light">
+    <div class="left-section col-12 col-md-6 mb-2 mb-md-0">
+      <mat-form-field appearance="outline" class=" filter-field">
+        <mat-label>Search</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Dev" #input>
+      </mat-form-field>
+    </div>
+
+    <div class="right-section col-12 col-md-6 d-flex justify-content-md-end flex-wrap align-items-center">
+      <button mat-button (click)="deleteSelection()" *ngIf="selection.hasValue() && isChecked" class="me-3 mb-2 mb-md-0">
+        Delete
+        <mat-icon class="delete-icon">delete_forever</mat-icon>
+      </button>
+
+      <div class="select-all d-flex align-items-center me-3 mb-2 mb-md-0" *ngIf="isChecked">
+        Select all :
+        <mat-checkbox
+          (change)="$event ? toggleAllGrid() : null"
+          [checked]="selection.hasValue() && isAllSelected()"
+          [indeterminate]="selection.hasValue() && !isAllSelected()"
+          [aria-label]="checkboxLabel()">
+        </mat-checkbox>
+      </div>
+
+      <mat-slide-toggle class="me-3" [(ngModel)]="isChecked" (click)="checkedClick()">Select</mat-slide-toggle>
+
+      <button mat-button class="add-folder" (click)="openAddFolder()"><mat-icon>add</mat-icon></button>
+    </div>
+  </div>
+
+  <ng-container *ngIf="!isLoading && dataSource && dataSource.length > 0 && !error">
+    <div class="content">
+      <div fxLayout="row wrap" fxLayoutGap="grid" class="grid-container">
+
+        <!--<div fxFlex="10%" fxFlex.xs="100%" fxFlex.sm="33%"
+             *ngFor="let folder of dataSource">-->
+
+        <div fxFlex="9.5"
+             fxFlex.xs="45"
+             fxFlex.sm="20"
+        *ngFor="let folder of dataSource">
+          <mat-card class="mat-elevation-z4 h-100" (dblclick)="handleCardClick(folder.id)">
+            <div class="checkbox-container position-absolute top-0 start-0 p-1" (click)="$event.stopPropagation()" *ngIf="isChecked">
+              <mat-checkbox (change)="$event ? toggleSelection(folder.id) : null"
+                            [checked]="selection.isSelected(folder.id)"
+                            [aria-label]="checkboxLabel(folder.id)">
+              </mat-checkbox>
+            </div>
+
+            <div class="checkbox-container position-absolute top-0 end-0 p-1" (click)="$event.stopPropagation()" *ngIf="!isChecked">
+              <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="rename(folder)">
+                  <mat-icon>mode_edit</mat-icon>
+                  <span>Rename</span>
+                </button>
+                <button mat-menu-item [matMenuTriggerFor]="deleteMenu">
+                  <mat-icon>delete_forever</mat-icon>
+                  <span>Delete</span>
+                </button>
+                <button mat-menu-item (click)="transfer(folder.id)" [disabled]="folder.fileCount === 0">
+                  <mat-icon>subdirectory_arrow_right</mat-icon>
+                  <span>Transfer</span>
+                </button>
+              </mat-menu>
+
+              <mat-menu #deleteMenu="matMenu">
+                <button mat-menu-item (click)="transferToDelete(folder.id)" [disabled]="folder.fileCount === 0">
+                  <span>Transfer and Delete</span>
+                </button>
+                <button mat-menu-item (click)="deleteAllFiles(folder.id)">
+                  <span *ngIf="folder.fileCount === 0">Delete</span>
+                  <span *ngIf="folder.fileCount !== 0">Delete with all files</span>
+                </button>
+              </mat-menu>
+            </div>
+
+            <img mat-card-image src="/assets/images/folder.svg" alt="pdf photos" class="img-fluid" />
+            <div class="card-actions text-center">
+              <span class="word-count d-block">{{ folder.fileCount }}</span>
+              <span class="word d-block">{{ folder.createdAt | date: 'yyyy-MM-dd' }}</span>
+            </div>
+            <div class="name-folder text-center">
+              <span class="word-action d-block">{{ folder.name }}</span>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="error">
+    <span class="error-message">{{ error }}</span>
+  </ng-container>
+
+  <ng-container *ngIf="!isLoading && dataSource && dataSource.length === 0 && !error">
+    <span class="error-message">No data available</span>
+  </ng-container>
+</div>
+
+

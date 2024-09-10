@@ -1,4 +1,5 @@
-/* Ajoutez ici votre style personnalisé pour le composant */
+
+
 h2 {
   margin: auto;
   font-size: 1.5em;
@@ -10,54 +11,25 @@ mat-dialog-content {
   padding: 0;
   width: 100%;
 
-  form{
+  form {
     padding: 10px;
-    mat-form-field {
-      mat-label{
-        font-size: 1.1em;
-      }
-      color: black;
-      font-size: 1.1em;
-      width: 100%;
-      margin: 10px 0;
-      padding: 0;
+  }
+  mat-form-field {
+    font-size: 1em;
+    width: 100%;
+    min-width: 450px;
+    margin: 10px 0;
+
+    mat-label {
+      font-size: 1em;
     }
   }
 }
-.select-field{
-  mat-label{
-    font-size: 1.1em;
-  }
-  color: black;
-  font-size: 1.1em;
-  width: 400px;
-  margin: 10px 0;
-  padding: 0;
-}
-.button-container {
+
+.mat-dialog-actions {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
-  width: 100%;
-}
-//
-// spinner and error message
-.mat-mdc-progress-spinner{
-  margin: 100px auto;
-}
-.spinner .spinner-border {
-  width: 5rem;
-  height: 5rem;
-}
-.error-message{
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  position: absolute;
-  text-align: center;
-  color: red;
-  font-size: 2em;
-  margin: 50px 0;
 }
 
 .spinner-overlay {
@@ -70,11 +42,21 @@ mat-dialog-content {
   display: flex;
   justify-content: center;
   align-items: center;
-  //background-color: rgba(0, 0, 0, 0.29); /* Semi-transparent pour obscurcir le reste de la page */
-  z-index: 1000; /* Au-dessus des autres composants */
-  pointer-events: all; /* Permet de capturer les clics */
+  //z-index: 1000;
 }
 
-.spinner-load {
-  z-index: 1100; /* Assurez-vous que le spinner est au-dessus de l'overlay */
+
+.error-message {
+  display: flex;               /* Utiliser flexbox */
+  justify-content: center;      /* Centrer horizontalement */
+  align-items: center;          /* Centrer verticalement */
+  width: 100%;
+  margin: auto;
+  text-align: center;
+  color: red;
+  font-size: 1.2em;
+  word-wrap: break-word;        /* Permettre le retour à la ligne */
+  white-space: normal;          /* Autoriser les retours à la ligne */
+  word-break: break-word;       /* Retourner à la ligne lorsque le mot dépasse la largeur */
 }
+

@@ -1,0 +1,160 @@
+*{
+  box-shadow: 0 0 0 1px #000000 inset;
+}
+
+
+button {
+  width: auto;
+  height: auto;
+  border-radius: 30px;
+
+  mat-icon {
+    width: auto;
+    height: auto;
+    margin: auto;
+    font-size: 35px;
+  }
+}
+
+table {
+  width: 90%;
+}
+
+.mat-mdc-header-row {
+  font-size: 1.2em;
+  //font-weight: bold;
+}
+
+.mat-mdc-row {
+  font-size: 1em;
+}
+
+.mat-column-action {
+  width: 100px;
+}
+
+// spinner and error message
+.mat-mdc-progress-spinner {
+  margin: 100px auto;
+}
+
+.spinner .spinner-border {
+  width: 5rem;
+  height: 5rem;
+}
+
+.list-pagination {
+  margin: 10px 0;
+  font-size: 1.2rem;
+  color: #004985;
+}
+
+
+.filter-field {
+  font-size: 1rem;
+  height: 60px;
+  min-width: 450px;
+  margin-bottom: 5px;
+
+  mat-label {
+    font-size: 1rem;
+  }
+
+  input {
+    border-bottom: solid 1px #004dff;
+    margin: 2px 0;
+    //padding: 5px 5px;
+  }
+}
+
+//profile list view list-container
+.main-list-container {
+  display: flex;
+  height: 750px;
+
+  .list-container {
+    width: 40%; // La liste occupe 25% de la largeur
+    min-width: 300px;
+    padding: 10px;
+    border-right: 1px solid #ddd;
+  }
+
+  .scrollable-list {
+    height: 100%;
+    width: 100%;
+    overflow-y: auto; // Active le scroll vertical
+    border: 2px solid #004b98;
+
+  }
+
+  .select-profile {
+    padding: 15px;
+    border-bottom: 1px solid #004b98;
+
+    .button-criteria {
+      color: #004b98;
+      //margin: 0 5px;
+      border-radius: 15px;
+      mat-icon{
+        font-size: 25px;
+      }
+    }
+  }
+
+  .second-container {
+    display: flex;
+    align-items: start;
+    //margin-right: 100px;
+
+    mat-form-field {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      margin-right: 8px;
+      margin-bottom: -30px;
+      width: 300px;
+
+      input {
+        flex: 1;
+        width: 100%;
+      }
+
+    }
+    button {
+      //margin-top: -20px;
+      //margin-left: -8px;
+      mat-icon{
+        width: auto;
+        height: auto;
+        font-size: 30px;
+
+      }
+    }
+  }
+
+
+  .no-data-message {
+    padding: 10px;
+    text-align: center;
+    color: grey;
+  }
+
+  .selected-profile {
+    background-color: #f0f0f0;
+    border-left: 4px solid #004985;
+    font-weight: bold;
+    .selectedButton{
+      background-color: #004985;
+      mat-icon{
+        color: white;
+      }
+    }
+  }
+
+
+}
+
+
+
+
+

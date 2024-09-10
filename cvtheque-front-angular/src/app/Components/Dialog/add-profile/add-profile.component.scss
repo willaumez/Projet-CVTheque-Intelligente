@@ -1,0 +1,41 @@
+
+
+.container-fluid {
+  h2 {
+    font-size: 1.5em;
+    font-weight: 500;
+  }
+
+  mat-dialog-content {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+
+    form {
+      mat-form-field {
+        font-size: 1.1em;
+        width: 100%;
+        margin-bottom: 10px;
+
+        mat-label {
+          font-size: 1.1em;
+        }
+      }
+    }
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+
+    button {
+      width: 100px;
+    }
+  }
+}
+
+* {
+  //background-color: #9e9e9e;
+  box-shadow: 0 0 0 1px #80a8ff inset;
+}

@@ -3,7 +3,13 @@ export interface Profile {
   name: string;
   description: string | null;
   createdAt: string;
-  listCriteria?: Criteria[];
+  listCriteria?: CriteriaDB[] | null;
+}
+
+export interface CriteriaDB {
+  id : number;
+  description : string;
+  createdAt : Date;
 }
 
 export interface Criteria{

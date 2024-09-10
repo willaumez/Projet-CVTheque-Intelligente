@@ -1,0 +1,33 @@
+<ng-container class="container-fluid p-4">
+  <h2 mat-dialog-title class="text-center mb-4">Add Profile</h2>
+  <mat-dialog-content>
+    <ng-container *ngIf="errorMessage">
+      <div class="alert alert-danger fs-5 text-wrap" role="alert">
+        {{ errorMessage }}
+      </div>
+    </ng-container>
+    <form [formGroup]="addProfileForm" (ngSubmit)="addProfileSubmit()">
+      <mat-form-field appearance="outline" class="w-100 mb-3 mt-1">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" placeholder="Profile name" required>
+        <mat-icon matSuffix>folder</mat-icon>
+        <mat-error *ngIf="addProfileForm.get('name')?.invalid && (addProfileForm.get('name')?.dirty || addProfileForm.get('name')?.touched)">
+          Profile name is required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-100 mt-1">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" cdkTextareaAutosize
+                  #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="5" cdkAutosizeMaxRows="25"></textarea>
+        <mat-icon matSuffix>description</mat-icon>
+      </mat-form-field>
+      <mat-divider></mat-divider>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions class="d-flex justify-content-end gap-2">
+    <button mat-raised-button class="btn col" color="secondary" [mat-dialog-close]="false">Cancel</button>
+    <button mat-raised-button class="btn col" color="primary" type="submit" [disabled]="!isFormValid()"
+            (click)="addProfileSubmit()">Submit
+    </button>
+  </mat-dialog-actions>
+</ng-container>

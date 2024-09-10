@@ -87,6 +87,18 @@ export class FilesService {
     });
   }
 
+  renameFile(renameFileDB: FileDB) {
+    if (!renameFileDB) {
+      return;
+    }
+    return this.http.put(environment.backEndHost + "/file/update", renameFileDB, {
+      reportProgress: true,
+      observe: 'events',
+      responseType: 'text'
+    });
+  }
+
+
 
 
 }

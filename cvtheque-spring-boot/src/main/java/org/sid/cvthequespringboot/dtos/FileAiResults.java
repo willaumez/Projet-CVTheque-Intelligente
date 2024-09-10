@@ -21,4 +21,5 @@ public class FileAiResults {
     private List<Criteria> rejectCriteria;
     private List<String> existWords;
     private List<String> noExistWords;
+    private Scoring scoring;
 }

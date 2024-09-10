@@ -1,15 +1,7 @@
+
 .header {
   width: 100%;
-  padding: 0 20px;
-  display: flex;
-  margin: 15px 0;
-  justify-content: space-between; /* Permet de séparer les éléments à gauche et à droite */
-  align-items: center; /* Centre verticalement les éléments */
-
   .action-container {
-    font-size: 20px;
-    //width: 500px;
-    //height: 50px;
     margin: 0;
     button{
       width: auto;
@@ -18,7 +10,7 @@
       mat-icon{
         width: auto;
         height: auto;
-        font-size: 40px;
+        font-size: 30px;
       }
       .first-icon{
         margin-right: -12px;
@@ -34,25 +26,27 @@
   }
 
   .filter-field {
-    font-size: 20px;
-    width: 500px;
-    margin: 0;
+    font-size: 1rem;
+    height: 60px;
+    min-width: 300px;
+    margin-bottom: 5px;
 
     mat-label {
-      font-size: 20px;
+      font-size: 1rem;
     }
 
     input {
-      border-bottom: solid 2px #004dff;
+      border-bottom: solid 1px #004dff;
       margin: 2px 0;
       //padding: 5px 5px;
     }
   }
+
 }
 
 .list-pagination{
   margin: 10px 0;
-  font-size: 1.2rem;
+  font-size: 1rem;
   color: #004985;
 }
 
@@ -61,11 +55,11 @@ table {
   width: 90%;
 }
 .mat-mdc-header-row {
-  font-size: 1.5em;
+  font-size: 1.2em;
   //font-weight: bold;
 }
 .mat-mdc-row{
-  font-size: 1.3em;
+  font-size: 1em;
 }
 .mat-column-action {
   width: 100px;
@@ -76,7 +70,7 @@ table {
   mat-icon{
     width: auto;
     height: auto;
-    font-size: 30px;
+    font-size: 25px;
     color: #004b87;
   }
 }
@@ -137,6 +131,33 @@ ngx-extended-pdf-viewer{
     margin-left: 15px;
   }
 }
+
+
+//Rename file
+.filter-field-rename {
+  display: flex;
+  align-items: start;
+  //margin-right: 100px;
+
+  mat-form-field {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    margin-right: 8px;
+    width: 300px;
+
+    input {
+      flex: 1;
+      width: 100%;
+    }
+
+  }
+  button {
+    margin-top: -20px;
+    margin-left: -8px;
+  }
+}
+
 // Is Result
 .body-viewer {
   display: flex;
@@ -183,9 +204,6 @@ ngx-extended-pdf-viewer{
     }
   }
 }
-
-
-
 .result-text {
   .accepted{
     font-size: 1.2rem;
@@ -217,6 +235,19 @@ ngx-extended-pdf-viewer{
     width: 100%;
     margin: 15px 0;
     border-bottom: 8px solid #eaeaea;
+  }
+  .score-score{
+    width: 100%;
+    font-size: 50px;
+    text-align: center;
+    display: block;
+    margin: 15px auto
+  }
+  .score-message{
+    width: 100%;
+    font-size: 1.2rem;
+    text-align: center;
+    margin-bottom: 5px;
   }
 }
 

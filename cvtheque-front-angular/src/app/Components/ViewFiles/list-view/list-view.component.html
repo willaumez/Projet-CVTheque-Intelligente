@@ -1,17 +1,23 @@
-<ng-container *ngIf="!isResult">
+<!--<ng-container *ngIf="!isResult">
   <div class="spinner" *ngIf="isLoading && !error">
     <mat-spinner></mat-spinner>
   </div>
   <div class="spinner-overlay" *ngIf="inOperation">
     <mat-spinner class="spinner-load"></mat-spinner>
   </div>
-
   <div *ngIf="!isLoading && dataSource && dataSource.data && dataSource.data.length > 0 && !error">
     <div class="header">
-      <mat-form-field appearance="fill" class="filter-field">
+      <mat-form-field appearance="outline" class="filter-field">
         <mat-label>Filter</mat-label>
-        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. name" #input>
       </mat-form-field>
+
+      <div class="filter-field-rename" *ngIf="isRenameFile">
+        <mat-form-field appearance="outline">
+          <mat-label>Rename file</mat-label>
+          <input matInput [(ngModel)]="renameFileDB!.name" placeholder="Ex. ium" (keyup.enter)="renameFileSubmit()">
+        </mat-form-field>
+      </div>
       <div class="action-container" *ngIf="selection.length  !==0 ">
         <button mat-button (click)="deleteSelection()">
           <mat-icon class="delete-icon">delete_forever</mat-icon>
@@ -24,7 +30,7 @@
     </div>
 
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-      <!-- Checkbox Column -->
+      &lt;!&ndash; Checkbox Column &ndash;&gt;
       <ng-container matColumnDef="select">
         <th mat-header-cell *matHeaderCellDef>
           <mat-checkbox
@@ -44,25 +50,26 @@
         </td>
       </ng-container>
 
-      <!-- Name Column -->
+      &lt;!&ndash; Name Column &ndash;&gt;
       <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Name</th>
-        <td mat-cell *matCellDef="let element"> {{ element.name }}</td>
+        <th mat-header-cell *matHeaderCellDef> Name <mat-icon>edit</mat-icon></th>
+        <td mat-cell *matCellDef="let element" (dblclick)="renameFile(element)"> {{ element.name }}</td>
       </ng-container>
 
-      <!-- type Column -->
+
+      &lt;!&ndash; type Column &ndash;&gt;
       <ng-container matColumnDef="type">
         <th mat-header-cell *matHeaderCellDef> Type</th>
         <td mat-cell *matCellDef="let element"> {{ element.type }}</td>
       </ng-container>
 
-      <!-- type Column -->
+      &lt;!&ndash; type Column &ndash;&gt;
       <ng-container matColumnDef="folder">
         <th mat-header-cell *matHeaderCellDef> Folder</th>
         <td mat-cell *matCellDef="let element"> {{ element.folderName }}</td>
       </ng-container>
 
-      <!-- Date Creation Column -->
+      &lt;!&ndash; Date Creation Column &ndash;&gt;
       <ng-container matColumnDef="dateCreation">
         <th mat-header-cell *matHeaderCellDef> Date Creation</th>
         <td mat-cell *matCellDef="let element">
@@ -70,7 +77,7 @@
         </td>
       </ng-container>
 
-      <!-- Results Column -->
+      &lt;!&ndash; Results Column &ndash;&gt;
       <ng-container matColumnDef="results">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let element" style="text-align: center">
@@ -89,7 +96,7 @@
               <mat-icon>info</mat-icon>
               <span class="criteria-accept" style="color: green">{{ element.acceptCriteria?.length || 0 }}</span>
               <sub>/{{ (element.acceptCriteria?.length || 0) + (element.rejectCriteria?.length || 0) }}</sub>
-              --
+              &#45;&#45;
               <span class="criteria-reject" style="color: red">{{ element.rejectCriteria?.length || 0 }}</span>
               <sub>/{{ (element.acceptCriteria?.length || 0) + (element.rejectCriteria?.length || 0) }}</sub>
             </button>
@@ -110,15 +117,27 @@
               <mat-icon>info</mat-icon>
               <span class="criteria-accept" style="color: green">{{ element.existWords?.length || 0 }}</span>
               <sub>/{{ (element.existWords?.length || 0) + (element.noExistWords?.length || 0) }}</sub>
-              --
+              &#45;&#45;
               <span class="criteria-reject" style="color: red">{{ element.noExistWords?.length || 0 }}</span>
               <sub>/{{ (element.existWords?.length || 0) + (element.noExistWords?.length || 0) }}</sub>
+            </button>
+          </div>
+
+          <div *ngIf="element.scoring?.score">
+            <button mat-button class="criteria-container"
+                    (click)="scoringInfos(element.id, element.scoring)">
+              <span
+                class="criteria-accept"
+                [ngStyle]="{ 'color': getCriteriaColor(element.scoring?.score , (100-(element.scoring?.score))) }"
+                style="margin-right: 10px">
+              {{ element.scoring?.score }}%
+              </span>
             </button>
           </div>
         </td>
       </ng-container>
 
-      <!-- Action Column -->
+      &lt;!&ndash; Action Column &ndash;&gt;
       <ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let element">
@@ -130,7 +149,7 @@
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      <!-- Row shown when there is no matching data. -->
+      &lt;!&ndash; Row shown when there is no matching data. &ndash;&gt;
       <tr class="mat-row" *matNoDataRow>
         <td class="mat-cell" colspan="4">No data matching the filter "{{ input.value }}"</td>
       </tr>
@@ -143,13 +162,196 @@
   <ng-container *ngIf="error">
     <span class="error-message">{{ error }}</span>
   </ng-container>
-  <!--Si le datasource est vide(n'a pas d'elements)-->
+  &lt;!&ndash;Si le datasource est vide(n'a pas d'elements)&ndash;&gt;
   <ng-container *ngIf="!isLoading && dataSource && dataSource.data && dataSource.data.length === 0 && !error">
     <span class="error-message">No data available</span>
   </ng-container>
 
+</ng-container>-->
 
+
+<ng-container *ngIf="!isResult">
+  <div class="d-flex justify-content-center my-4" *ngIf="isLoading && !error">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div class="spinner-overlay" *ngIf="inOperation">
+    <mat-spinner class="spinner-load"></mat-spinner>
+  </div>
+
+  <div *ngIf="!isLoading && dataSource && dataSource.data && dataSource.data.length > 0 && !error" class="container-fluid">
+    <!--<div class="header d-flex align-items-center justify-content-between">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Filter</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. name" #input>
+      </mat-form-field>
+
+      <div class="action-container d-flex" *ngIf="selection.length  !==0 ">
+        <button mat-button (click)="deleteSelection()">
+          <mat-icon class="delete-icon">delete_forever</mat-icon>
+        </button>
+        <button mat-button (click)="transferSelection()">
+          <mat-icon class="action-icon first-icon">subdirectory_arrow_right</mat-icon>
+          <mat-icon class="action-icon">folder_special</mat-icon>
+        </button>
+      </div>
+
+      <div *ngIf="isRenameFile" class="filter-field-rename d-flex align-items-center">
+        <mat-form-field appearance="outline" class="flex-grow-1">
+          <mat-label>Rename file</mat-label>
+          <input matInput [(ngModel)]="renameFileDB!.name" placeholder="Ex. ium" (keyup.enter)="renameFileSubmit()">
+        </mat-form-field>
+        <mat-icon style="margin-top: -20px" (click)="resetRename()">cancel</mat-icon>
+      </div>
+    </div>-->
+
+    <div class="header row d-flex align-items-center justify-content-between">
+      <div class="col-12 col-md-6 col-lg-4 mb-2 mb-md-0">
+        <mat-form-field appearance="outline" class="w-100 filter-field">
+          <mat-label>Filter</mat-label>
+          <input matInput (keyup)="applyFilter($event)" placeholder="Ex. name" #input>
+        </mat-form-field>
+      </div>
+
+      <div class="action-container col-12 col-md-6 col-lg-4 mb-2 mb-md-0 d-flex justify-content-end" *ngIf="selection.length  !==0 ">
+        <button mat-button (click)="deleteSelection()">
+          <mat-icon class="delete-icon">delete_forever</mat-icon>
+        </button>
+        <button mat-button (click)="transferSelection()">
+          <mat-icon class="action-icon first-icon">subdirectory_arrow_right</mat-icon>
+          <mat-icon class="action-icon">folder_special</mat-icon>
+        </button>
+      </div>
+
+      <div *ngIf="isRenameFile && selection.length === 0" class="filter-field-rename col-12 col-md-6 col-lg-4 d-flex align-items-center">
+        <mat-form-field appearance="outline" class="flex-grow-1 filter-field">
+          <mat-label>Rename file</mat-label>
+          <input matInput [(ngModel)]="renameFileDB!.name" placeholder="Ex. ium" (keyup.enter)="renameFileSubmit()">
+        </mat-form-field>
+        <mat-icon style="margin-top: -5px" (click)="resetRename()">cancel</mat-icon>
+      </div>
+    </div>
+
+
+    <table mat-table [dataSource]="dataSource" class="table table-striped table-hover mat-elevation-z8">
+      <!-- Checkbox Column -->
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-checkbox
+            (change)="$event ? toggleAllRows() : null"
+            [checked]="selection.length !== 0 && isAllSelected()"
+            [indeterminate]="selection.length !== 0 && !isAllSelected()"
+            [aria-label]="checkboxLabel()">
+          </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let row" class="align-middle">
+          <mat-checkbox
+            (click)="$event.stopPropagation()"
+            (change)="$event ? toggleRow(row) : null"
+            [checked]="selection.includes(row.id)"
+            [aria-label]="checkboxLabel(row)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Name <mat-icon>edit</mat-icon></th>
+        <td mat-cell *matCellDef="let element" (dblclick)="renameFile(element)" class="align-middle"> {{ element.name }}</td>
+      </ng-container>
+
+      <!-- Type Column -->
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef> Type</th>
+        <td mat-cell *matCellDef="let element" class="align-middle"> {{ element.type }}</td>
+      </ng-container>
+
+      <!-- Folder Column -->
+      <ng-container matColumnDef="folder">
+        <th mat-header-cell *matHeaderCellDef> Folder</th>
+        <td mat-cell class="align-middle" *matCellDef="let element"> {{ element.folderName }}</td>
+      </ng-container>
+
+      <!-- Date Creation Column -->
+      <ng-container matColumnDef="dateCreation">
+        <th mat-header-cell *matHeaderCellDef> Date Creation</th>
+        <td mat-cell *matCellDef="let element" class="align-middle">
+          {{ element.createdAt | date: 'yyyy-MM-dd' }} | {{ element.createdAt | date: 'HH:mm:ss' }}
+        </td>
+      </ng-container>
+
+      <!-- Results Column -->
+      <ng-container matColumnDef="results">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element" class="text-center align-middle">
+          <!-- Criteria Info -->
+          <div *ngIf="element.acceptCriteria?.length || element.rejectCriteria?.length">
+            <button mat-button (click)="criteriaInfos(element)">
+              <span class="text-success me-2">{{ calculateAcceptancePercentage(element.acceptCriteria?.length, element.rejectCriteria?.length) }}%</span>
+              <mat-icon>info</mat-icon>
+              <span class="text-success">{{ element.acceptCriteria?.length || 0 }}</span>
+              <sub>/{{ (element.acceptCriteria?.length || 0) + (element.rejectCriteria?.length || 0) }}</sub>
+              --
+              <span class="text-danger">{{ element.rejectCriteria?.length || 0 }}</span>
+              <sub>/{{ (element.acceptCriteria?.length || 0) + (element.rejectCriteria?.length || 0) }}</sub>
+            </button>
+          </div>
+
+          <!-- Keywords Info -->
+          <div *ngIf="element.existWords?.length || element.noExistWords?.length">
+            <button mat-button (click)="keywordsInfos(element)">
+              <span class="text-success me-2">{{ calculateAcceptancePercentage(element.existWords?.length, element.noExistWords?.length) }}%</span>
+              <mat-icon>info</mat-icon>
+              <span class="text-success">{{ element.existWords?.length || 0 }}</span>
+              <sub>/{{ (element.existWords?.length || 0) + (element.noExistWords?.length || 0) }}</sub>
+              --
+              <span class="text-danger">{{ element.noExistWords?.length || 0 }}</span>
+              <sub>/{{ (element.existWords?.length || 0) + (element.noExistWords?.length || 0) }}</sub>
+            </button>
+          </div>
+
+          <!-- Scoring Info -->
+          <div *ngIf="element.scoring?.score">
+            <button mat-button (click)="scoringInfos(element.id, element.scoring)">
+              <span class="text-success me-2">{{ element.scoring?.score }}%</span>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Action Column -->
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element" class="align-middle">
+          <button mat-button (click)="viewDescription(element.id)" class="action-btn">
+            <mat-icon>picture_as_pdf</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <!-- Row shown when there is no matching data -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell text-center" colspan="4">No data matching the filter "{{ input.value }}"</td>
+      </tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[10, 30, 60, 120]" showFirstLastButtons aria-label="Select page of periodic elements" class="list-pagination"></mat-paginator>
+  </div>
+
+  <ng-container *ngIf="error">
+    <span class="error-message">{{ error }}</span>
+  </ng-container>
+
+  <ng-container *ngIf="!isLoading && dataSource?.data?.length === 0 && !error">
+    <span class="error-message">No data available</span>
+  </ng-container>
 </ng-container>
+
+
+
 <ng-container *ngIf="isResult">
   <div class="body-viewer">
     <div class="pdf-viewer">
@@ -162,7 +364,7 @@
       </ngx-extended-pdf-viewer>
     </div>
 
-    <div class="result-container" *ngIf="this.resultData || this.resultKeyword">
+    <div class="result-container" *ngIf="this.resultData || this.resultKeyword || this.resultScoring">
       <div class="return-button">
         <button mat-raised-button (click)="returnToFilesView()">
           <mat-icon>arrow_back</mat-icon>
@@ -196,12 +398,9 @@
             </li>
           </ul>
         </ng-container>
-
-        <!-- Affichage d'un message si aucun critère rejeté n'est présent -->
         <ng-template #noRejectCriteria>
           <p>No rejected criteria.</p>
         </ng-template>
-
       </div>
 
       <div class="result-text" *ngIf="this.resultKeyword">
@@ -233,9 +432,30 @@
         <ng-template #noNoExistWords>
           <p>no keywords exist.</p>
         </ng-template>
-
       </div>
 
+      <div class="result-text" *ngIf="resultScoring">
+        <ng-container *ngIf="resultScoring.score; else noExistScore">
+          <span class="score-score"
+                [ngStyle]="{ 'color': getCriteriaColor(resultScoring.score, (100 - resultScoring.score)) }">
+            {{ resultScoring.score }}%
+          </span>
+        </ng-container>
+
+        <ng-template #noExistScore>
+          <p>No score found.</p>
+        </ng-template>
+
+        <mat-divider class="divider-criteria"></mat-divider>
+
+        <ng-container *ngIf="resultScoring.message; else noExistMessage">
+          <p class="score-message">{{ resultScoring.message }}</p>
+        </ng-container>
+
+        <ng-template #noExistMessage>
+          <p>No message found.</p>
+        </ng-template>
+      </div>
 
     </div>
   </div>

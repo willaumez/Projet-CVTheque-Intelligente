@@ -58,5 +58,19 @@ export class AiChatService {
   }
 
 
+  selectByScoring(scoring: { jobDescription: string; folderId: number | undefined }) {
+    const formData: FormData = new FormData();
+    formData.append('jobDescription', scoring.jobDescription);
+    if (scoring.folderId !== undefined) {
+      formData.append('folderId', scoring.folderId.toString());
+    }
+    console.log('Scoring: ', scoring);
+    return this.http.post<Observable<FileDB[]>>(environment.backEndHost+"/ai/scoring", formData, {
+      reportProgress: true,
+      observe: 'events',
+      responseType: 'text' as 'json'
+    });
+  }
+
 
 }

@@ -1,3 +1,4 @@
+<!--
 <div class="container-load">
   <div class="header-container">
     <h3>Load file(s)</h3>
@@ -43,4 +44,50 @@
     </ngx-dropzone-preview>
   </ngx-dropzone>
 
+</div>
+-->
+
+
+<div class="container-load">
+  <div class="header-container d-flex justify-content-center align-items-center position-relative mb-1 p-1">
+    <h3>Load file(s)  </h3><span *ngIf="files.length > 0">: {{ files.length }}</span>
+  </div>
+
+  <div class="folder-container d-flex align-items-center my-0">
+    <form class="select-form ms-auto w-100">
+      <button mat-raised-button class="w-100 mb-1" (click)="openAddFolder()">Add a new folder..
+        <mat-icon>add</mat-icon>
+      </button>
+      <mat-form-field class="select-full-width w-100" appearance="outline">
+        <mat-label>Select Folder</mat-label>
+        <input matInput type="text" aria-label="Select Folder" [matAutocomplete]="auto" (focus)="onFocus()" [formControl]="folderCtrl">
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFolder">
+          <mat-option *ngFor="let folder of filteredFolders | async" [value]="folder">
+            <mat-icon>folder</mat-icon>
+            <span>{{ folder.name }}</span>
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </form>
+  </div>
+
+  <div class="btn-upload d-flex flex-column align-items-center my-1">
+    <button mat-raised-button class="w-100 mb-3" (click)="uploadFiles()" [disabled]="!this.folderCtrl.value || this.files.length === 0">Upload
+      <mat-icon>file_upload</mat-icon>
+    </button>
+    <div class="progress-container w-100" *ngIf="progress !== null">
+      <span class="d-block text-center fw-bold fs-5 text-dark">:  {{ progress }}  %</span>
+      <mat-progress-bar class="w-100" mode="determinate" value="{{progress}}"></mat-progress-bar>
+    </div>
+  </div>
+
+  <ngx-dropzone class="ngx-dropzone mx-auto" (change)="onSelect($event)" [accept]="'application/pdf'" [expandable]="true">
+    <ngx-dropzone-label class="label-drop text-center">
+      <mat-icon>cloud_upload</mat-icon>
+      <br><span>Drop your PDF files here!</span>
+    </ngx-dropzone-label>
+    <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onRemove(f)">
+      <ngx-dropzone-label class="text-wrap word-break-all">{{ f.name }}</ngx-dropzone-label>
+    </ngx-dropzone-preview>
+  </ngx-dropzone>
 </div>

@@ -21,5 +21,6 @@ public interface FileServices {
 
     void transferFiles(List<Long> fileIds, Long folderId);
 
+    FileDB updateFile(FileDB fileDB);
 
 }

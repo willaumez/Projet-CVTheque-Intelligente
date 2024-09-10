@@ -1,4 +1,117 @@
+
+html, body, .h-100 {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 mat-toolbar {
+  background-color: rgb(0, 74, 134);
+  height: 50px;
+
+  .logo-renault {
+    margin: 5px 0;
+    border-bottom: 2px solid #ffffff;
+  }
+
+  button {
+    width: auto;
+    height: auto;
+    border-radius: 30px;
+    justify-content: start;
+    font-size: 1rem;
+    color: #FFFFFF;
+
+    mat-icon {
+      width: 35px;
+      height: 35px;
+      color: #ffffff;
+      font-size: 35px;
+      margin: auto;
+    }
+  }
+}
+
+.example-spacer {
+  flex: 1 1 auto;
+}
+.mat-drawer-container {
+  width: 100%;
+  height: calc(100vh - 50px); /* 64px est la hauteur typique d'une mat-toolbar, ajustez si nécessaire */
+  display: flex;
+  flex-grow: 1;
+}
+
+.mat-drawer {
+  width: auto;
+  background-color: rgb(0, 74, 134);
+  height: 100%;
+
+  mat-nav-list {
+    display: flex;
+    flex-direction: column;
+    width: auto;
+    height: 100%;
+
+    .spacer {
+      flex: 1;
+    }
+
+    mat-list-item {
+      width: 100%;
+      margin: 5px 0;
+      padding: 0 6px;
+      border: none;
+
+      button {
+        width: 100%;
+        height: 100%;
+        justify-content: start;
+        font-size: 0.9rem;
+        color: #FFFFFF;
+
+        mat-icon {
+          width: 30px;
+          height: 30px;
+          color: #ffffff;
+          font-size: 30px;
+        }
+      }
+
+      &:hover {
+        background-color: #0049ff;
+      }
+
+      .active {
+        background-color: #ffffff;
+        color: #004985;
+        font-weight: bold;
+
+        mat-icon {
+          color: #004985;
+        }
+        &:hover {
+          background-color: #ffffff;
+          color: #004985;
+        }
+      }
+    }
+  }
+}
+
+/* Pour que le contenu s'ajuste à l'espace restant */
+.mat-drawer-content {
+  flex-grow: 1;
+  //padding: 16px;
+  overflow: auto;
+}
+
+
+
+
+/*mat-toolbar {
   background-color: rgb(0, 74, 134);
 
   button {
@@ -15,6 +128,10 @@ mat-toolbar {
       font-size: 40px;
       margin: auto;
     }
+  }
+  .logo-renault{
+    margin: 10px 0;
+    border-bottom: 2px solid #ffffff;
   }
 }
 
@@ -85,13 +202,14 @@ mat-toolbar {
 
     }
   }
-}
+}*/
 
 /*
 
 *{
   box-shadow: 0 0 0 1px #fbfdff inset;
 }
+
 */
 
 

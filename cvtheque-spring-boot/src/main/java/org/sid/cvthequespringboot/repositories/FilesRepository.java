@@ -11,7 +11,11 @@ public interface FilesRepository extends JpaRepository<FileDB, Long> {
 
     Long countByFolderId(Long id);
 
-    List<FileDB> findAllByFolderId(Long id);
+    List<FileDB> findAllByFolderIdOrderByCreatedAtDesc(Long id);
 
     void deleteAllByFolderId(Long id);
+
+    List<FileDB> findAllByOrderByCreatedAtDesc();
+
+    List<FileDB> findAllByFolderId(Long fromId);
 }

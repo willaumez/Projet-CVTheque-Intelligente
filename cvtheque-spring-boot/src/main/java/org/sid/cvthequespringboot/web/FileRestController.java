@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.sid.cvthequespringboot.dtos.FileDbDto;
 import org.sid.cvthequespringboot.dtos.FolderDto;
+import org.sid.cvthequespringboot.entities.FileDB;
 import org.sid.cvthequespringboot.services.FileServices.FileServices;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -29,32 +30,15 @@ public class FileRestController {
     private final ObjectMapper objectMapper;
     private FileServices fileServices;
 
-    //private static final String UPLOAD_DIR = "src/main/resources/pdfs/";
-   /* @PostMapping(value = "/upload", produces = MediaType.TEXT_PLAIN_VALUE)
-    public void upload(@RequestParam("files") List<MultipartFile> files, @RequestParam("folder") String folderJson) throws IOException {
-        FolderDto folderDto = objectMapper.readValue(folderJson, FolderDto.class);
-        fileServices.processAndStoreFiles(files, folderDto);
-        System.out.println("File stored successfully");
-    }
-*/
     //-------------------------------------------------------------------------
 
     @PostMapping(value = "/upload", produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("folder") String folderJson) throws IOException {
-        // Convertir le JSON en FolderDto
         FolderDto folderDto = objectMapper.readValue(folderJson, FolderDto.class);
-        //afficher au format JSON
-        //System.out.println("folderDto: " + objectMapper.writeValueAsString(folderDto));
-
-        // Appeler le service pour traiter et stocker le fichier
         fileServices.processAndStoreFiles(file, folderDto);
-
         return ResponseEntity.ok("File stored successfully");
     }
-
-
     //-------------------------------------------------------------------------
-
     //Get all files form the database FileDB
     @GetMapping("/files")
     public List<FileDbDto> getFiles(@RequestParam(value = "folderId", required = false) Long folderId) {
@@ -67,29 +51,21 @@ public class FileRestController {
         }
         return fileDbDtos;
     }
-
-
     //Read a file from the database FileDB
     @GetMapping("/read/{fileId}")
     public ResponseEntity<Resource> readFilePdf(@PathVariable Long fileId) {
         System.out.println("fileId: " + fileId);
         try {
-            // Charger le fichier depuis la base de données et sauvegarder en tant que fichier temporaire
             File tempFile = fileServices.saveReadFile(fileId);
             System.out.println("tempFile: " + tempFile.toString());
-
-            // Créer une ressource à partir du fichier temporaire
             Resource resource = new UrlResource(tempFile.toURI());
-
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + tempFile.getName());
             return new ResponseEntity<>(resource, headers, HttpStatus.OK);
-
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
     //Delete all files from the database FileDB and the vectorStore
     @DeleteMapping("/delete/{filesIds}")
     public void deleteFiles(@PathVariable List<Long> filesIds) {
@@ -108,6 +84,23 @@ public class FileRestController {
             return ResponseEntity.status(500).body("Error transferring files: " + e.getMessage());
         }
     }
+    //Upload a file to the database FileDB
+    @PutMapping("/update")
+    public ResponseEntity<String> updateFile(@RequestBody FileDB fileDB) {
+        System.out.println("=========================== fileDB: " + fileDB);
+        if (fileDB == null || fileDB.getId() == null) {
+            return ResponseEntity.badRequest().body("Invalid file data");
+        }
+
+        FileDB updatedFile = fileServices.updateFile(fileDB);
+        if (updatedFile != null) {
+            return ResponseEntity.ok("File updated successfully");
+        } else {
+            return ResponseEntity.status(500).body("Failed to update file");
+        }
+    }
+
+
 
 
 

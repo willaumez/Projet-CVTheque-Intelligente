@@ -20,6 +20,7 @@ export class AddFolderComponent implements OnInit {
   inOperation: boolean = false;
 
   @ViewChild('autosize') autosize: CdkTextareaAutosize | undefined;
+  error!: string;
 
   constructor(private fb: FormBuilder, private _dialogRef: MatDialogRef<AddFolderComponent>, private _folderService: FoldersService,
               @Inject(MAT_DIALOG_DATA) public data: any, private folderService: FoldersService, private _fileService: FilesService) {
@@ -39,39 +40,44 @@ export class AddFolderComponent implements OnInit {
         description: this.data.description,
         createdAt: this.data.createdAt,
       });
-    } else if (this.data?.transferFromFolder!){
+    } else if (this.data?.transferFromFolder!) {
       this.isTransfer = true;
       this.getFolders();
       this.selectedFolder = this.data.folderId;
-    }else if (this.data) {
+    } else if (this.data) {
       this.getFolders();
       this.isTransfer = true;
     }
   }
 
-// Méthode appelée lors de la soumission du formulaire
+// Méthode appelée lors de la soumission du formulaire;
   addFolderSubmit(): void {
+    let newFolder: Folder = undefined!;
     if (this.addFolderForm.valid) {
       const formData = this.addFolderForm.value;
-      this._folderService.saveFolder(formData).subscribe(
-        (response: Folder) => {
-          console.log('----- Folder added:', response);
-          this._dialogRef.close(response);
+      this._folderService.saveFolder(formData).subscribe({
+        next: (folder: Folder) => {
+          //console.log('Folder saved: ', folder);
+          newFolder = folder;
         },
-        (error) => {
-          console.error('Erreur lors de l\'ajout du dossier:', error);
+        error: (error) => {
+          this.error = 'Error saving folder: ' + error.message;
+        },
+        complete: () => {
+          //console.log('this._dialogRef.close(newFolder);'+newFolder);
+          //affiche le nouveau dossier dans la console au format JSON
+          //console.log(JSON.stringify(newFolder, null, 2));
+          this._dialogRef.close(newFolder);
         }
-      );
 
-      this._dialogRef.close();
-      // Ajouter votre logique de soumission ici (ex: appeler un service pour sauvegarder les données)
+      });
+      //this._dialogRef.close();
     } else {
-      console.log('Formulaire invalide');
+      this.error = 'Please fill in the required fields';
     }
   }
 
 // Méthode pour vérifier si le formulaire est valide
-
   isFormValid(): boolean {
     return this.addFolderForm.valid;
   }
@@ -86,7 +92,7 @@ export class AddFolderComponent implements OnInit {
       },
       error: (error) => {
         this.inOperation = true;
-        console.error('Error fetching folders:', error);
+        this.error = 'Error fetching folders: ' + error.message;
       }
     });
   }
@@ -94,39 +100,41 @@ export class AddFolderComponent implements OnInit {
   transferSubmit() {
     this.inOperation = true;
     if (this.selectedFolder && this.data && this.data.length > 0) {
-      this._fileService.transferFiles(this.data, this.selectedFolder).subscribe(
-        (response) => {
-          this.inOperation = false;
-          this.isTransfer = false;
-          this._dialogRef.close(true);
+      this._fileService.transferFiles(this.data, this.selectedFolder).subscribe({
+        error: (error) => {
+          this.error = 'Error transferring files: ' + error.message;
         },
-        (error) => {
+        complete: () => {
           this.inOperation = false;
           this.isTransfer = false;
-          //console.error("Error transferring files", error);
+          //console.log('this._dialogRef.close(true);');
+          this._dialogRef.close(true);
         }
-      );
+      });
     } else {
       this.inOperation = false;
       this.isTransfer = false;
       //console.warn("No folder selected or no files to transfer");
     }
   }
+
+
   transferFromIdSubmit() {
     this.inOperation = true;
     if (this.selectedFolder && this.data && this.data.transferFromFolder) {
-      this.folderService.transferFilesFromId(this.data.folderId, this.selectedFolder).subscribe(
-        (response) => {
-          this.inOperation = false;
-          this.isTransfer = false;
-          this._dialogRef.close(true);
-        },
-        (error) => {
+      this.folderService.transferFilesFromId(this.data.folderId, this.selectedFolder).subscribe({
+        error: (error) => {
           this.inOperation = false;
           this.isTransfer = false;
           //console.error("Error transferring files", error);
+        },
+        complete: () => {
+          this.inOperation = false;
+          this.isTransfer = false;
+          this._dialogRef.close(true);
         }
-      );
+
+      });
     } else {
       this.inOperation = false;
       this.isTransfer = false;

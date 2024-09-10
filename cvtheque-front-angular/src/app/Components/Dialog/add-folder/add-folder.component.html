@@ -1,3 +1,4 @@
+<!--
 <ng-container *ngIf="!isTransfer">
   <h2 mat-dialog-title>Add a new folder</h2>
   <mat-dialog-content>
@@ -61,3 +62,70 @@
   <mat-spinner class="spinner-load"></mat-spinner>
 </div>
 
+-->
+
+
+<ng-container *ngIf="!isTransfer">
+  <h2 mat-dialog-title class="text-center mb-4">Add a new folder</h2>
+  <mat-dialog-content>
+    <ng-container *ngIf="error">
+      <span class="error-message">{{ error }}</span>
+    </ng-container>
+
+    <form [formGroup]="addFolderForm" (ngSubmit)="addFolderSubmit()" class="m-1">
+      <div class="mb-3">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name" placeholder="Folder name" required>
+          <mat-icon matSuffix>folder</mat-icon>
+          <mat-error *ngIf="addFolderForm.get('name')?.invalid && (addFolderForm.get('name')?.dirty || addFolderForm.get('name')?.touched)">
+            Folder name is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="mb-3">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" cdkTextareaAutosize cdkAutosizeMinRows="5" cdkAutosizeMaxRows="25"></textarea>
+          <mat-icon matSuffix>description</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <mat-divider></mat-divider>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-raised-button class="me-2" [mat-dialog-close]="false">Cancel</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="!isFormValid()" (click)="addFolderSubmit()">Submit</button>
+  </mat-dialog-actions>
+</ng-container>
+
+
+<ng-container *ngIf="isTransfer">
+  <h2 mat-dialog-title class="text-center mb-4">Select a folder</h2>
+  <mat-dialog-content>
+
+    <ng-container *ngIf="error">
+      <span class="error-message">{{ error }}</span>
+    </ng-container>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Select a folder</mat-label>
+      <mat-select [(value)]="selectedFolder">
+        <mat-option *ngFor="let folder of folders" [value]="folder.id">{{ folder.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="d-flex justify-content-end">
+    <button mat-raised-button class="me-2" [mat-dialog-close]="false">Cancel</button>
+    <button mat-raised-button color="primary" [disabled]="!selectedFolder" (click)="transferSubmit()" *ngIf="!data.transferFromFolder">Submit</button>
+    <button mat-raised-button color="primary" [disabled]="!selectedFolder" (click)="transferFromIdSubmit()" *ngIf="data.transferFromFolder">Submit</button>
+  </mat-dialog-actions>
+</ng-container>
+
+<div class="spinner-overlay" *ngIf="inOperation && !error">
+  <mat-spinner class="spinner-load"></mat-spinner>
+</div>

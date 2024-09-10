@@ -8,7 +8,7 @@ Criteria: name, message
 
 - **Extract the fileId** from the document (CV): Long fileId.
 - **Compile a list of criteria that the document respects**, providing their names (using the exact name given in SELECTED CRITERIA) and a justification paragraph of 50 words: Criteria: name, message.
-- **Compile a list of criteria that the document does not respect**, providing their names (using the exact name given in SELECTED CRITERIA) and a justification paragraph of 50 words: Criteria: name, message.
+- **Compile a list of criteria that the document does not respect**, providing their names (using the exact name given in SELECTED CRITERIA) and a detailed justification paragraph: Criteria: name, message.
 
 To ensure accuracy, once a criterion is classified as either accepted or rejected, it **must not** be evaluated in the opposite category.
 

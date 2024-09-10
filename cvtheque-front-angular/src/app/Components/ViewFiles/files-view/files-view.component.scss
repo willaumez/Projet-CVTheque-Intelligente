@@ -1,23 +1,64 @@
-/*
-* {
-  //background-color: #9e9e9e;
-  box-shadow: 0 0 0 1px #80a8ff inset;
-}
-*/
 
-//With folder
+// Styles généraux
+/** {
+  box-shadow: 0 0 0 1px #80a8ff inset;
+}*/
+
+// Container principal
+.view-container {
+  width: 100%;
+  height: 100%;
+  //padding: 10px;
+
+  .view-header {
+    height: auto;
+    //margin: 12px;
+
+    .select-view {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      height: 100%;
+      margin-bottom: 15px;
+
+      .view-footer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        //padding: 10px;
+        background-color: #f5f5f5;
+
+        button {
+          width: 110px;
+          height: 30px;
+          font-size: 20px;
+          margin: 0 10px;
+
+          mat-icon {
+            width: auto;
+            height: auto;
+            font-size: 35px;
+          }
+        }
+      }
+    }
+  }
+
+  .view-content {
+    //margin: 0 10px;
+  }
+}
+
+// Header container
 .header-container {
   display: flex;
   justify-content: start;
   align-items: center;
   position: relative;
-  padding: 0 15px;
-  margin: 15px 0;
   background-color: #f5f5f5;
 
   span {
-    font-size: 1.5rem;
-    margin: 0;
+    font-size: 1rem;
     font-weight: bold;
     color: #004985;
 
@@ -28,30 +69,85 @@
   }
 }
 
-.example-container {
-  width: 50%;
-  height: 250px;
-  max-width: 100%;
-  margin-bottom: 10px;
-  display: inline-block;
-  vertical-align: top;
-  overflow: auto;
-
-  h2 {
-    position: sticky;
-    top: 0;
-    background: white;
-    width: 100%;
-  }
-}
-
-.main {
+// Fonctionnalités et menus
+.function-container {
   display: flex;
-  flex-direction: row;
   flex-wrap: wrap;
   width: 100%;
 }
 
+.function-content {
+  flex: 1;
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+
+  .function-content-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    .full-width {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+
+      mat-form-field {
+        flex: 1;
+      }
+    }
+  }
+}
+
+.function-menu {
+  //padding: 5px 10px 25px 10px;
+  box-sizing: border-box;
+  border: 3px solid #004a86;
+  border-radius: 10px;
+
+  .function-menu-title {
+    //margin: 25px 0;
+    text-align: center;
+    font-size: 1rem;
+    text-decoration: underline;
+    font-weight: bold;
+  }
+
+  mat-list-item {
+    height: auto;
+    padding: 8px;
+
+    button {
+      width: 100%;
+      //padding: 10px;
+      text-align: right;
+      justify-content: center;
+      font-size: 0.8rem;
+      color: #004985;
+      background-color: white;
+      border: none;
+      display: flex;
+      align-items: center;
+      text-transform: none;
+      cursor: pointer;
+      border-radius: 10px;
+
+      &.active {
+        background-color: #004985;
+        color: white;
+      }
+    }
+  }
+
+  @media (max-width: 900px) {
+    width: 100%;
+    order: -1;
+  }
+}
+
+// Criteria and drag-and-drop
 .main-1 {
   flex: 1;
   min-width: 500px;
@@ -65,7 +161,6 @@
     .form-container {
       display: flex;
       align-items: center;
-      height: auto;
 
       .input-field {
         flex-grow: 1;
@@ -81,7 +176,7 @@
         mat-icon {
           width: auto;
           height: auto;
-          font-size: 35px;
+          font-size: 30px;
           border-radius: 20px;
           color: #004a86;
         }
@@ -100,10 +195,11 @@
   }
 }
 
+// Job Description section
 .main-2 {
   flex: 1;
   min-width: 500px;
-  padding: 10px;
+  //padding: 10px;
 
   .main-2-1 {
     width: 100%;
@@ -112,18 +208,37 @@
       width: 100%;
     }
   }
+}
 
+// Example and drag-and-drop lists
+.example-container {
+  width: 50%;
+  height: 230px;
+  max-width: 100%;
+  //margin-bottom: 10px;
+  display: inline-block;
+  vertical-align: top;
+  overflow: auto;
+
+  h2 {
+    position: sticky;
+    top: 0;
+    text-decoration: underline;
+    background: white;
+    font-size: 1rem;
+  }
 }
 
 .example-list {
-  border: solid 1px #ccc;
-  min-height: 60px;
+  border: 2px solid #ccc;
+  min-height: 100%;
   background: white;
   border-radius: 4px;
   overflow: hidden;
   display: block;
 
   .edit-mode {
+    margin-bottom: -20px;
     width: 100%;
     height: 100%;
   }
@@ -131,17 +246,17 @@
 
 .example-box {
   padding: 10px;
-  border-bottom: solid 1px #ccc;
+  border: 1px solid #ccc;
+  //border-bottom: solid 1px #ccc;
   color: rgba(0, 0, 0, 0.87);
   display: flex;
-  flex-wrap: wrap;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
   cursor: move;
   background: white;
-  font-size: 1.1rem;
+  font-size: 1rem;
 
   &:last-child {
     border: none;
@@ -166,186 +281,27 @@
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
-.spinner-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+// Miscellaneous styles
+.criteria-button {
+  margin: 10px auto;
+  padding: 5px;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.29);
-  z-index: 1000;
-  pointer-events: all;
-}
-
-.spinner-load {
-  z-index: 1100;
-}
-
-.view-container {
-  width: 100%;
-  height: 100%;
-  padding: 10px;
-
-  h2 {
-    margin: 0;
-    text-align: center;
-    justify-content: center;
-  }
-
-  .view-header {
-    height: auto;
-    margin: 12px;
-
-    .select-view {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      height: 100%;
-
-      .view-footer {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 10px;
-        background-color: #f5f5f5;
-
-        button {
-          width: 150px;
-          height: 40px;
-          font-size: 20px;
-          margin: 0 10px;
-
-          mat-icon {
-            width: auto;
-            height: auto;
-            font-size: 50px;
-          }
-        }
-      }
-    }
-  }
-
-  .view-content {
-    height: auto;
-    margin: 0 10px;
-  }
+  border-radius: 5px;
+  font-size: 1rem;
 }
 
 .reset-data {
   position: absolute;
   height: auto;
   font-size: 20px;
-  margin: auto 10px;
-
   mat-icon {
     width: auto;
     height: auto;
-    font-size: 44px;
+    font-size: 35px;
     color: red;
   }
 }
 
-.function-container {
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-}
-
-/*.function-content {
-  flex: 1;
-  padding: 20px;
-  box-sizing: border-box;
-  .function-content-content{
-    .full-width{
-      width: 100%;
-      height: 100%;
-    }
-  }
-}*/
-.function-content {
-  flex: 1;
-  padding: 20px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-
-  .function-content-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-
-    .full-width {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      mat-form-field {
-        flex: 1;
-      }
-    }
-  }
-}
-
-
-.function-menu {
-  width: auto;
-  padding: 5px 10px 25px 10px;
-  box-sizing: border-box;
-  border: 3px solid #004a86;
-  border-radius: 10px;
-
-  .function-menu-title {
-    margin: 25px 0;
-    text-align: center;
-    font-size: 1.2rem;
-    text-decoration-line: underline;
-    font-weight: bold;
-  }
-
-  @media (max-width: 768px) {
-    width: 100%;
-    order: -1;
-  }
-
-  mat-list-item {
-    height: auto;
-    padding: 8px;
-
-    button {
-      width: 100%;
-      height: 100%;
-      padding: 10px;
-      text-align: right;
-      justify-content: center;
-      font-size: 1.1rem;
-      color: #004985;
-      background-color: white;
-      border: none;
-      display: flex;
-      align-items: center;
-      text-transform: none;
-      cursor: pointer;
-      border-radius: 10px;
-
-      &.active {
-        background-color: #004985;
-        color: white;
-      }
-    }
-  }
-}
-.criteria-button {
-  margin: 10px auto;
-  padding: 5px;
-  width: auto;
-  display: flex;
-  justify-content: center;
-  border-radius: 5px;
-  font-size: 1.2rem;
-}
 .active {
   background-color: #004985;
   color: white;

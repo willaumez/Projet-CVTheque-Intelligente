@@ -1,7 +1,10 @@
+<div class="h-100">
   <mat-toolbar>
-    <button class="togglebtn" mat-button (click)="toggleDrawer(drawer)" matTooltip="Nav" [class.open]="!isOpen">
+    <div class="logo-renault" routerLink="/cvs/home">
+      <img mat-card-image src="/assets/images/Renault_Group_logo.svg" alt="logo" width="110" />
+    </div>
+    <button class="togglebtn" mat-button (click)="toggleDrawer(drawer)" matTooltip="Nav" [class.open]="!isOpen" style="margin-left: 5px">
       <mat-icon>menu</mat-icon>
-<!--      <mat-icon>{{ isOpen ? 'close' : 'menu' }}</mat-icon>-->
     </button>
     <span class="example-spacer"></span>
     <button mat-button class="example-icon" aria-label="Example icon-button with share icon">
@@ -10,7 +13,77 @@
     </button>
   </mat-toolbar>
 
-  <mat-drawer-container autosize><!--&lt;!&ndash;  mode="over"  mode="push"  mode="side" &ndash;&gt;-->
+  <mat-drawer-container autosize class="d-flex">
+    <mat-drawer #drawer opened="true" mode="side" position="start" (openedChange)="onDrawerToggle($event)">
+      <mat-nav-list>
+        <div class="logo-app text-center">
+          <img mat-card-image src="/assets/images/logo.svg" alt="logo" width="130" height="55" />
+        </div>
+        <div class="spacer"></div>
+        <mat-list-item>
+          <button routerLink="/cvs/home" mat-button routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <mat-icon>home</mat-icon> Home
+          </button>
+        </mat-list-item>
+
+        <mat-list-item>
+          <button routerLink="/cvs/files-view" mat-button routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }">
+            <mat-icon>file_copy</mat-icon> Files
+          </button>
+        </mat-list-item>
+
+        <mat-list-item>
+          <button routerLink="/cvs/folders" mat-button routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }">
+            <mat-icon>folder_special</mat-icon> Folders
+          </button>
+        </mat-list-item>
+
+        <mat-list-item>
+          <button routerLink="/cvs/load-files" mat-button routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <mat-icon>file_download</mat-icon> Load files
+          </button>
+        </mat-list-item>
+        <div class="spacer"></div>
+        <mat-list-item>
+          <button routerLink="/cvs/settings" mat-button routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <mat-icon>settings</mat-icon>Settings
+          </button>
+        </mat-list-item>
+        <mat-list-item>
+          <button routerLink="#" mat-button>
+            <mat-icon>logout</mat-icon>Logout
+          </button>
+        </mat-list-item>
+      </mat-nav-list>
+    </mat-drawer>
+
+    <mat-drawer-content class="flex-grow-1 p-2">
+      <router-outlet></router-outlet>
+    </mat-drawer-content>
+  </mat-drawer-container>
+</div>
+
+
+
+
+
+<!--  <mat-toolbar>
+    <div class="logo-renault" routerLink="/cvs/home">
+      <img mat-card-image src="/assets/images/Renault_Group_logo.svg" alt="logo" class="image-pdf" width="150" height="57"/>
+    </div>
+    <button class="togglebtn" mat-button (click)="toggleDrawer(drawer)" matTooltip="Nav" [class.open]="!isOpen"
+    style="margin-left: 5px">
+      <mat-icon>menu</mat-icon>
+&lt;!&ndash;      <mat-icon>{{ isOpen ? 'close' : 'menu' }}</mat-icon>&ndash;&gt;
+    </button>
+    <span class="example-spacer"></span>
+    <button mat-button class="example-icon" aria-label="Example icon-button with share icon">
+      <span class="username">User</span>
+      <mat-icon>person</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <mat-drawer-container autosize>&lt;!&ndash;&lt;!&ndash;  mode="over"  mode="push"  mode="side" &ndash;&gt;&ndash;&gt;
     <mat-drawer #drawer opened="true" mode="side" position="start" (openedChange)="onDrawerToggle($event)">
       <mat-nav-list>
         <div class="logo-app">
@@ -42,7 +115,7 @@
         </mat-list-item>
         <div class="spacer"></div>
         <mat-list-item>
-          <button routerLink="#" mat-button
+          <button routerLink="/cvs/settings" mat-button
                   routerLinkActive="active"
                   [routerLinkActiveOptions]="{exact: true}"><mat-icon>settings</mat-icon>Settings</button>
         </mat-list-item>
@@ -61,7 +134,7 @@
     </mat-drawer-content>
 
 
-  </mat-drawer-container>
+  </mat-drawer-container>-->
 
 
 <!--

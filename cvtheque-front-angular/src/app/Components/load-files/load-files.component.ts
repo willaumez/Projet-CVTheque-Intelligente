@@ -74,8 +74,9 @@ export class LoadFilesComponent implements OnInit {
     this.folderCtrl.setValue(null); // Réinitialiser la valeur
     //this.folderCtrl.disable(); // Désactiver le champ de formulaire
     const dialogRef = this._dialog.open(AddFolderComponent, {});
-    dialogRef.afterClosed().subscribe({
-      next: (val: Folder) => {
+    dialogRef.afterClosed().subscribe(
+       (val: Folder) => {
+        //console.log('Folder added:', val);
         if (val) {
           this.folders.push(val);
           this.folderCtrl.setValue(val);
@@ -83,7 +84,7 @@ export class LoadFilesComponent implements OnInit {
           this.displayFolder(val);
         }
       },
-    });
+    );
   }
 
 

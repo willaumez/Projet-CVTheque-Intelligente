@@ -60,6 +60,11 @@ import { DeleteFolderComponent } from './Components/Dialog/delete-folder/delete-
 import {MatPaginatorModule} from "@angular/material/paginator";
 import {MatExpansionModule} from "@angular/material/expansion";
 import {MatChipsModule} from "@angular/material/chips";
+import { SettingsComponent } from './Components/Settings/settings/settings.component';
+import {MatTabsModule} from "@angular/material/tabs";
+import { ProfileCriteriaComponent } from './Components/Settings/profile-criteria/profile-criteria.component';
+import { UserManagementComponent } from './Components/Settings/user-management/user-management.component';
+import { AddProfileComponent } from './Components/Dialog/add-profile/add-profile.component';
 
 
 @NgModule({
@@ -76,6 +81,10 @@ import {MatChipsModule} from "@angular/material/chips";
     PdfViewerComponent,
     FolderViewComponent,
     DeleteFolderComponent,
+    SettingsComponent,
+    ProfileCriteriaComponent,
+    UserManagementComponent,
+    AddProfileComponent,
   ],
   imports: [
     BrowserModule, AppRoutingModule, MatSidenavModule, MatIcon, MatDivider, MatButton, MatTooltip, MatButtonToggle,
@@ -85,6 +94,7 @@ import {MatChipsModule} from "@angular/material/chips";
     MatHeaderRow, MatRow, MatRowDef, MatHeaderRowDef, MatNoDataRow, FlexLayoutModule, MatToolbar, MatCardModule, NgOptimizedImage,
     HttpClientModule, MatListItem, MatNavList, DragDropModule, MatProgressSpinnerModule, NgxExtendedPdfViewerModule, MatSelect,
     MatListModule, MatLine, MatSortModule, MatIconButton,MatMenuModule,MatPaginatorModule, MatExpansionModule,MatChipsModule,
+    MatTabsModule,
   ],
   providers: [
     provideAnimationsAsync()

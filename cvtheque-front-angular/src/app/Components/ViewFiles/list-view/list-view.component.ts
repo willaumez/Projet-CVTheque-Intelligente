@@ -11,7 +11,7 @@ import {
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {FilesService} from "../../../Services/FileServices/files.service";
-import {FileDB, ResultCriteria, ResultKeywords} from "../../../Models/FileDB";
+import {FileDB, ResultCriteria, ResultKeywords, Scoring} from "../../../Models/FileDB";
 import {MatDialog} from "@angular/material/dialog";
 import {PdfViewerComponent} from "../../Dialog/pdf-viewer/pdf-viewer.component";
 import {AddFolderComponent} from "../../Dialog/add-folder/add-folder.component";
@@ -28,7 +28,7 @@ export interface PdfFile {
   templateUrl: './list-view.component.html',
   styleUrl: './list-view.component.scss'
 })
-export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked  {
+export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked {
   isLoading = false;
   inOperation: boolean = false;
   error: string = '';
@@ -38,41 +38,44 @@ export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked  {
   selection: number[] = [];
   dataLoaded: boolean = false;
 
-  @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator!: MatPaginator;
 
   @Input() data: FileDB[] | null = [];
   @Input() folderId!: number;
   isResult: boolean = false;
   resultData: ResultCriteria | undefined;
   resultKeyword: ResultKeywords | undefined;
+  resultScoring: Scoring | undefined;
   pdfSrc = '';
 
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['data'].currentValue.length>0) {
+    if (changes['data'].currentValue.length > 0) {
       //console.log('Data received in app-list-view : ', changes['data']);
       // @ts-ignore
       this.dataSource.data = this.data;
+      this.returnToFilesView();
       //this.sortDataByAcceptCriteriaLength();
       if (this.data?.some(item => item.acceptCriteria && item.acceptCriteria.length > 0)) {
         this.sortData('acceptCriteria');
-        console.log('Sorting by acceptCriteria');
       } else if (this.data?.some(item => item.existWords && item.existWords.length > 0)) {
         this.sortData('existWords');
-        console.log('Sorting by existWords');
+      } else if (this.data?.some(item => item.scoring)) {
+        this.sortData('scoring');
       } else {
-        console.warn('No valid criteria found for sorting.');
+        this.error = ('No valid criteria found for sorting.');
       }
       this.dataLoaded = true;
       //console.log('Données reçues dans app-list-view : ', JSON.stringify(this.data, null, 2));
-    }else {
+    } else {
       this.getAllFiles();
     }
+
   }
 
   ngOnInit(): void {
     if (!this.dataLoaded) {
-        this.getAllFiles();
+      this.getAllFiles();
     }
   }
 
@@ -86,40 +89,55 @@ export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked  {
   }
 
 
-
 // Fonction de tri personnalisée
-  sortData(criteriaType: 'acceptCriteria' | 'existWords') {
+  sortData(criteriaType: 'acceptCriteria' | 'existWords' | 'scoring') {
     this.dataSource.data = this.dataSource.data.sort((a, b) => {
-      const aLength = criteriaType === 'acceptCriteria' ? (a.acceptCriteria?.length || 0) : (a.existWords?.length || 0);
-      const bLength = criteriaType === 'acceptCriteria' ? (b.acceptCriteria?.length || 0) : (b.existWords?.length || 0);
-      return bLength - aLength;
+      let aValue = 0;
+      let bValue = 0;
+
+      if (criteriaType === 'acceptCriteria') {
+        aValue = a.acceptCriteria?.length || 0;
+        bValue = b.acceptCriteria?.length || 0;
+      } else if (criteriaType === 'existWords') {
+        aValue = a.existWords?.length || 0;
+        bValue = b.existWords?.length || 0;
+      } else if (criteriaType === 'scoring') {
+        aValue = a.scoring?.score || 0;
+        bValue = b.scoring?.score || 0;
+      }
+      return bValue - aValue;
     });
   }
+
 
   getAllFiles() {
     this.isLoading = true;
 
-    // Vérifier si folderId existe et appeler la méthode appropriée dans le service
     if (this.folderId !== undefined) {
-      this._fileService.getAllFiles(this.folderId).subscribe(
-        (files: FileDB[]) => {
+      this._fileService.getAllFiles(this.folderId).subscribe({
+        next: (files: FileDB[]) => {
           this.dataSource.data = files;
           this.isLoading = false;
         },
-        (error) => {
+        error: (error) => {
           this.error = 'Error fetching files: ' + error.message;
           this.isLoading = false;
         }
-      );
+      });
     } else {
       this._fileService.getAllFiles().subscribe(
-        (files: FileDB[]) => {
-          this.dataSource.data = files;
-          this.isLoading = false;
-        },
-        (error) => {
-          this.error = 'Error fetching files: ' + error.message;
-          this.isLoading = false;
+        {
+          next: (files: FileDB[]) => {
+            this.dataSource.data = files;
+            this.isLoading = false;
+
+            //this.dataSource.data = [...files];
+            //this.dataSource._updateChangeSubscription();
+          },
+          error: (error) => {
+            this.error = 'Error fetching files: ' + error.message;
+            this.isLoading = false;
+          }
         }
       );
     }
@@ -168,13 +186,12 @@ export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked  {
       maxWidth: "100%",
       maxHeight: "100%"
     });
-    dialogRef.afterClosed().subscribe({
-      next: (val) => {
+    dialogRef.afterClosed().subscribe((val) => {
         if (val) {
           this.getAllFiles();
         }
       },
-    });
+    );
   }
 
   applyFilter(event: Event) {
@@ -185,21 +202,19 @@ export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked  {
   deleteSelection() {
     let conf: boolean = confirm("Are you sure to delete the selected items?");
     if (!conf) return;
-
     this.inOperation = true; // Début de l'opération
-
     if (this.selection.length > 0) {
-      this._fileService.deleteFiles(this.selection).subscribe(
-        (response) => {
+      this._fileService.deleteFiles(this.selection).subscribe({
+        next: (response) => {
           this.selection = [];
           this.getAllFiles();
           this.inOperation = false;
         },
-        (error) => {
-          this.error = 'Error Deleting Files: ' + error.message;
+        error: (error) => {
+          this.error = 'Error deleting files: ' + error.message;
           this.inOperation = false;
         }
-      );
+      });
     } else {
       this.inOperation = false;
     }
@@ -211,18 +226,15 @@ export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked  {
     const dialogRef = this._dialog.open(AddFolderComponent, {
       data,
     });
-    dialogRef.afterClosed().subscribe({
-      next: (val) => {
-        if (val) {
-          //console.log('Files transferred to:', val);
-          this.selection = [];
-          this.getAllFiles();
-        }
-      },
-      error: (error) => {
-        this.error = 'Error transferring files: ' + error.message;
+    dialogRef.afterClosed().subscribe((val) => {
+      if (val) {
+        console.log('Dialog closed with value: ', val);
+        this.selection = [];
+        this.dataSource.data = [];
+        this.getAllFiles();
       }
     });
+
   }
 
 
@@ -234,6 +246,7 @@ export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked  {
       rejectCriteria: file.rejectCriteria
     }
   }
+
   keywordsInfos(file: FileDB) {
     this.isResult = true;
     this.viewFile(file.id);
@@ -243,10 +256,17 @@ export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked  {
     }
   }
 
+  scoringInfos(fileId: number, scoring: Scoring,) {
+    this.isResult = true;
+    this.viewFile(fileId);
+    this.resultScoring = scoring
+  }
+
   returnToFilesView() {
     this.isResult = false;
     this.resultData = undefined;
     this.resultKeyword = undefined;
+    this.resultScoring = undefined;
   }
 
   //Real File
@@ -271,9 +291,42 @@ export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked  {
     const percentage = (acceptLength / total) * 100;
     return percentage.toFixed(0);
   }
+
   getCriteriaColor(first: any, second: any): string {
     const percentage = parseFloat(this.calculateAcceptancePercentage(first, second));
     return percentage >= 50 ? 'green' : 'red';
+  }
+
+  //Rename File
+  isRenameFile: boolean = false;
+  renameFileDB: FileDB | undefined;
+
+  renameFile(element: FileDB) {
+    this.isRenameFile = true;
+    this.renameFileDB = element;
+  }
+
+  renameFileSubmit() {
+    if (this.renameFileDB !== undefined) {
+      // @ts-ignore
+      this._fileService.renameFile(this.renameFileDB).subscribe({
+        next: (response) => {
+          if (!this.data) {
+            this.getAllFiles();
+          }
+          this.isRenameFile = false;
+          this.renameFileDB = undefined;
+        },
+        error: (error) => {
+          this.error = 'Error renaming file: ' + error.message;
+        }
+      });
+    }
+  }
+
+  resetRename() {
+    this.isRenameFile = false;
+    this.renameFileDB = undefined;
   }
 
 

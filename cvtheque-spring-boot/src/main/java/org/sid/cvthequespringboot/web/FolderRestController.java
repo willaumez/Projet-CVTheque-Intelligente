@@ -54,7 +54,7 @@ public class FolderRestController {
     public ResponseEntity<?> transferFiles(
             @RequestParam("fromId") Long fromId,
             @RequestParam("toId") Long toId) {
-        System.out.println("fromId: " + fromId + " toId: " + toId);
+        System.out.println("==================0 fromId: " + fromId + " toId: " + toId);
         try {
             folderService.transferFiles(fromId, toId);
             return ResponseEntity.ok("Files transferred successfully");

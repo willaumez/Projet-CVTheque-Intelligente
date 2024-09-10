@@ -16,7 +16,7 @@ import {Router} from "@angular/router";
 export class FolderViewComponent implements OnInit {
   isChecked = false;
   inOperation: boolean = false;
-  gridColumns = 10;
+  gridColumns = 14;
   dataSource: Folder[] = [];
   error: string = '';
   isLoading = false;
@@ -103,12 +103,11 @@ export class FolderViewComponent implements OnInit {
     const dialogRef = this._dialog.open(DeleteFolderComponent, {
       data,
     });
-    dialogRef.afterClosed().subscribe({
-      next: () => {
+    dialogRef.afterClosed().subscribe((val) => {
         this.getAllFolders();
         this.selection.clear();
       },
-    });
+    );
   }
 
   //Rename folder
@@ -117,13 +116,13 @@ export class FolderViewComponent implements OnInit {
     const dialogRef = this._dialog.open(AddFolderComponent, {
       data,
     });
-    dialogRef.afterClosed().subscribe({
-      next: (val: Folder) => {
+    dialogRef.afterClosed().subscribe((val: Folder) => {
+      console.log('Dialog closed with value: ', val);
         if (val) {
           this.getAllFolders();
         }
       },
-    });
+    );
   }
 
   //Delete folder
@@ -135,13 +134,12 @@ export class FolderViewComponent implements OnInit {
     const dialogRef = this._dialog.open(DeleteFolderComponent, {
       data,
     });
-    dialogRef.afterClosed().subscribe({
-      next: (val: Folder) => {
+    dialogRef.afterClosed().subscribe((val: Folder) => {
         if (val) {
           this.getAllFolders();
         }
       },
-    });
+    );
   }
 
   transfer(id: number) {
@@ -152,8 +150,7 @@ export class FolderViewComponent implements OnInit {
     const dialogRef = this._dialog.open(AddFolderComponent, {
       data,
     });
-    dialogRef.afterClosed().subscribe({
-      next: (val: Folder) => {
+    dialogRef.afterClosed().subscribe((val: Folder) => {
         if (val) {
           this.getAllFolders();
           if (this.transDelet) {
@@ -162,7 +159,7 @@ export class FolderViewComponent implements OnInit {
           }
         }
       },
-    });
+    );
   }
 
   transferToDelete(id: number) {
@@ -171,24 +168,24 @@ export class FolderViewComponent implements OnInit {
   }
 
   delete(id: number) {
-    this.folderService.delete(id).subscribe(
-      (response) => {
+    this.folderService.delete(id).subscribe({
+      next: (val) => {
         this.getAllFolders();
       },
-      (error) => {
-        this.error = 'Error Deleting Folder: ' + error.message;
+      error: (error) => {
+        console.error('Error deleting folder:', error);
       }
-    );
+    });
   }
 
   openAddFolder() {
     const dialogRef = this._dialog.open(AddFolderComponent, {});
-    dialogRef.afterClosed().subscribe({
-      next: (val: Folder) => {
+    dialogRef.afterClosed().subscribe((val: Folder) => {
         this.getAllFolders();
       },
-    });
+    );
   }
+
 
 
 }

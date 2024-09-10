@@ -25,7 +25,7 @@
     "@ngx-loading-bar/core": "^6.0.2",
     "@ngx-loading-bar/router": "^6.0.2",
     "@popperjs/core": "^2.11.8",
-    "bootstrap": "^5.3.2",
+    "bootstrap": "^5.3.3",
     "event-source-polyfill": "^1.0.31",
     "ngx-dropzone": "^3.1.0",
     "ngx-extended-pdf-viewer": "^21.0.0-alpha.6",

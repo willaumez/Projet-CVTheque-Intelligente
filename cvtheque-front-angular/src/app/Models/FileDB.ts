@@ -10,8 +10,8 @@ export interface FileDB {
   rejectCriteria?: Criteria[];
   existWords?: string[];
   noExistWords?: string[];
+  scoring?: Scoring;
 }
-
 
 export interface Folder {
   id: number;
@@ -20,19 +20,19 @@ export interface Folder {
   createdAt: string;
   fileCount?: number;
 }
-
-
 interface Criteria{
   name: string;
   message: string;
 }
-
 export interface ResultCriteria{
   acceptCriteria?: Criteria[];
   rejectCriteria?: Criteria[];
 }
-
 export interface ResultKeywords{
   existWords?: string[];
   noExistWords?: string[];
+}
+export interface Scoring{
+  score: number;
+  message: string;
 }
