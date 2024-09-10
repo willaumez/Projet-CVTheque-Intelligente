@@ -36,3 +36,12 @@ export interface Scoring{
   score: number;
   message: string;
 }
+
+
+//Stats
+export interface CVStatsDTO {
+  folderName: string;
+  month: number;
+  year: number;
+  count: number;
+}

@@ -2,6 +2,7 @@ package org.sid.cvthequespringboot.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import org.sid.cvthequespringboot.dtos.CVStatsDTO;
 import org.sid.cvthequespringboot.dtos.FileDbDto;
 import org.sid.cvthequespringboot.dtos.FolderDto;
 import org.sid.cvthequespringboot.entities.FileDB;
@@ -17,7 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 //@CrossOrigin(origins = "http://localhost:4200")  // pour autoriser les requêtes provenant de Angular
 //@CrossOrigin(origins = "*")  // pour autoriser les requêtes provenant de n'importe quelle origine
@@ -100,6 +103,34 @@ public class FileRestController {
         }
     }
 
+    //Stats
+    @GetMapping("/count-per-month")
+    public List<CVStatsDTO> getCvCountPerMonth() {
+        List<CVStatsDTO> statsDTOS = fileServices.getCvStats();
+        //System.out.println("====================== statsDTOS: " + statsDTOS.toString());
+        return statsDTOS;
+    }
+    /*@GetMapping("/count-per-month")
+    public List<CVStatsDTO> getCvCountPerMonth() {
+        List<CVStatsDTO> statsDTOS = new ArrayList<>();
+
+        // Création de données de test pour plusieurs années
+        String[] folders = {"Folder1", "Folder2", "Folder3"};
+        int[] years = {2023, 2024, 2025};
+
+        Random random = new Random();
+
+        for (String folder : folders) {
+            for (int year : years) {
+                for (int month = 1; month <= 12; month++) {
+                    long count = random.nextInt(100); // Nombre aléatoire de CVs
+                    statsDTOS.add(new CVStatsDTO(folder, month, year, count));
+                }
+            }
+        }
+
+        return statsDTOS;
+    }*/
 
 
 

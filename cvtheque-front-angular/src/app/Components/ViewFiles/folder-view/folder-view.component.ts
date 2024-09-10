@@ -15,8 +15,6 @@ import {Router} from "@angular/router";
 })
 export class FolderViewComponent implements OnInit {
   isChecked = false;
-  inOperation: boolean = false;
-  gridColumns = 14;
   dataSource: Folder[] = [];
   error: string = '';
   isLoading = false;
@@ -75,6 +73,7 @@ export class FolderViewComponent implements OnInit {
   //Get all folders
   getAllFolders() {
     this.isLoading = true;
+    this.error = '';
     this.folderService.getAllFolders(this.keyword).subscribe({
       next: (folders: Folder[]) => {
         this.dataSource = folders;
@@ -96,6 +95,7 @@ export class FolderViewComponent implements OnInit {
 
   //Delete selected folders
   deleteSelection() {
+    this.error = '';
     const data: {} = {
       deleteSelection: true,
       selection: this.selection.selected,
@@ -112,12 +112,13 @@ export class FolderViewComponent implements OnInit {
 
   //Rename folder
   rename(folder: Folder) {
+    this.error = '';
     const data: any = folder
     const dialogRef = this._dialog.open(AddFolderComponent, {
       data,
     });
     dialogRef.afterClosed().subscribe((val: Folder) => {
-      console.log('Dialog closed with value: ', val);
+      //console.log('Dialog closed with value: ', val);
         if (val) {
           this.getAllFolders();
         }

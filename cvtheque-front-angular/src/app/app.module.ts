@@ -10,7 +10,7 @@ import {MatListItem, MatListModule, MatNavList} from "@angular/material/list";
 import {MatIcon} from "@angular/material/icon";
 import {MatDivider} from "@angular/material/divider";
 import {MatButton, MatIconButton} from "@angular/material/button";
-import {MatTooltip} from "@angular/material/tooltip";
+import {MatTooltip, MatTooltipModule} from "@angular/material/tooltip";
 import {LoadFilesComponent} from './Components/load-files/load-files.component';
 import {TemplateScreensComponent} from './Components/template-screens/template-screens.component';
 import {MatButtonToggle} from "@angular/material/button-toggle";
@@ -65,6 +65,8 @@ import {MatTabsModule} from "@angular/material/tabs";
 import { ProfileCriteriaComponent } from './Components/Settings/profile-criteria/profile-criteria.component';
 import { UserManagementComponent } from './Components/Settings/user-management/user-management.component';
 import { AddProfileComponent } from './Components/Dialog/add-profile/add-profile.component';
+import {MatSnackBarModule} from "@angular/material/snack-bar";
+import {CanvasJSAngularChartsModule} from "@canvasjs/angular-charts";
 
 
 @NgModule({
@@ -94,7 +96,7 @@ import { AddProfileComponent } from './Components/Dialog/add-profile/add-profile
     MatHeaderRow, MatRow, MatRowDef, MatHeaderRowDef, MatNoDataRow, FlexLayoutModule, MatToolbar, MatCardModule, NgOptimizedImage,
     HttpClientModule, MatListItem, MatNavList, DragDropModule, MatProgressSpinnerModule, NgxExtendedPdfViewerModule, MatSelect,
     MatListModule, MatLine, MatSortModule, MatIconButton,MatMenuModule,MatPaginatorModule, MatExpansionModule,MatChipsModule,
-    MatTabsModule,
+    MatTabsModule, MatTooltipModule, CanvasJSAngularChartsModule
   ],
   providers: [
     provideAnimationsAsync()

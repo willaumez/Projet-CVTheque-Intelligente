@@ -10,8 +10,9 @@ import java.util.List;
 @Repository
 public interface CriteriaDBRepository extends JpaRepository<CriteriaDB, Long> {
     List<CriteriaDB> findAllByOrderByCreatedAtDesc();
-
     List<CriteriaDB> findAllByProfileIdOrderByCreatedAtDesc(Long profileId);
-
     boolean existsByProfileAndDescription(Profile profile, String description);
+    void deleteAllByProfileId(Long id);
+
+    void deleteAllByProfile(Profile profile);
 }

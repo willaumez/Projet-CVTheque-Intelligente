@@ -20,7 +20,7 @@ public class Folder {
     private String description;
     private Date createdAt = new Date();
 
-    @ManyToMany(cascade = {CascadeType.REMOVE}) // Ajout de CascadeType.REMOVE
+    @ManyToMany(cascade = {CascadeType.REMOVE})
     @JoinTable(
             name = "folder_files",
             joinColumns = @JoinColumn(name = "folder_id"),

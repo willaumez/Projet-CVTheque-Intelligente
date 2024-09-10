@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, inject, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
@@ -8,6 +8,7 @@ import {AddProfileComponent} from "../../Dialog/add-profile/add-profile.componen
 import {ProfileService} from "../../../Services/ProfileServices/profile.service";
 import {Event} from "@angular/router";
 import {CriteriaDB, Profile} from "../../../Models/Profile";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-profile-criteria',
@@ -80,7 +81,6 @@ export class ProfileCriteriaComponent implements OnInit {
   errorMessage: string = '';
   isLoading: boolean = false;
 
-
   constructor(private _dialog: MatDialog, private _profileService: ProfileService) {
   }
 
@@ -110,6 +110,8 @@ export class ProfileCriteriaComponent implements OnInit {
 
   getAllProfiles() {
     this.isLoading = true;
+    this.errorMessage = '';
+    this.criteriaErrorMessage = '';
     this._profileService.getAllProfiles().subscribe({
       next: (profiles: Profile[]) => {
         this.dataSource.data = profiles;
@@ -125,10 +127,39 @@ export class ProfileCriteriaComponent implements OnInit {
       }
     });
   }
+  renameProfile(row: Profile) {
+    const dialogRef = this._dialog.open(AddProfileComponent, {
+      data: row
+    });
+    dialogRef.afterClosed().subscribe({
+      next: (val: Profile) => {
+        if (val) {
+          this.getAllProfiles();
+        }
+      },
+    });
+  }
+
+  deleteProfile(row: Profile) {
+    this.errorMessage = '';
+    this.criteriaErrorMessage = '';
+    let conf: boolean = confirm("Are you sure to delete the item?");
+    if (!conf) return;
+    this._profileService.deleteProfile(row.id).subscribe({
+      next: () => {
+        this.selectedProfile = {} as Profile;
+        this.getAllProfiles();
+      },
+      error: (error: Error) => {
+        this.errorMessage = error.message;
+      }
+    });
+  }
 
 
   //Criteria Functions
   getCriteria(id: number) {
+    this.errorMessage = '';
     this.criteriaErrorMessage = '';
     this._profileService.getCriteriaByProfileId(id).subscribe({
       next: (criteria: CriteriaDB[]) => {
@@ -156,6 +187,7 @@ export class ProfileCriteriaComponent implements OnInit {
     //this.getCriteria(row.id);
   }
   addCriteriaClick() {
+    this.errorMessage = '';
     this.criteriaErrorMessage = '';
     if(this.newCriteria && this.selectedProfile.id){
       this._profileService.addCriteria(this.selectedProfile.id, this.newCriteria).subscribe({
@@ -171,6 +203,7 @@ export class ProfileCriteriaComponent implements OnInit {
   }
   deleteCriteria(id: number) {
     this.criteriaErrorMessage = '';
+    this.errorMessage = '';
     let conf: boolean = confirm("Are you sure to delete the item?");
     if (!conf) return;
     this._profileService.deleteCriteria(id).subscribe({
@@ -182,8 +215,6 @@ export class ProfileCriteriaComponent implements OnInit {
       }
     });
   }
-
-
 
 
 

@@ -12,7 +12,7 @@ button {
     width: auto;
     height: auto;
     margin: auto;
-    font-size: 35px;
+    font-size: 30px;
   }
 }
 
@@ -83,8 +83,13 @@ table {
     height: 100%;
     width: 100%;
     overflow-y: auto; // Active le scroll vertical
-    border: 2px solid #004b98;
-
+    border: 1px solid #004b98;
+  }
+  .scrollable-list-criteria {
+    height: 100%;
+    width: auto;
+    overflow-y: auto; // Active le scroll vertical
+    //border: 1px solid #004b98;
   }
 
   .select-profile {
@@ -101,36 +106,25 @@ table {
     }
   }
 
+
+  .form-container {
+    display: flex;
+    justify-content: center;
+  }
+
   .second-container {
     display: flex;
-    align-items: start;
-    //margin-right: 100px;
-
-    mat-form-field {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      margin-right: 8px;
-      margin-bottom: -30px;
-      width: 300px;
-
-      input {
-        flex: 1;
-        width: 100%;
-      }
-
-    }
-    button {
-      //margin-top: -20px;
-      //margin-left: -8px;
-      mat-icon{
-        width: auto;
-        height: auto;
-        font-size: 30px;
-
-      }
-    }
+    width: 100%;
+    justify-content: center;
   }
+
+  mat-form-field {
+    width: 500px;
+    margin-right: 8px;
+    margin-bottom: -30px;
+  }
+
+
 
 
   .no-data-message {

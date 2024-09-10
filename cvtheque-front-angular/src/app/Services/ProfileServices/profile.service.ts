@@ -91,6 +91,22 @@ export class ProfileService {
     );
   }
 
+  //Delete Profile
+  deleteProfile(id: number) {
+    return this.http.delete(environment.backEndHost + "/profile/delete/" + id).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 409) {
+          return throwError(() => new Error(error.error));
+        } else if (error.status === 404) {
+          return throwError(() => new Error('Profile not found'));
+        } else if (error.status >= 400 && error.status < 600) {
+          return throwError(() => new Error('An unexpected error occurred: ' + error.message));
+        } else {
+          return of(null);
+        }
+      })
+    )
+  }
 
 
 }

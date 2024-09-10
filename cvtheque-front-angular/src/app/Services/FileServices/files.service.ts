@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpEvent} from "@angular/common/http";
 import {Observable, throwError} from "rxjs";
 import {catchError, map} from "rxjs/operators";
-import {FileDB, Folder} from "../../Models/FileDB";
+import {CVStatsDTO, FileDB, Folder} from "../../Models/FileDB";
 import {environment} from "../../../environments/environment";
 
 @Injectable({
@@ -96,6 +96,11 @@ export class FilesService {
       observe: 'events',
       responseType: 'text'
     });
+  }
+
+  //Stats
+  getCvCountPerMonth(): Observable<any> {
+    return this.http.get<CVStatsDTO[]>(environment.backEndHost + "/file/count-per-month");
   }
 
 

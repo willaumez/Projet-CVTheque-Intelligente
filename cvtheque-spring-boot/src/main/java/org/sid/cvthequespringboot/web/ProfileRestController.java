@@ -24,7 +24,12 @@ public class ProfileRestController {
     @PostMapping("/save")
     public ResponseEntity<?> saveProfile(@RequestBody Profile profile) {
         try {
-            ProfileDto savedProfile = profileService.save(profile);
+            ProfileDto savedProfile;
+            if (profile.getId() == null) {
+                savedProfile = profileService.save(profile);
+            } else {
+                savedProfile = profileService.updateProfile(profile);
+            }
             return ResponseEntity.ok(savedProfile);
         } catch (ProfileAlreadyExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
@@ -72,6 +77,19 @@ public class ProfileRestController {
             }
         } catch (CriteriaDeletionException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred."+e.getMessage());
+        }
+    }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteProfile(@PathVariable Long id) {
+        try {
+            boolean isDeleted = profileService.deleteProfile(id);
+            if (isDeleted) {
+                return ResponseEntity.ok("Profile deleted successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Profile not found");
+            }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred."+e.getMessage());
         }

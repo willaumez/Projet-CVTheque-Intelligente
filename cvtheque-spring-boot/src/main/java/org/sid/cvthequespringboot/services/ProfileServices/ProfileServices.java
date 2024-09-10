@@ -12,7 +12,7 @@ import java.util.List;
 public interface ProfileServices {
     ProfileDto save(Profile profile);
     Profile getProfile(Long id);
-    Profile updateProfile(Profile profile);
+    ProfileDto updateProfile(Profile profile);
     boolean deleteProfile(Long id);
     List<ProfileDto> getProfiles();
 

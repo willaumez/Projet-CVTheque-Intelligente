@@ -48,13 +48,43 @@ public class ProfileServicesImpl implements ProfileServices {
     }
 
     @Override
-    public Profile updateProfile(Profile profile) {
-        return null;
+    public ProfileDto updateProfile(Profile profile) {
+        if (profile.getId() != null) {
+            Optional<Profile> profileOpt = profileRepository.findById(profile.getId());
+
+            if (profileOpt.isPresent()) {
+                Profile existingProfile = profileOpt.get();
+                existingProfile.setName(profile.getName());
+                existingProfile.setDescription(profile.getDescription());
+                existingProfile.setCreatedAt(new Date());
+                Profile updatedProfile = profileRepository.save(existingProfile);
+                return fileMappers.fromProfile(updatedProfile);
+            }
+        }
+        return fileMappers.fromProfile(profile);
     }
 
+
     @Override
+    @Transactional
     public boolean deleteProfile(Long id) {
-        return false;
+        Optional<Profile> profileOpt = profileRepository.findById(id);
+        if (profileOpt.isPresent()) {
+            try {
+                Profile profile = profileOpt.get();
+                //profileRepository.delete(profile);
+                System.out.println("==================== Profile deleted"+profile.getId());
+                criteriaDBRepository.deleteAllByProfileId(profile.getId());
+                profileRepository.deleteById(id);
+                return true;
+            } catch (DataIntegrityViolationException e) {
+                throw new CriteriaDeletionException("Cannot delete profile due to related data.");
+            } catch (Exception e) {
+                throw new CriteriaDeletionException("Error occurred during deletion.");
+            }
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -109,8 +139,6 @@ public class ProfileServicesImpl implements ProfileServices {
             return false;
         }
     }
-
-
 
 
 }

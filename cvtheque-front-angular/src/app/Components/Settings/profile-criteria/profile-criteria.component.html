@@ -33,14 +33,15 @@
 <div class="spinner" *ngIf="isLoading && !errorMessage">
   <mat-spinner></mat-spinner>
 </div>
-<ng-container *ngIf="errorMessage.length">
-  <span class="alert alert-danger fs-5 text-wrap">{{ errorMessage }}</span>
-</ng-container>
-<ng-container *ngIf="!isLoading && dataSource && dataSource.data && dataSource.data.length === 0 && !errorMessage">
+<div *ngIf="errorMessage.length" class="w-100 d-flex justify-content-center">
+  <span class="alert alert-danger text-wrap">{{ errorMessage }}</span>
+</div>
+
+<!--<ng-container *ngIf="!isLoading && dataSource && dataSource.data && dataSource.data.length === 0">
   <span class="alert alert-danger fs-5 text-wrap">No data available</span>
-</ng-container>
+</ng-container>-->
 <!--*ngIf="!isLoading && dataSource && dataSource.data && dataSource.data.length > 0 && !errorMessage"-->
-<div>
+<div *ngIf="!isLoading && dataSource && dataSource.data && !errorMessage">
   <div class="container-fluid row d-flex align-items-center justify-content-between flex-wrap">
     <div class="col-12 col-md-6 col-lg-4 mb-2 mb-md-0">
       <mat-form-field class="w-100 m-1 filter-field" appearance="outline">
@@ -60,18 +61,29 @@
     <div class="list-container col-4">
       <mat-list class="scrollable-list">
         <mat-list-item *ngFor="let row of dataSource.filteredData" class="select-profile"
-                       [ngClass]="{'selected-profile': selectedProfile?.id === row.id}">
+                       [ngClass]="{'selected-profile': selectedProfile.id === row.id}">
           <div class="w-100 d-flex justify-content-between align-items-center">
-            <div class="col-8">{{ row.name }}</div>
+            <div class="col-8" matTooltip="{{row.description}}" [matTooltipShowDelay]= 1000>
+              {{ row.name }}
+            </div>
             <div class="col-4 d-flex justify-content-between p-1">
-              <button mat-icon-button class="button-criteria">
+              <button mat-icon-button class="button-criteria" [matMenuTriggerFor]="menu">
                 <mat-icon>more_vert</mat-icon>
               </button>
               <button mat-raised-button (click)="loadCriteria(row)" class="button-criteria selectedButton">
                 <mat-icon>keyboard_tab</mat-icon>
               </button>
             </div>
-
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="renameProfile(row)" style="color: #004a86; border-radius: 10px;width: 100%">
+                <mat-icon style="color: #004a86">mode_edit</mat-icon>
+                <span>Rename</span>
+              </button>
+              <button mat-menu-item (click)="deleteProfile(row)" style="color: red; border-radius: 10px;width: 100%">
+                <mat-icon style="color: red">delete_forever</mat-icon>
+                <span>Delete</span>
+              </button>
+            </mat-menu>
           </div>
         </mat-list-item>
         <div *ngIf="dataSource.filteredData.length === 0" class="no-data-message">
@@ -81,45 +93,29 @@
     </div>
 
 
-    <div *ngIf="selectedProfile" class="col-7">
-      <ng-container *ngIf="selectedProfile?.listCriteria; else message">
-        <div class="alert-danger" *ngIf="criteriaErrorMessage">{{ criteriaErrorMessage }}</div>
-        <div class="form-container second-container p-2 align-items-center">
-          <mat-form-field appearance="outline" class="input-field">
+
+
+    <div *ngIf="selectedProfile" class="w-100">
+      <ng-container *ngIf="selectedProfile?.listCriteria">
+        <div *ngIf="criteriaErrorMessage" class="w-100 d-flex justify-content-center">
+          <span class="alert alert-danger text-wrap">{{ criteriaErrorMessage }}</span>
+        </div>
+        <div class="form-container second-container p-2 align-items-center align-content-center">
+          <mat-form-field appearance="outline">
             <mat-label>Add a new Criteria</mat-label>
             <input matInput type="text" placeholder="Enter new criteria" [(ngModel)]="newCriteria"
                    (keydown.enter)="addCriteriaClick()">
           </mat-form-field>
-          <button mat-button [disabled]="!newCriteria" (click)="addCriteriaClick()">
-            <mat-icon>add_circle</mat-icon>
-          </button>
         </div>
-        <div class="scrollable-list">
 
-          <!--<mat-list class="mt-4">
-            <mat-list-item *ngFor="let criteria of selectedProfile?.listCriteria" class="criteria-element">
-              <div class="d-flex justify-content-between align-items-center">
-                <div>{{ criteria.description }}</div>
-                <div>
-                  {{ criteria.createdAt | date: 'yyyy-MM-dd' }}
-                </div>
-                <div>
-                  <button mat-icon-button aria-label="Example icon-button with a menu">
-                    <mat-icon>more_vert</mat-icon>
-                  </button>
-                </div>
-              </div>
-            </mat-list-item>
-            <div *ngIf="dataSource.filteredData.length === 0" class="no-data-message">
-              No data matching the filter "{{ input.value }}"
-            </div>
-          </mat-list>-->
+
+        <div class="scrollable-list-criteria">
           <table class="table w-100 table-striped mt-4">
             <thead>
             <tr>
               <th>Description</th>
               <th>Date</th>
-              <th>Actions</th>
+              <th></th>
             </tr>
             </thead>
             <tbody>
@@ -136,18 +132,12 @@
           </table>
 
           <!-- Message si aucune donnée ne correspond au filtre -->
-          <div *ngIf="dataSource.filteredData.length === 0" class="no-data-message">
-            No data matching the filter "{{ input.value }}"
+          <div *ngIf="selectedProfile?.listCriteria?.length === 0" class="no-data-message ">
+            <span class="alert alert-info fs-5 text-wrap">No Criteria available</span>
           </div>
-
-
         </div>
 
-
       </ng-container>
-      <ng-template #message>
-        <div>{{ criteriaErrorMessage }}</div>
-      </ng-template>
     </div>
   </div>
 

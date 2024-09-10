@@ -1,5 +1,6 @@
 package org.sid.cvthequespringboot.services.FileServices;
 
+import org.sid.cvthequespringboot.dtos.CVStatsDTO;
 import org.sid.cvthequespringboot.dtos.FileDbDto;
 import org.sid.cvthequespringboot.dtos.FolderDto;
 import org.sid.cvthequespringboot.entities.FileDB;
@@ -22,5 +23,8 @@ public interface FileServices {
     void transferFiles(List<Long> fileIds, Long folderId);
 
     FileDB updateFile(FileDB fileDB);
+
+    //Stats
+    List<CVStatsDTO> getCvStats();
 
 }

@@ -1,1 +1,19 @@
-<p>home works!</p>
+<div class="container-fluid header-home">
+
+</div>
+<div class="container d-flex align-items-center justify-content-center" *ngIf="chartOptions">
+  <canvasjs-chart [options]="chartOptions" class="m-auto w-100"></canvasjs-chart>
+</div>
+
+<div class="container-fluid content-home">
+  <div class="row">
+    <div class="col-lg-6 col-md-12 p-1">
+      <canvasjs-chart [options]="chartOptions2"></canvasjs-chart>
+    </div>
+    <div class="col-lg-6 col-md-12 p-1">
+      <canvasjs-chart [options]="chartOptions3"></canvasjs-chart>
+    </div>
+  </div>
+</div>
+
+

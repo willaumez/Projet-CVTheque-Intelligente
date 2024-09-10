@@ -26,7 +26,7 @@ public class Profile {
 
     private Date createdAt;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = {CascadeType.REMOVE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id")
     private List<CriteriaDB> listCriteria;
 }

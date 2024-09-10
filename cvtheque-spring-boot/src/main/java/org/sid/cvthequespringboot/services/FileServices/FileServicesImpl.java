@@ -2,6 +2,7 @@ package org.sid.cvthequespringboot.services.FileServices;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
+import org.sid.cvthequespringboot.dtos.CVStatsDTO;
 import org.sid.cvthequespringboot.dtos.FileDbDto;
 import org.sid.cvthequespringboot.dtos.FolderDto;
 import org.sid.cvthequespringboot.entities.FileDB;
@@ -14,6 +15,7 @@ import org.sid.cvthequespringboot.repositories.FolderRepository;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.reader.pdf.PagePdfDocumentReader;
 import org.springframework.ai.vectorstore.OracleVectorStore;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
@@ -164,6 +166,11 @@ public class FileServicesImpl implements FileServices {
                 .orElseThrow(() -> new IllegalArgumentException("File not found"));
         fileDBFromDB.setName(fileDB.getName());
         return filesRepository.save(fileDBFromDB);
+    }
+
+    @Override
+    public List<CVStatsDTO> getCvStats() {
+        return filesRepository.countCVsByMonthAndFolder();
     }
 
 
