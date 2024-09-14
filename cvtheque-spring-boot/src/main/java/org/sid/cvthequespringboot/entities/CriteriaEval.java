@@ -1,9 +1,6 @@
 package org.sid.cvthequespringboot.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import org.sid.cvthequespringboot.enums.Status;
 
@@ -19,6 +16,8 @@ public class CriteriaEval {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
     private Status status;

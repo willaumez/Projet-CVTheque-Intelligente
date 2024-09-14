@@ -287,55 +287,12 @@
         </td>
       </ng-container>
 
-      <!-- Results Column -->
-      <ng-container matColumnDef="results">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let element" class="text-center align-middle">
-          <!-- Criteria Info -->
-          <div *ngIf="element.acceptCriteria?.length || element.rejectCriteria?.length">
-            <button mat-button (click)="criteriaInfos(element)">
-              <span
-                class="text-success me-2">{{ calculateAcceptancePercentage(element.acceptCriteria?.length, element.rejectCriteria?.length) }}
-                %</span>
-              <mat-icon>info</mat-icon>
-              <span class="text-success">{{ element.acceptCriteria?.length || 0 }}</span>
-              <sub>/{{ (element.acceptCriteria?.length || 0) + (element.rejectCriteria?.length || 0) }}</sub>
-              --
-              <span class="text-danger">{{ element.rejectCriteria?.length || 0 }}</span>
-              <sub>/{{ (element.acceptCriteria?.length || 0) + (element.rejectCriteria?.length || 0) }}</sub>
-            </button>
-          </div>
-
-          <!-- Keywords Info -->
-          <div *ngIf="element.existWords?.length || element.noExistWords?.length">
-            <button mat-button (click)="keywordsInfos(element)">
-              <span
-                class="text-success me-2">{{ calculateAcceptancePercentage(element.existWords?.length, element.noExistWords?.length) }}
-                %</span>
-              <mat-icon>info</mat-icon>
-              <span class="text-success">{{ element.existWords?.length || 0 }}</span>
-              <sub>/{{ (element.existWords?.length || 0) + (element.noExistWords?.length || 0) }}</sub>
-              --
-              <span class="text-danger">{{ element.noExistWords?.length || 0 }}</span>
-              <sub>/{{ (element.existWords?.length || 0) + (element.noExistWords?.length || 0) }}</sub>
-            </button>
-          </div>
-
-          <!-- Scoring Info -->
-          <div *ngIf="element.scoring?.score">
-            <button mat-button (click)="scoringInfos(element.id, element.scoring)">
-              <span class="text-success me-2">{{ element.scoring?.score }}%</span>
-            </button>
-          </div>
-        </td>
-      </ng-container>
-
       <!-- P Criteria Column -->
       <ng-container matColumnDef="criteria">
         <th mat-header-cell *matHeaderCellDef mat-sort-header="pcriteria" class="text-center">P-Criteria</th>
         <td mat-cell *matCellDef="let element" class="align-middle" style="width: 110px;">
           <button mat-button (click)="evaluationInfos(element.id)"
-                  *ngIf="element.evaluation"
+                  *ngIf="element.evaluation && element.pcriteria !== null"
                   [ngStyle]="{'color': element.pcriteria === null ? 'gray' : (element.pcriteria < 50 ? 'red' : 'green')}"
                   class="evaluation-btn">
             <mat-icon *ngIf="element.pcriteria !== null">{{ element.pcriteria < 50 ? 'thumb_down' : 'thumb_up' }}
@@ -350,7 +307,7 @@
         <td mat-cell *matCellDef="let element" class="align-middle" style="width: 115px;">
           <button mat-button
                   (click)="evaluationInfos(element.id)"
-                  *ngIf="element.evaluation"
+                  *ngIf="element.evaluation && element.pkeywords !== null"
                   [ngStyle]="{'color': element.pkeywords === null ? 'gray' : (element.pkeywords < 50 ? 'red' : 'green')}"
                   class="evaluation-btn">
             <mat-icon *ngIf="element.pkeywords !== null">{{ element.pkeywords < 50 ? 'thumb_down' : 'thumb_up' }}
@@ -365,7 +322,7 @@
         <td mat-cell *matCellDef="let element" class="align-middle" style="width: 110px;">
           <button mat-button
                   (click)="evaluationInfos(element.id)"
-                  *ngIf="element.evaluation"
+                  *ngIf="element.evaluation && element.pscoring !== null"
                   [ngStyle]="{'color': element.pscoring === null ? 'gray' : (element.pscoring < 50 ? 'red' : 'green')}"
                   class="evaluation-btn">
             <mat-icon *ngIf="element.pscoring !== null">{{ element.pscoring < 50 ? 'thumb_down' : 'thumb_up' }}
@@ -408,115 +365,6 @@
 </ng-container>
 
 
-<!--<ng-container *ngIf="isResult">
-  <div class="body-viewer">
-    <div class="pdf-viewer">
-      <ngx-extended-pdf-viewer
-        [src]="pdfSrc"
-        useBrowserLocale="true"
-        [textLayer]="true"
-        [showHandToolButton]="true"
-        class="ngx-viewer">
-      </ngx-extended-pdf-viewer>
-    </div>
-
-    <div class="result-container" *ngIf="this.resultData || this.resultKeyword || this.resultScoring">
-      <div class="return-button">
-        <button mat-raised-button (click)="returnToFilesView()">
-          <mat-icon>arrow_back</mat-icon>
-          Return
-        </button>
-      </div>
-      <div class="result-text" *ngIf="this.resultData">
-        <h2 class="accepted">Accepted Criteria:</h2>
-        <ng-container *ngIf="resultData?.acceptCriteria?.length; else noAcceptCriteria">
-          <ul>
-            <li *ngFor="let criteria of resultData.acceptCriteria">
-              <h3 style="color:#007e40;">{{ criteria.name }}</h3>
-              <p>{{ criteria.message }}</p>
-            </li>
-          </ul>
-        </ng-container>
-
-        &lt;!&ndash; Affichage d'un message si aucun critère accepté n'est présent &ndash;&gt;
-        <ng-template #noAcceptCriteria>
-          <p>No accepted criteria.</p>
-        </ng-template>
-
-        <mat-divider class="divider-criteria"></mat-divider>
-        &lt;!&ndash; Affichage des critères rejetés &ndash;&gt;
-        <h2 class="rejected">Rejected Criteria: </h2>
-        <ng-container *ngIf="resultData?.rejectCriteria?.length; else noRejectCriteria">
-          <ul>
-            <li *ngFor="let criteria of resultData.rejectCriteria">
-              <h3 style="color:#fb0000;">{{ criteria.name }}</h3>
-              <p>{{ criteria.message }}</p>
-            </li>
-          </ul>
-        </ng-container>
-        <ng-template #noRejectCriteria>
-          <p>No rejected criteria.</p>
-        </ng-template>
-      </div>
-
-      <div class="result-text" *ngIf="this.resultKeyword">
-        <h2 class="accepted">Keywords found:</h2>
-        <ng-container *ngIf="resultKeyword?.existWords?.length; else noExistWords">
-          <ul>
-            <li *ngFor="let criteria of resultKeyword.existWords">
-              <h3 style="color:#007e40;">{{ criteria }}</h3>
-            </li>
-          </ul>
-        </ng-container>
-
-        &lt;!&ndash; Affichage d'un message si aucun critère accepté n'est présent &ndash;&gt;
-        <ng-template #noExistWords>
-          <p>no keywords found.</p>
-        </ng-template>
-
-        <mat-divider class="divider-criteria"></mat-divider>
-        &lt;!&ndash; Affichage des critères rejetés &ndash;&gt;
-        <h2 class="rejected">keywords that were not found: </h2>
-        <ng-container *ngIf="resultKeyword?.noExistWords?.length; else noNoExistWords">
-          <ul>
-            <li *ngFor="let keyword of resultKeyword.noExistWords">
-              <h3 style="color:#fb0000;">{{ keyword }}</h3>
-            </li>
-          </ul>
-        </ng-container>
-
-        <ng-template #noNoExistWords>
-          <p>no keywords exist.</p>
-        </ng-template>
-      </div>
-
-      <div class="result-text" *ngIf="resultScoring">
-        <ng-container *ngIf="resultScoring.score; else noExistScore">
-          <span class="score-score"
-                [ngStyle]="{ 'color': getCriteriaColor(resultScoring.score, (100 - resultScoring.score)) }">
-            {{ resultScoring.score }}%
-          </span>
-        </ng-container>
-
-        <ng-template #noExistScore>
-          <p>No score found.</p>
-        </ng-template>
-
-        <mat-divider class="divider-criteria"></mat-divider>
-
-        <ng-container *ngIf="resultScoring.message; else noExistMessage">
-          <p class="score-message">{{ resultScoring.message }}</p>
-        </ng-container>
-
-        <ng-template #noExistMessage>
-          <p>No message found.</p>
-        </ng-template>
-      </div>
-
-    </div>
-  </div>
-
-</ng-container>-->
 
 <ng-container *ngIf="isResult">
   <div class="body-viewer">

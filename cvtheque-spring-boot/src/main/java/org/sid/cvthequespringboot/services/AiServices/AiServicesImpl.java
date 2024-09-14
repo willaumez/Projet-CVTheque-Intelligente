@@ -1,5 +1,7 @@
 package org.sid.cvthequespringboot.services.AiServices;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import jakarta.transaction.Transactional;
 import org.sid.cvthequespringboot.dtos.FileAiResults;
@@ -28,6 +30,8 @@ public class AiServicesImpl implements AiServices {
     private final FileStoreRepository fileStoreRepository;
     private final FilesRepository filesRepository;
     private final EvaluationRepository evaluationRepository;
+
+    ObjectMapper objectMapper = new ObjectMapper();
 
     //Prompts
     @Value("classpath:/prompts/prompt-general-chat.st")
@@ -128,9 +132,6 @@ public class AiServicesImpl implements AiServices {
                 scoringEvaluations = chatClient.prompt()
                         .system(promptResource)
                         .call().entity(ScoringEvaluation[].class);
-                for (ScoringEvaluation scor: scoringEvaluations) {
-                    System.out.println("===================================0 Scoring evaluations: " + scor.scoringDto().getMessage());
-                }
             } catch (Exception e) {
                 throw new RuntimeException("Erreur lors de l'appel au service AI", e);
             }
@@ -146,16 +147,12 @@ public class AiServicesImpl implements AiServices {
                     existingEvaluation.setCreatedAt(new Date());
                     existingEvaluation.setFileDB(fileDB);
                 }
-                System.out.println("===================================0 existingEvaluation evaluations: " + existingEvaluation.getScoring());
-
                 Scoring newScoring = Scoring.builder()
                         .profile(evaluation.scoringDto().getProfile())
                         .score(evaluation.scoringDto().getScore())
                         .message(evaluation.scoringDto().getMessage())
                         .createdAt(new Date())
                         .build();
-                System.out.println("===================================0 Score evaluations: " + newScoring.getScore());
-
                 // Ajouter le nouveau Scoring à la liste existante
                 if (existingEvaluation.getScoring() == null) {
                     existingEvaluation.setScoring(new ArrayList<>());
@@ -177,7 +174,6 @@ public class AiServicesImpl implements AiServices {
         }
         return fileAiResultsList;
     }
-
 
     @Transactional
     public List<FileAiResults> processSelectedKeywords(List<FileVectorStore> documents, List<String> keywords){
@@ -246,9 +242,6 @@ public class AiServicesImpl implements AiServices {
         return fileAiResultsList;
     }
 
-
-
-
     /*@Transactional
     public List<FileAiResults> processElectedCriteria(List<FileVectorStore> documents, List<String> selectedCriteria, String jobDescription){
         List<List<FileVectorStore>> partitionedDocuments = Lists.partition(documents, 2);
@@ -302,7 +295,6 @@ public class AiServicesImpl implements AiServices {
                     .map(doc -> "| FileDBId: " + doc.getFileDB().getId() +
                             " | Content: " + doc.getContent())
                     .collect(Collectors.toList());
-
             PromptTemplate promptTemplate = new PromptTemplate(promptCriteria);
             Prompt prompt = promptTemplate.create(Map.of(
                     "context", context,
@@ -311,7 +303,6 @@ public class AiServicesImpl implements AiServices {
 
             Resource promptResource = new ByteArrayResource(prompt.getContents().getBytes());
             CriteriaEvaluation[] criteriaEvaluation;
-
             try {
                 criteriaEvaluation = chatClient.prompt()
                         .system(promptResource)
@@ -319,23 +310,21 @@ public class AiServicesImpl implements AiServices {
             } catch (Exception e) {
                 throw new RuntimeException("Erreur lors de l'appel au service AI", e);
             }
-
             for (CriteriaEvaluation evaluation : criteriaEvaluation) {
-                // Récupérer le fichier associé
                 FileDB fileDB = filesRepository.findById(evaluation.fileId())
                         .orElseThrow(() -> new RuntimeException("Fichier introuvable pour l'ID: " + evaluation.fileId()));
 
-                // Chercher si une évaluation existe déjà pour ce fichier
                 Evaluation existingEvaluation = evaluationRepository.findByFileDB_Id(fileDB.getId());
                 if (existingEvaluation == null) {
-                    // Créer une nouvelle évaluation si elle n'existe pas
                     existingEvaluation = new Evaluation();
                     existingEvaluation.setCreatedAt(new Date());
                     existingEvaluation.setFileDB(fileDB);
                 }
-
-                // Mettre à jour l'évaluation
-                existingEvaluation.setAcceptRejectCriteria(evaluation.acceptCriteria().stream()
+                List<CriteriaEval> currentCriteriaEvals = existingEvaluation.getAcceptRejectCriteria();
+                if (currentCriteriaEvals == null) {
+                    currentCriteriaEvals = new ArrayList<>();
+                }
+                currentCriteriaEvals.addAll(evaluation.acceptCriteria().stream()
                         .map(c -> {
                             CriteriaEval criteriaEval = new CriteriaEval();
                             criteriaEval.setCreatedAt(new Date());
@@ -343,22 +332,29 @@ public class AiServicesImpl implements AiServices {
                             criteriaEval.setMessage(c.getMessage());
                             criteriaEval.setStatus(Status.ACCEPTED);
                             return criteriaEval;
-                        }) // Convertir Criteria pour CriteriaEval
-                        .collect(Collectors.toList()));
-
-                existingEvaluation.setAcceptRejectCriteria(evaluation.rejectCriteria().stream()
+                        })
+                        .toList());
+                currentCriteriaEvals.addAll(evaluation.rejectCriteria().stream()
                         .map(c -> {
                             CriteriaEval criteriaEval = new CriteriaEval();
+                            criteriaEval.setCreatedAt(new Date());
                             criteriaEval.setName(c.getName());
                             criteriaEval.setMessage(c.getMessage());
                             criteriaEval.setStatus(Status.REJECTED);
                             return criteriaEval;
-                        }) // Convertir Criteria pour CriteriaEval
-                        .collect(Collectors.toList()));
-
-                // Sauvegarder l'évaluation dans la base de données
+                        })
+                        .toList());
+                existingEvaluation.setAcceptRejectCriteria(currentCriteriaEvals);
                 evaluationRepository.save(existingEvaluation);
-
+                /*
+                // Sauvegarder l'évaluation dans la base de données
+                String existingEvaluationJson = null;
+                try {
+                    existingEvaluationJson = objectMapper.writeValueAsString(existingEvaluation.getAcceptRejectCriteria());
+                    System.out.println("============================ existingEvaluation: " + existingEvaluationJson);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }*/
                 // Remplir les résultats
                 FileAiResults fileAiResults = new FileAiResults();
                 fileAiResults.setId(fileDB.getId());

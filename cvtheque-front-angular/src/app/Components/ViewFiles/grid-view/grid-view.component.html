@@ -267,7 +267,8 @@
       </div>
 
       <!-- Action container for delete and transfer buttons -->
-      <div class="action-container col-12 col-md-6 col-lg-4 mb-2 mb-md-0 d-flex justify-content-center" *ngIf="selection.hasValue() && isChecked">
+      <div class="action-container col-12 col-md-6 col-lg-4 mb-2 mb-md-0 d-flex justify-content-center"
+           *ngIf="selection.hasValue() && isChecked">
         <button mat-button (click)="deleteSelection()">
           <mat-icon class="delete-icon">delete_forever</mat-icon>
         </button>
@@ -288,7 +289,8 @@
           </mat-checkbox>
         </div>
 
-        <mat-slide-toggle class="example-margin" [(ngModel)]="isChecked" (click)="checkedClick()">Select</mat-slide-toggle>
+        <mat-slide-toggle class="example-margin" [(ngModel)]="isChecked" (click)="checkedClick()">Select
+        </mat-slide-toggle>
       </div>
     </div>
 
@@ -318,56 +320,27 @@
               </div>
             </div>
 
-            <mat-card-actions class="card-results" *ngIf="file.acceptCriteria?.length || file.rejectCriteria?.length
-             || file.existWords?.length || file.noExistWords?.length || file.scoring">
-              <div *ngIf="file.acceptCriteria?.length || file.rejectCriteria?.length">
-                <button mat-button class="criteria-container" (click)="criteriaInfos(file)">
-                <span
-                  class="criteria-accept"
-                  [ngStyle]="{ 'color': getCriteriaColor(file.acceptCriteria?.length, file.rejectCriteria?.length) }"
-                  style="margin-right: 10px">
-              {{ calculateAcceptancePercentage(file.acceptCriteria?.length, file.rejectCriteria?.length) }}%
-            </span>
-                </button>
-                <button mat-button class="criteria-container"
-                        (click)="criteriaInfos(file)">
-                  <mat-icon>info</mat-icon>
-                  <span class="criteria-accept" style="color: green">{{ file.acceptCriteria?.length || 0 }}</span>  -
-                  <span class="criteria-reject" style="color: red">{{ file.rejectCriteria?.length || 0 }}</span>
-                  <sub>/{{ (file.acceptCriteria?.length || 0) + (file.rejectCriteria?.length || 0) }}</sub>
-                </button>
-              </div>
-
-              <div *ngIf="file.existWords?.length || file.noExistWords?.length">
-                <button mat-button class="criteria-container"
-                        (click)="keywordsInfos(file)">
-              <span
-                class="criteria-accept"
-                [ngStyle]="{ 'color': getCriteriaColor(file.existWords?.length , file.noExistWords?.length) }"
-                style="margin-right: 10px">
-              {{ calculateAcceptancePercentage(file.existWords?.length, file.noExistWords?.length) }}%
-              </span>
-                </button>
-                <button mat-button class="criteria-container"
-                        (click)="keywordsInfos(file)">
-                  <mat-icon>info</mat-icon>
-                  <span class="criteria-accept" style="color: green">{{ file.existWords?.length || 0 }}</span>-
-                  <span class="criteria-reject" style="color: red">{{ file.noExistWords?.length || 0 }}</span>
-                  <sub> /{{ (file.existWords?.length || 0) + (file.noExistWords?.length || 0) }}</sub>
-                </button>
-              </div>
-
-              <div *ngIf="file.scoring && file.scoring.score">
-                <button mat-button class="criteria-container"
-                        (click)="scoringInfos(file.id, file.scoring)">
-                  <span class="criteria-accept"
-                        [ngStyle]="{ 'color': getCriteriaColor(file.scoring.score, (100 - file.scoring.score)) }"
-                        style="margin-right: 10px">
-                    {{ file.scoring.score }}%
-                  </span>
-                </button>
-              </div>
+            <mat-card-actions class="card-results">
+              <button class="button-container" mat-button type="button" (click)="evaluationInfos(file.id)">
+                <span *ngIf="file.evaluation"
+                      [ngStyle]="{'color': file.pcriteria === null ? 'gray' : (file.pcriteria < 50 ? 'red' : 'green')}"
+                      class="evaluation-btn">Criteria:
+                  {{file.pcriteria !== null ? file.pcriteria + '%' : 'N/A' }}
+                </span>
+                <span *ngIf="file.evaluation"
+                      [ngStyle]="{'color': file.pkeywords === null ? 'gray' : (file.pkeywords < 50 ? 'red' : 'green')}"
+                      class="evaluation-btn">Keywords:
+                  {{file.pkeywords !== null ? file.pkeywords + '%' : 'N/A' }}
+                </span>
+                <span *ngIf="file.evaluation"
+                      [ngStyle]="{'color': file.pscoring === null ? 'gray' : (file.pscoring < 50 ? 'red' : 'green')}"
+                      class="evaluation-btn">Score:
+                  {{ file.pscoring !== null ? file.pscoring + '%' : 'N/A' }}
+                </span>
+              </button>
             </mat-card-actions>
+
+
           </mat-card>
         </div>
       </div>
@@ -386,7 +359,6 @@
 </ng-container>
 
 
-
 <ng-container *ngIf="isResult">
   <div class="body-viewer">
     <div class="pdf-viewer">
@@ -399,97 +371,101 @@
       </ngx-extended-pdf-viewer>
     </div>
 
-    <div class="result-container" *ngIf="this.resultData || this.resultKeyword || this.resultScoring">
+    <div class="result-container" *ngIf="evaluation">
       <div class="return-button">
         <button mat-raised-button (click)="returnToFilesView()">
           <mat-icon>arrow_back</mat-icon>
           Return
         </button>
       </div>
-      <div class="result-text" *ngIf="this.resultData">
+
+      <!-- Affichage des critères acceptés -->
+      <div class="result-text" *ngIf="evaluation.acceptCriteria?.length">
         <h2 class="accepted">Accepted Criteria:</h2>
-        <ng-container *ngIf="resultData?.acceptCriteria?.length; else noAcceptCriteria">
-          <ul>
-            <li *ngFor="let criteria of resultData.acceptCriteria">
-              <h3 style="color:#007e40;">{{ criteria.name }}</h3>
-              <p>{{ criteria.message }}</p>
-            </li>
-          </ul>
-        </ng-container>
-        <ng-template #noAcceptCriteria>
-          <p>No accepted criteria.</p>
-        </ng-template>
-
-        <mat-divider class="divider-criteria"></mat-divider>
-        <h2 class="rejected">Rejected Criteria: </h2>
-        <ng-container *ngIf="resultData?.rejectCriteria?.length; else noRejectCriteria">
-          <ul>
-            <li *ngFor="let criteria of resultData.rejectCriteria">
-              <h3 style="color:#fb0000;">{{ criteria.name }}</h3>
-              <p>{{ criteria.message }}</p>
-            </li>
-          </ul>
-        </ng-container>
-
-        <!-- Affichage d'un message si aucun critère rejeté n'est présent -->
-        <ng-template #noRejectCriteria>
-          <p>No rejected criteria.</p>
-        </ng-template>
-
+        <ul>
+          <li *ngFor="let criteria of evaluation.acceptCriteria">
+            <h3 style="color:#007e40;">{{ criteria.name }}</h3>
+            <p>{{ criteria.message }}</p>
+          </li>
+        </ul>
       </div>
+      <ng-container *ngIf="!evaluation.acceptCriteria?.length">
+        <p>No accepted criteria.</p>
+      </ng-container>
 
+      <mat-divider class="divider-criteria"></mat-divider>
 
-      <div class="result-text" *ngIf="this.resultKeyword">
+      <!-- Affichage des critères rejetés -->
+      <div class="result-text" *ngIf="evaluation.rejectCriteria?.length">
+        <h2 class="rejected">Rejected Criteria:</h2>
+        <ul>
+          <li *ngFor="let criteria of evaluation.rejectCriteria">
+            <h3 style="color:#fb0000;">{{ criteria.name }}</h3>
+            <p>{{ criteria.message }}</p>
+          </li>
+        </ul>
+      </div>
+      <ng-container *ngIf="!evaluation.rejectCriteria?.length">
+        <p>No rejected criteria.</p>
+      </ng-container>
+
+      <mat-divider class="divider-criteria"></mat-divider>
+
+      <!-- Affichage des mots existants -->
+      <div class="result-text" *ngIf="evaluation.existWords?.length">
         <h2 class="accepted">Keywords found:</h2>
-        <ng-container *ngIf="resultKeyword?.existWords?.length; else noExistWords">
-          <ul>
-            <li *ngFor="let keyword of resultKeyword.existWords">
-              <h3 style="color:#007e40;">{{ keyword }}</h3>
-            </li>
-          </ul>
-        </ng-container>
-        <ng-template #noExistWords>
-          <p>no keywords found.</p>
-        </ng-template>
-        <mat-divider class="divider-criteria"></mat-divider>
-        <h2 class="rejected">keywords that were not found: </h2>
-        <ng-container *ngIf="resultKeyword?.noExistWords?.length; else noNoExistWords">
-          <ul>
-            <li *ngFor="let keyword of resultKeyword.noExistWords">
-              <h3 style="color:#fb0000;">{{ keyword }}</h3>
-            </li>
-          </ul>
-        </ng-container>
-
-        <ng-template #noNoExistWords>
-          <p>no keywords exist.</p>
-        </ng-template>
-      </div>
-      <div class="result-text" *ngIf="resultScoring">
-        <ng-container *ngIf="resultScoring.score; else noExistScore">
-          <span class="score-score"
-                [ngStyle]="{ 'color': getCriteriaColor(resultScoring.score, (100 - resultScoring.score)) }">
-            {{ resultScoring.score }}%
+        <div class="keywords-container p-2" style="color:green;">
+          <span *ngFor="let word of evaluation.existWords" class="keyword">
+            {{ word }}
           </span>
-        </ng-container>
-
-        <ng-template #noExistScore>
-          <p>No score found.</p>
-        </ng-template>
-
-        <mat-divider class="divider-criteria"></mat-divider>
-
-        <ng-container *ngIf="resultScoring.message; else noExistMessage">
-          <p class="score-message">{{ resultScoring.message }}</p>
-        </ng-container>
-
-        <ng-template #noExistMessage>
-          <p>No message found.</p>
-        </ng-template>
+        </div>
       </div>
 
+      <ng-container *ngIf="!evaluation.existWords?.length">
+        <p>No keywords found.</p>
+      </ng-container>
+
+      <mat-divider class="divider-criteria"></mat-divider>
+
+      <!-- Affichage des mots non existants -->
+      <div class="result-text" *ngIf="evaluation.noExistWords?.length">
+        <h2 class="rejected">Keywords that were not found:</h2>
+        <div class="keywords-container p-2" style="color:red;">
+          <span *ngFor="let keyword of evaluation.noExistWords" class="keyword">
+          {{ keyword }}
+          </span>
+        </div>
+      </div>
+
+      <ng-container *ngIf="!evaluation.noExistWords?.length">
+        <p>No keywords exist.</p>
+      </ng-container>
+
+      <mat-divider class="divider-criteria"></mat-divider>
+
+      <!-- Affichage du score -->
+      <div class="result-text" *ngIf="evaluation.scoring?.length">
+        <h2 class="score">Scoring:</h2>
+        <ng-container *ngFor="let score of evaluation.scoring">
+          <ng-container *ngIf="score.score !== null; else noExistScore">
+            <span class="accepted"> Profile: {{ score.profile }}</span>
+            <span class="score-score"
+                  [ngStyle]="{ 'color': score.score < 50 ? 'red' : 'green' }">
+              {{ score.score }}%
+            </span>
+          </ng-container>
+          <ng-template #noExistScore>
+            <p>No score found.</p>
+          </ng-template>
+          <ng-container *ngIf="score.message; else noExistMessage">
+            <p class="score-message">{{ score.message }}</p>
+          </ng-container>
+          <ng-template #noExistMessage>
+            <p>No message found.</p>
+          </ng-template>
+        </ng-container>
+      </div>
     </div>
   </div>
-
 </ng-container>
 

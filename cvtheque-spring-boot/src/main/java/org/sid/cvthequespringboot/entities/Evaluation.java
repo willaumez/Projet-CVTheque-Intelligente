@@ -23,7 +23,7 @@ public class Evaluation {
     @Column(nullable = false)
     private Date createdAt = new Date();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "evaluation_id")
     private List<CriteriaEval> acceptRejectCriteria;
 
@@ -37,7 +37,7 @@ public class Evaluation {
     @Column(name = "no_exist_words")
     private List<String> noExistWords;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "evaluation_id")
     private List<Scoring> scoring;
 

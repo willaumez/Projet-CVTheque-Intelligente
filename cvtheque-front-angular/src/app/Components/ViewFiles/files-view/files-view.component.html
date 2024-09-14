@@ -149,7 +149,6 @@
             </button>
           </div>
         </div>
-
         <div class="function-menu">
           <div mat-subheader class="function-menu-title">Evaluation</div>
           <mat-list>
@@ -176,14 +175,7 @@
       </div>
 
 
-    <!--test-->
-
-
     <div class="select-view">
-      <button mat-button class="reset-data" (click)="cancelData()"
-      *ngIf="data$.value.length>0">
-        <mat-icon>cancel</mat-icon>
-      </button>
       <div class="view-footer">
         <button mat-raised-button (click)="toggleListView()" [disabled]="isListView">
           <mat-icon class="view-icon">view_list</mat-icon>
@@ -193,12 +185,6 @@
           <mat-icon class="view-icon">view_module</mat-icon>
           Grid
         </button>
-        <!--<div class="chat-container">
-          <button mat-raised-button routerLink="/cvs/files-view/chat">
-            <mat-icon>chat</mat-icon>
-            Chat
-          </button>
-        </div>-->
       </div>
       <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
 
@@ -206,14 +192,16 @@
     </div>
 
 
-    <div class="view-content">
-      <ng-container *ngIf="isListView">
-        <app-list-view [data]="data$ | async" [folderId]="folderId"></app-list-view>
-      </ng-container>
-      <ng-container *ngIf="isGridView">
-        <app-grid-view [data]="data$ | async" [folderId]="folderId"></app-grid-view>
-      </ng-container>
-    </div>
+      <div class="view-content">
+        <ng-container *ngIf="isListView">
+          <app-list-view [folderId]="folderId"></app-list-view>
+        </ng-container>
+        <ng-container *ngIf="isGridView">
+          <app-grid-view [folderId]="folderId"></app-grid-view>
+        </ng-container>
+      </div>
 
-  </div>
+
+
+    </div>
 </div>

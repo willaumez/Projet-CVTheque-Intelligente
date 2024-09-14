@@ -137,10 +137,18 @@ public class FileServicesImpl implements FileServices {
     @Transactional
     public void deleteFiles(List<Long> filesIds) {
         for (Long fileId : filesIds) {
+            evaluationRepository.deleteByFileDB_Id(fileId);
             fileStoreRepository.deleteByFileDB_Id(fileId);
             filesRepository.deleteById(fileId);
         }
     }
+
+    /*public void deleteFiles(List<Long> filesIds) {
+        for (Long fileId : filesIds) {
+            fileStoreRepository.deleteByFileDB_Id(fileId);
+            filesRepository.deleteById(fileId);
+        }
+    }*/
 
     @Override
     @Transactional
@@ -178,13 +186,8 @@ public class FileServicesImpl implements FileServices {
     @Override
     public EvaluationDto getEvaluationByFileId(Long fileId) {
         Evaluation evaluation = evaluationRepository.findByFileDB_Id(fileId);
-        System.out.println("=========================0 evaluationDto: " + evaluation.getAcceptRejectCriteria().size());
-        System.out.println("=========================0 evaluationDto: " + evaluation.getAcceptRejectCriteria().size());
-
         if (evaluation != null) {
-            EvaluationDto eva =fileMappers.fromEvaluation(evaluation);
-            System.out.println("=========================0 evaluationDto: " + eva);
-            return eva;
+            return fileMappers.fromEvaluation(evaluation);
         }
         return null;
     }

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -16,6 +16,8 @@ import {map, startWith} from "rxjs/operators";
 import {COMMA, ENTER} from "@angular/cdk/keycodes";
 import {MatChipInputEvent} from "@angular/material/chips";
 import {ProfileService} from "../../../Services/ProfileServices/profile.service";
+import {ListViewComponent} from "../list-view/list-view.component";
+import {GridViewComponent} from "../grid-view/grid-view.component";
 
 @Component({
   selector: 'app-files-view',
@@ -40,8 +42,9 @@ export class FilesViewComponent implements OnInit{
   jobDescription: string = '';
   files: FileDB[] = [];
 
-  data$: BehaviorSubject<FileDB[]> = new BehaviorSubject<FileDB[]>([]);
   folder!: Folder;
+  @ViewChild(ListViewComponent) listView!: ListViewComponent;
+  @ViewChild(GridViewComponent) gridView!: GridViewComponent;
 
   //profile
   profileCtrl = new FormControl();
@@ -63,6 +66,15 @@ export class FilesViewComponent implements OnInit{
     );
     this.editMode = new Array(this.selectedCriteria.length).fill(false);
   }
+
+  refreshChildViews() {
+    if (this.isListView && this.listView) {
+      this.listView.refreshData();
+    } else if (this.isGridView && this.gridView) {
+      this.gridView.refreshData();
+    }
+  }
+
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id !== null) {
@@ -112,27 +124,6 @@ export class FilesViewComponent implements OnInit{
   displayProfile(profile: Profile): string {
     return profile && profile.name ? profile.name : '';
   }
-  /*onFocus(): void {
-    this.profileCtrl.setValue(this.profileCtrl.value);
-    this.getCriteria(this.profileCtrl.value.id);
-    if (this.profileCtrl.value){
-      this.selectedCriteria = [];
-      this.criteria$ = this.profileCtrl.value.listCriteria.map((criteria: { description: any; }) => criteria.description);
-    }else {
-      this.criteria$ = [];
-    }
-  }
-  getCriteria(id: number) {
-    this._profileService.getCriteriaByProfileId(id).subscribe({
-      next: (criteria: CriteriaDB[]) => {
-        console.log("All ========== : "+criteria);
-        this.profileCtrl.value.listCriteria = criteria;
-      },
-      error: (error: Error) => {
-        this.error = error.message;
-      }
-    });
-  }*/
   onFocus(): void {
     this.profileCtrl.setValue(this.profileCtrl.value);
     if (this.profileCtrl.value && this.profileCtrl.value.id) {
@@ -163,8 +154,6 @@ export class FilesViewComponent implements OnInit{
     });
   }
 
-
-
   enableEdit(index: number, item: string) {
     // Si un index précédent existe et que l'édition est active, sauvegarder la valeur précédente
     if (this.previousEditIndex !== null && this.editValue) {
@@ -178,19 +167,17 @@ export class FilesViewComponent implements OnInit{
   }
 
   saveEdit(index: number) {
-    // Vérifier si la valeur éditée n'est pas vide
     if (this.editValue.trim()) {
-      this.selectedCriteria[index] = this.editValue; // Mettre à jour la valeur dans `selectedCriteria`
+      this.selectedCriteria[index] = this.editValue;
     }
-    this.editMode[index] = false; // Désactiver le mode édition
-    this.previousEditIndex = null; // Réinitialiser l'index précédent après la sauvegarde
+    this.editMode[index] = false;
+    this.previousEditIndex = null;
   }
 
   cancelEdit(index: number) {
-    this.editMode[index] = false; // Désactiver le mode édition sans sauvegarder
-    this.previousEditIndex = null; // Réinitialiser l'index précédent
+    this.editMode[index] = false;
+    this.previousEditIndex = null;
   }
-
   //end profile
 
   //KeyWords
@@ -231,19 +218,19 @@ export class FilesViewComponent implements OnInit{
       folderId: this.folderId ? this.folderId : undefined
     };
 
-    this._aiService.selectWithCriteria(criteria).subscribe(
-      (event: any) => {
+    this._aiService.selectWithCriteria(criteria).subscribe({
+      next: (event: any) => {
         if (event.type === HttpEventType.Response) {
-          const response: FileDB[] = JSON.parse(event.body);
-          this.data$.next(response);
+          this.refreshChildViews();
+          this.cancelData();
           this.loading = false;
         }
       },
-      (error) => {
+      error: (error: Error) => {
         this.error = 'Error fetching files: ' + error.message;
         this.loading = false;
       }
-    );
+    });
   }
   evaluateKeywords(){
     this.loading = true;
@@ -251,19 +238,19 @@ export class FilesViewComponent implements OnInit{
       keywords: this.keywords,
       folderId: this.folderId ? this.folderId : undefined
     };
-    this._aiService.selectWithKeywords(keywords).subscribe(
-      (event: any) => {
+    this._aiService.selectWithKeywords(keywords).subscribe({
+      next: (event: any) => {
         if (event.type === HttpEventType.Response) {
-          const response: FileDB[] = JSON.parse(event.body);
-          this.data$.next(response);
+          this.refreshChildViews();
+          this.cancelData();
           this.loading = false;
         }
       },
-      (error) => {
+      error: (error: Error) => {
         this.error = 'Error fetching files: ' + error.message;
         this.loading = false;
       }
-    );
+    });
   }
   evaluateScoring() {
     this.loading = true;
@@ -271,28 +258,28 @@ export class FilesViewComponent implements OnInit{
       jobDescription: this.jobDescription,
       folderId: this.folderId ? this.folderId : undefined
     };
-    this._aiService.selectByScoring(scoring).subscribe(
-      (event: any) => {
+    this._aiService.selectByScoring(scoring).subscribe({
+      next: (event: any) => {
         if (event.type === HttpEventType.Response) {
-          const response: FileDB[] = JSON.parse(event.body);
-          this.data$.next(response);
+          this.refreshChildViews();
+          this.cancelData();
           this.loading = false;
         }
       },
-      (error) => {
+      error: (error: Error) => {
         this.error = 'Error fetching files: ' + error.message;
         this.loading = false;
       }
-    );
+    });
   }
 
   cancelData() {
     this.selectedCriteria = [];
     this.jobDescription = '';
     this.keywords = [];
-    this.data$.next([]);
     this.profileCtrl.setValue('');
     this.criteria$ = [];
+    this.refreshChildViews();
   }
 
   //protected readonly event = event;
