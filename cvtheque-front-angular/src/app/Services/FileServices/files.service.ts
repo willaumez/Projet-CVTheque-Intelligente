@@ -4,6 +4,7 @@ import {Observable, throwError} from "rxjs";
 import {catchError, map} from "rxjs/operators";
 import {CVStatsDTO, FileDB, Folder} from "../../Models/FileDB";
 import {environment} from "../../../environments/environment";
+import {EvaluationDto} from "../../Models/EvaluationDto";
 
 @Injectable({
   providedIn: 'root'
@@ -103,7 +104,10 @@ export class FilesService {
     return this.http.get<CVStatsDTO[]>(environment.backEndHost + "/file/count-per-month");
   }
 
-
+  //Get Evaluation
+  getEvaluationInfos(file: number) {
+    return this.http.get<EvaluationDto>(environment.backEndHost + `/file/evaluation/${file}`);
+  }
 
 
 }

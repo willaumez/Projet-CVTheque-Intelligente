@@ -9,7 +9,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CriteriaDTO {
+public class CriteriaProfileDto {
     private Long id;
     private String description;
     private Date createdAt;

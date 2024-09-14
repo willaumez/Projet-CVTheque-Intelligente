@@ -1,15 +1,15 @@
 package org.sid.cvthequespringboot.services.ProfileServices;
 
 import jakarta.transaction.Transactional;
-import org.sid.cvthequespringboot.dtos.CriteriaDTO;
+import org.sid.cvthequespringboot.dtos.CriteriaProfileDto;
 import org.sid.cvthequespringboot.dtos.ProfileDto;
-import org.sid.cvthequespringboot.entities.CriteriaDB;
+import org.sid.cvthequespringboot.entities.CriteriaProfile;
 import org.sid.cvthequespringboot.entities.Profile;
 import org.sid.cvthequespringboot.exceptions.CriteriaAlreadyExistsException;
 import org.sid.cvthequespringboot.exceptions.CriteriaDeletionException;
 import org.sid.cvthequespringboot.exceptions.ProfileAlreadyExistsException;
 import org.sid.cvthequespringboot.mappers.FileMappersImpl;
-import org.sid.cvthequespringboot.repositories.CriteriaDBRepository;
+import org.sid.cvthequespringboot.repositories.CriteriaProfileRepository;
 import org.sid.cvthequespringboot.repositories.ProfileRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -22,12 +22,12 @@ import java.util.stream.Collectors;
 @Service
 public class ProfileServicesImpl implements ProfileServices {
     private final ProfileRepository profileRepository;
-    private final CriteriaDBRepository criteriaDBRepository;
+    private final CriteriaProfileRepository criteriaProfileRepository;
     private final FileMappersImpl fileMappers;
 
-    public ProfileServicesImpl(ProfileRepository profileRepository, CriteriaDBRepository criteriaDBRepository, FileMappersImpl fileMappers) {
+    public ProfileServicesImpl(ProfileRepository profileRepository, CriteriaProfileRepository criteriaProfileRepository, FileMappersImpl fileMappers) {
         this.profileRepository = profileRepository;
-        this.criteriaDBRepository = criteriaDBRepository;
+        this.criteriaProfileRepository = criteriaProfileRepository;
         this.fileMappers = fileMappers;
     }
 
@@ -74,7 +74,7 @@ public class ProfileServicesImpl implements ProfileServices {
                 Profile profile = profileOpt.get();
                 //profileRepository.delete(profile);
                 System.out.println("==================== Profile deleted"+profile.getId());
-                criteriaDBRepository.deleteAllByProfileId(profile.getId());
+                criteriaProfileRepository.deleteAllByProfileId(profile.getId());
                 profileRepository.deleteById(id);
                 return true;
             } catch (DataIntegrityViolationException e) {
@@ -98,8 +98,8 @@ public class ProfileServicesImpl implements ProfileServices {
 
 
     @Override
-    public List<CriteriaDTO> getCriteriaByProfileId(Long profileId) {
-        List<CriteriaDB> criteriaList = criteriaDBRepository.findAllByProfileIdOrderByCreatedAtDesc(profileId);
+    public List<CriteriaProfileDto> getCriteriaByProfileId(Long profileId) {
+        List<CriteriaProfile> criteriaList = criteriaProfileRepository.findAllByProfileIdOrderByCreatedAtDesc(profileId);
         return criteriaList.stream()
                 .map(fileMappers::fromCriteria)
                 .collect(Collectors.toList());
@@ -108,27 +108,27 @@ public class ProfileServicesImpl implements ProfileServices {
 
     @Transactional
     @Override
-    public CriteriaDTO addCriteriaToProfile(Long profileId, String description) throws CriteriaAlreadyExistsException {
+    public CriteriaProfileDto addCriteriaToProfile(Long profileId, String description) throws CriteriaAlreadyExistsException {
         Profile profile = profileRepository.findById(profileId)
                 .orElseThrow(() -> new RuntimeException("Profile not found"));
-        if (criteriaDBRepository.existsByProfileAndDescription(profile, description)) {
+        if (criteriaProfileRepository.existsByProfileAndDescription(profile, description)) {
             throw new CriteriaAlreadyExistsException("This criteria already exists for this profile.");
         }
-        CriteriaDB criteria = new CriteriaDB();
+        CriteriaProfile criteria = new CriteriaProfile();
         criteria.setCreatedAt(new Date());
         criteria.setDescription(description);
         criteria.setProfile(profile);
 
-        CriteriaDB newCriteria = criteriaDBRepository.save(criteria);
+        CriteriaProfile newCriteria = criteriaProfileRepository.save(criteria);
         return fileMappers.fromCriteria(newCriteria);
     }
 
     @Override
     public boolean deleteCriteria(Long id) throws CriteriaDeletionException {
-        Optional<CriteriaDB> criteriaOpt = criteriaDBRepository.findById(id);
+        Optional<CriteriaProfile> criteriaOpt = criteriaProfileRepository.findById(id);
         if (criteriaOpt.isPresent()) {
             try {
-                criteriaDBRepository.deleteById(id);
+                criteriaProfileRepository.deleteById(id);
                 return true;
             } catch (DataIntegrityViolationException e) {
                 throw new CriteriaDeletionException("Cannot delete criteria due to related data.");

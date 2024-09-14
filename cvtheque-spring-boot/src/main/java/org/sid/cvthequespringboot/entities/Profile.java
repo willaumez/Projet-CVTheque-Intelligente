@@ -3,7 +3,6 @@ package org.sid.cvthequespringboot.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -28,5 +27,5 @@ public class Profile {
 
     @OneToMany(cascade = {CascadeType.REMOVE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id")
-    private List<CriteriaDB> listCriteria;
+    private List<CriteriaProfile> listCriteria;
 }

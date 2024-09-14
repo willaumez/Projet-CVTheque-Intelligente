@@ -1,9 +1,8 @@
 package org.sid.cvthequespringboot.web;
 
 import lombok.AllArgsConstructor;
-import org.sid.cvthequespringboot.dtos.CriteriaDTO;
+import org.sid.cvthequespringboot.dtos.CriteriaProfileDto;
 import org.sid.cvthequespringboot.dtos.ProfileDto;
-import org.sid.cvthequespringboot.entities.CriteriaDB;
 import org.sid.cvthequespringboot.entities.Profile;
 import org.sid.cvthequespringboot.exceptions.CriteriaAlreadyExistsException;
 import org.sid.cvthequespringboot.exceptions.CriteriaDeletionException;
@@ -48,7 +47,7 @@ public class ProfileRestController {
     @GetMapping("/criteria/{profileId}")
     public ResponseEntity<?> getCriteriaByProfileId(@PathVariable Long profileId) {
         try {
-            List<CriteriaDTO> criteriaList = profileService.getCriteriaByProfileId(profileId);
+            List<CriteriaProfileDto> criteriaList = profileService.getCriteriaByProfileId(profileId);
             return ResponseEntity.ok(criteriaList);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -56,9 +55,9 @@ public class ProfileRestController {
     }
 
     @PostMapping("/criteria/add")
-    public ResponseEntity<?> addCriteriaToProfile(@RequestBody CriteriaDTO criteriaDTO) {
+    public ResponseEntity<?> addCriteriaToProfile(@RequestBody CriteriaProfileDto criteriaProfileDto) {
         try {
-            CriteriaDTO newCriteria = profileService.addCriteriaToProfile(criteriaDTO.getId(), criteriaDTO.getDescription());
+            CriteriaProfileDto newCriteria = profileService.addCriteriaToProfile(criteriaProfileDto.getId(), criteriaProfileDto.getDescription());
             return ResponseEntity.ok(newCriteria);
         } catch (CriteriaAlreadyExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());

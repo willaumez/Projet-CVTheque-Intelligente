@@ -2,13 +2,13 @@ package org.sid.cvthequespringboot.services.FileServices;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
-import org.sid.cvthequespringboot.dtos.CVStatsDTO;
-import org.sid.cvthequespringboot.dtos.FileDbDto;
-import org.sid.cvthequespringboot.dtos.FolderDto;
+import org.sid.cvthequespringboot.dtos.*;
+import org.sid.cvthequespringboot.entities.Evaluation;
 import org.sid.cvthequespringboot.entities.FileDB;
 import org.sid.cvthequespringboot.entities.FileVectorStore;
 import org.sid.cvthequespringboot.entities.Folder;
 import org.sid.cvthequespringboot.mappers.FileMappers;
+import org.sid.cvthequespringboot.repositories.EvaluationRepository;
 import org.sid.cvthequespringboot.repositories.FileStoreRepository;
 import org.sid.cvthequespringboot.repositories.FilesRepository;
 import org.sid.cvthequespringboot.repositories.FolderRepository;
@@ -39,14 +39,16 @@ public class FileServicesImpl implements FileServices {
     private final FolderRepository folderRepository;
     private final FileStoreRepository fileStoreRepository;
     private FileVectorStore fileStore;
+    private final EvaluationRepository evaluationRepository;
 
     private final FileMappers fileMappers;
 
-    public FileServicesImpl(FilesRepository filesRepository, FolderRepository folderRepository, FileMappers fileMappers, FileStoreRepository fileStoreRepository) {
+    public FileServicesImpl(FilesRepository filesRepository, FolderRepository folderRepository, FileMappers fileMappers, FileStoreRepository fileStoreRepository, EvaluationRepository evaluationRepository) {
         this.filesRepository = filesRepository;
         this.folderRepository = folderRepository;
         this.fileMappers = fileMappers;
         this.fileStoreRepository = fileStoreRepository;
+        this.evaluationRepository = evaluationRepository;
     }
 
     @Override
@@ -93,19 +95,19 @@ public class FileServicesImpl implements FileServices {
     }
 
     @Override
-    public List<FileDbDto> getFiles() {
+    public List<FileDto> getFiles() {
         List<FileDB> fileDBS = filesRepository.findAllByOrderByCreatedAtDesc();
         return fileDBS.stream()
-                .map(fileMappers::fromFileDB)
+                .map(fileMappers::fromFile)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<FileDbDto> getFilesByFolderId(Long folderId) {
+    public List<FileDto> getFilesByFolderId(Long folderId) {
         List<FileDB> fileDBS = filesRepository.findAllByFolderIdOrderByCreatedAtDesc(folderId);
         // Conversion de FileDB à FileDbDto
         return fileDBS.stream()
-                .map(fileMappers::fromFileDB)
+                .map(fileMappers::fromFile)
                 .collect(Collectors.toList());
     }
 
@@ -171,6 +173,20 @@ public class FileServicesImpl implements FileServices {
     @Override
     public List<CVStatsDTO> getCvStats() {
         return filesRepository.countCVsByMonthAndFolder();
+    }
+
+    @Override
+    public EvaluationDto getEvaluationByFileId(Long fileId) {
+        Evaluation evaluation = evaluationRepository.findByFileDB_Id(fileId);
+        System.out.println("=========================0 evaluationDto: " + evaluation.getAcceptRejectCriteria().size());
+        System.out.println("=========================0 evaluationDto: " + evaluation.getAcceptRejectCriteria().size());
+
+        if (evaluation != null) {
+            EvaluationDto eva =fileMappers.fromEvaluation(evaluation);
+            System.out.println("=========================0 evaluationDto: " + eva);
+            return eva;
+        }
+        return null;
     }
 
 

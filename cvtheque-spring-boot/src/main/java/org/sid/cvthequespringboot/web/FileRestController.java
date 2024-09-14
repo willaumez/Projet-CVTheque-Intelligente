@@ -2,10 +2,13 @@ package org.sid.cvthequespringboot.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
-import org.sid.cvthequespringboot.dtos.CVStatsDTO;
-import org.sid.cvthequespringboot.dtos.FileDbDto;
-import org.sid.cvthequespringboot.dtos.FolderDto;
+import org.sid.cvthequespringboot.dtos.*;
+import org.sid.cvthequespringboot.entities.Evaluation;
 import org.sid.cvthequespringboot.entities.FileDB;
+import org.sid.cvthequespringboot.mappers.FileMappersImpl;
+import org.sid.cvthequespringboot.repositories.EvaluationRepository;
+import org.sid.cvthequespringboot.repositories.FileStoreRepository;
+import org.sid.cvthequespringboot.repositories.FilesRepository;
 import org.sid.cvthequespringboot.services.FileServices.FileServices;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -21,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 //@CrossOrigin(origins = "http://localhost:4200")  // pour autoriser les requêtes provenant de Angular
 //@CrossOrigin(origins = "*")  // pour autoriser les requêtes provenant de n'importe quelle origine
@@ -31,7 +35,12 @@ public class FileRestController {
 
 
     private final ObjectMapper objectMapper;
+    private final FileStoreRepository fileStoreRepository;
     private FileServices fileServices;
+    private final FilesRepository fileRepository;
+    private final EvaluationRepository evaluationRepository;
+
+    private final FileMappersImpl fileMappersImpl;
 
     //-------------------------------------------------------------------------
 
@@ -44,8 +53,8 @@ public class FileRestController {
     //-------------------------------------------------------------------------
     //Get all files form the database FileDB
     @GetMapping("/files")
-    public List<FileDbDto> getFiles(@RequestParam(value = "folderId", required = false) Long folderId) {
-        List<FileDbDto> fileDbDtos;
+    public List<FileDto> getFiles(@RequestParam(value = "folderId", required = false) Long folderId) {
+        List<FileDto> fileDbDtos;
 
         if (folderId != null) {
             fileDbDtos = fileServices.getFilesByFolderId(folderId).stream().toList();
@@ -54,6 +63,26 @@ public class FileRestController {
         }
         return fileDbDtos;
     }
+
+
+    @GetMapping("/test")
+    public List<FileDto> getFilesAll() {
+        List<FileDB> files = fileRepository.findAll();
+        return files.stream()
+                .map(fileMappersImpl::fromFile)
+                .collect(Collectors.toList());
+    }
+    @GetMapping("/test2")
+    public List<EvaluationDto> getEvaluationAll() {
+        List<Evaluation> files = evaluationRepository.findAll();
+        return files.stream()
+                .map(fileMappersImpl::fromEvaluation)
+                .collect(Collectors.toList());
+    }
+
+
+
+
     //Read a file from the database FileDB
     @GetMapping("/read/{fileId}")
     public ResponseEntity<Resource> readFilePdf(@PathVariable Long fileId) {
@@ -100,6 +129,17 @@ public class FileRestController {
             return ResponseEntity.ok("File updated successfully");
         } else {
             return ResponseEntity.status(500).body("Failed to update file");
+        }
+    }
+    //Evaluate a file
+    @GetMapping("/evaluation/{fileId}")
+    public ResponseEntity<EvaluationDto> getEvaluationInfos(@PathVariable Long fileId) {
+        EvaluationDto evaluationDto = fileServices.getEvaluationByFileId(fileId);
+        System.out.println("evaluationDto: " + fileId);
+        if (evaluationDto != null) {
+            return ResponseEntity.ok(evaluationDto);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 

@@ -25,8 +25,8 @@ import {ProfileService} from "../../../Services/ProfileServices/profile.service"
 
 export class FilesViewComponent implements OnInit{
   inputValue: string = '';
-  isListView: boolean = false;
-  isGridView: boolean = true;
+  isListView: boolean = true;
+  isGridView: boolean = false;
 
   selectedItem: string = 'Criteria';
   criteria$: string[] = [];

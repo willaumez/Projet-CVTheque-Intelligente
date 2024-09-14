@@ -1,5 +1,6 @@
 package org.sid.cvthequespringboot.entities;
 
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,26 +12,18 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class FileDB {
+public class Scoring {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String profile;
+    private Long score;
 
-    private String name;
-
-    private String type;
+    @Column(length = 4000)
+    private String message;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false)
     private Date createdAt = new Date();
 
-    @Lob
-    private byte[] data;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "folder_id")
-    private Folder folder;
-
-    @OneToOne()
-    @JoinColumn(name = "evaluation_id")
-    private Evaluation evaluation;
 }

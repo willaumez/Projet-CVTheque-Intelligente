@@ -6,6 +6,11 @@ export interface FileDB {
   createdAt: Date;
   folderName: string;
   folderId: number;
+  evaluation: boolean;
+  pscoring: number;
+  pkeywords: number;
+  pcriteria: number;
+
   acceptCriteria?: Criteria[];
   rejectCriteria?: Criteria[];
   existWords?: string[];
@@ -33,6 +38,7 @@ export interface ResultKeywords{
   noExistWords?: string[];
 }
 export interface Scoring{
+  profile: string;
   score: number;
   message: string;
 }
@@ -45,3 +51,4 @@ export interface CVStatsDTO {
   year: number;
   count: number;
 }
+

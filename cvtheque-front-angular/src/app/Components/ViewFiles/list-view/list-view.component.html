@@ -179,7 +179,8 @@
     <mat-spinner class="spinner-load"></mat-spinner>
   </div>
 
-  <div *ngIf="!isLoading && dataSource && dataSource.data && dataSource.data.length > 0 && !error" class="container-fluid">
+  <div *ngIf="!isLoading && dataSource && dataSource.data && dataSource.data.length > 0 && !error"
+       class="container-fluid">
     <!--<div class="header d-flex align-items-center justify-content-between">
       <mat-form-field appearance="outline" class="filter-field">
         <mat-label>Filter</mat-label>
@@ -213,7 +214,8 @@
         </mat-form-field>
       </div>
 
-      <div class="action-container col-12 col-md-6 col-lg-4 mb-2 mb-md-0 d-flex justify-content-end" *ngIf="selection.length  !==0 ">
+      <div class="action-container col-12 col-md-6 col-lg-4 mb-2 mb-md-0 d-flex justify-content-end"
+           *ngIf="selection.length  !==0 ">
         <button mat-button (click)="deleteSelection()">
           <mat-icon class="delete-icon">delete_forever</mat-icon>
         </button>
@@ -223,7 +225,8 @@
         </button>
       </div>
 
-      <div *ngIf="isRenameFile && selection.length === 0" class="filter-field-rename col-12 col-md-6 col-lg-4 d-flex align-items-center">
+      <div *ngIf="isRenameFile && selection.length === 0"
+           class="filter-field-rename col-12 col-md-6 col-lg-4 d-flex align-items-center">
         <mat-form-field appearance="outline" class="flex-grow-1 filter-field">
           <mat-label>Rename file</mat-label>
           <input matInput [(ngModel)]="renameFileDB!.name" placeholder="Ex. ium" (keyup.enter)="renameFileSubmit()">
@@ -233,7 +236,7 @@
     </div>
 
 
-    <table mat-table [dataSource]="dataSource" class="table table-striped table-hover mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" class="table table-striped table-hover mat-elevation-z8" matSort>
       <!-- Checkbox Column -->
       <ng-container matColumnDef="select">
         <th mat-header-cell *matHeaderCellDef>
@@ -256,25 +259,29 @@
 
       <!-- Name Column -->
       <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Name <mat-icon>edit</mat-icon></th>
-        <td mat-cell *matCellDef="let element" (dblclick)="renameFile(element)" class="align-middle"> {{ element.name }}</td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="name"> Name
+          <mat-icon>edit</mat-icon>
+        </th>
+        <td mat-cell *matCellDef="let element" (dblclick)="renameFile(element)"
+            class="align-middle"> {{ element.name }}
+        </td>
       </ng-container>
 
       <!-- Type Column -->
       <ng-container matColumnDef="type">
-        <th mat-header-cell *matHeaderCellDef> Type</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="type"> Type</th>
         <td mat-cell *matCellDef="let element" class="align-middle"> {{ element.type }}</td>
       </ng-container>
 
       <!-- Folder Column -->
       <ng-container matColumnDef="folder">
-        <th mat-header-cell *matHeaderCellDef> Folder</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="folderName"> Folder</th>
         <td mat-cell class="align-middle" *matCellDef="let element"> {{ element.folderName }}</td>
       </ng-container>
 
       <!-- Date Creation Column -->
       <ng-container matColumnDef="dateCreation">
-        <th mat-header-cell *matHeaderCellDef> Date Creation</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="createdAt"> Date Creation</th>
         <td mat-cell *matCellDef="let element" class="align-middle">
           {{ element.createdAt | date: 'yyyy-MM-dd' }} | {{ element.createdAt | date: 'HH:mm:ss' }}
         </td>
@@ -287,7 +294,9 @@
           <!-- Criteria Info -->
           <div *ngIf="element.acceptCriteria?.length || element.rejectCriteria?.length">
             <button mat-button (click)="criteriaInfos(element)">
-              <span class="text-success me-2">{{ calculateAcceptancePercentage(element.acceptCriteria?.length, element.rejectCriteria?.length) }}%</span>
+              <span
+                class="text-success me-2">{{ calculateAcceptancePercentage(element.acceptCriteria?.length, element.rejectCriteria?.length) }}
+                %</span>
               <mat-icon>info</mat-icon>
               <span class="text-success">{{ element.acceptCriteria?.length || 0 }}</span>
               <sub>/{{ (element.acceptCriteria?.length || 0) + (element.rejectCriteria?.length || 0) }}</sub>
@@ -300,7 +309,9 @@
           <!-- Keywords Info -->
           <div *ngIf="element.existWords?.length || element.noExistWords?.length">
             <button mat-button (click)="keywordsInfos(element)">
-              <span class="text-success me-2">{{ calculateAcceptancePercentage(element.existWords?.length, element.noExistWords?.length) }}%</span>
+              <span
+                class="text-success me-2">{{ calculateAcceptancePercentage(element.existWords?.length, element.noExistWords?.length) }}
+                %</span>
               <mat-icon>info</mat-icon>
               <span class="text-success">{{ element.existWords?.length || 0 }}</span>
               <sub>/{{ (element.existWords?.length || 0) + (element.noExistWords?.length || 0) }}</sub>
@@ -316,6 +327,51 @@
               <span class="text-success me-2">{{ element.scoring?.score }}%</span>
             </button>
           </div>
+        </td>
+      </ng-container>
+
+      <!-- P Criteria Column -->
+      <ng-container matColumnDef="criteria">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="pcriteria" class="text-center">P-Criteria</th>
+        <td mat-cell *matCellDef="let element" class="align-middle" style="width: 110px;">
+          <button mat-button (click)="evaluationInfos(element.id)"
+                  *ngIf="element.evaluation"
+                  [ngStyle]="{'color': element.pcriteria === null ? 'gray' : (element.pcriteria < 50 ? 'red' : 'green')}"
+                  class="evaluation-btn">
+            <mat-icon *ngIf="element.pcriteria !== null">{{ element.pcriteria < 50 ? 'thumb_down' : 'thumb_up' }}
+            </mat-icon>
+            {{ element.pcriteria !== null ? element.pcriteria + '%' : 'N/A' }}
+          </button>
+        </td>
+      </ng-container>
+      <!-- P Keyword Column -->
+      <ng-container matColumnDef="keyword">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="pkeywords" class="text-center">P-Keyword</th>
+        <td mat-cell *matCellDef="let element" class="align-middle" style="width: 115px;">
+          <button mat-button
+                  (click)="evaluationInfos(element.id)"
+                  *ngIf="element.evaluation"
+                  [ngStyle]="{'color': element.pkeywords === null ? 'gray' : (element.pkeywords < 50 ? 'red' : 'green')}"
+                  class="evaluation-btn">
+            <mat-icon *ngIf="element.pkeywords !== null">{{ element.pkeywords < 50 ? 'thumb_down' : 'thumb_up' }}
+            </mat-icon>
+            {{ element.pkeywords !== null ? element.pkeywords + '%' : 'N/A' }}
+          </button>
+        </td>
+      </ng-container>
+      <!-- P Scoring Column -->
+      <ng-container matColumnDef="scoring">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="pscoring" class="text-center">P-Scoring</th>
+        <td mat-cell *matCellDef="let element" class="align-middle" style="width: 110px;">
+          <button mat-button
+                  (click)="evaluationInfos(element.id)"
+                  *ngIf="element.evaluation"
+                  [ngStyle]="{'color': element.pscoring === null ? 'gray' : (element.pscoring < 50 ? 'red' : 'green')}"
+                  class="evaluation-btn">
+            <mat-icon *ngIf="element.pscoring !== null">{{ element.pscoring < 50 ? 'thumb_down' : 'thumb_up' }}
+            </mat-icon>
+            {{ element.pscoring !== null ? element.pscoring + '%' : 'N/A' }}
+          </button>
         </td>
       </ng-container>
 
@@ -338,7 +394,8 @@
       </tr>
     </table>
 
-    <mat-paginator [pageSizeOptions]="[10, 30, 60, 120]" showFirstLastButtons aria-label="Select page of periodic elements" class="list-pagination"></mat-paginator>
+    <mat-paginator [pageSizeOptions]="[10, 30, 60, 120]" showFirstLastButtons
+                   aria-label="Select page of periodic elements" class="list-pagination"></mat-paginator>
   </div>
 
   <ng-container *ngIf="error">
@@ -351,8 +408,7 @@
 </ng-container>
 
 
-
-<ng-container *ngIf="isResult">
+<!--<ng-container *ngIf="isResult">
   <div class="body-viewer">
     <div class="pdf-viewer">
       <ngx-extended-pdf-viewer
@@ -382,13 +438,13 @@
           </ul>
         </ng-container>
 
-        <!-- Affichage d'un message si aucun critère accepté n'est présent -->
+        &lt;!&ndash; Affichage d'un message si aucun critère accepté n'est présent &ndash;&gt;
         <ng-template #noAcceptCriteria>
           <p>No accepted criteria.</p>
         </ng-template>
 
         <mat-divider class="divider-criteria"></mat-divider>
-        <!-- Affichage des critères rejetés -->
+        &lt;!&ndash; Affichage des critères rejetés &ndash;&gt;
         <h2 class="rejected">Rejected Criteria: </h2>
         <ng-container *ngIf="resultData?.rejectCriteria?.length; else noRejectCriteria">
           <ul>
@@ -413,13 +469,13 @@
           </ul>
         </ng-container>
 
-        <!-- Affichage d'un message si aucun critère accepté n'est présent -->
+        &lt;!&ndash; Affichage d'un message si aucun critère accepté n'est présent &ndash;&gt;
         <ng-template #noExistWords>
           <p>no keywords found.</p>
         </ng-template>
 
         <mat-divider class="divider-criteria"></mat-divider>
-        <!-- Affichage des critères rejetés -->
+        &lt;!&ndash; Affichage des critères rejetés &ndash;&gt;
         <h2 class="rejected">keywords that were not found: </h2>
         <ng-container *ngIf="resultKeyword?.noExistWords?.length; else noNoExistWords">
           <ul>
@@ -460,10 +516,118 @@
     </div>
   </div>
 
+</ng-container>-->
+
+<ng-container *ngIf="isResult">
+  <div class="body-viewer">
+    <div class="pdf-viewer">
+      <ngx-extended-pdf-viewer
+        [src]="pdfSrc"
+        useBrowserLocale="true"
+        [textLayer]="true"
+        [showHandToolButton]="true"
+        class="ngx-viewer">
+      </ngx-extended-pdf-viewer>
+    </div>
+
+    <div class="result-container" *ngIf="evaluation">
+      <div class="return-button">
+        <button mat-raised-button (click)="returnToFilesView()">
+          <mat-icon>arrow_back</mat-icon>
+          Return
+        </button>
+      </div>
+
+      <!-- Affichage des critères acceptés -->
+      <div class="result-text" *ngIf="evaluation.acceptCriteria?.length">
+        <h2 class="accepted">Accepted Criteria:</h2>
+        <ul>
+          <li *ngFor="let criteria of evaluation.acceptCriteria">
+            <h3 style="color:#007e40;">{{ criteria.name }}</h3>
+            <p>{{ criteria.message }}</p>
+          </li>
+        </ul>
+      </div>
+      <ng-container *ngIf="!evaluation.acceptCriteria?.length">
+        <p>No accepted criteria.</p>
+      </ng-container>
+
+      <mat-divider class="divider-criteria"></mat-divider>
+
+      <!-- Affichage des critères rejetés -->
+      <div class="result-text" *ngIf="evaluation.rejectCriteria?.length">
+        <h2 class="rejected">Rejected Criteria:</h2>
+        <ul>
+          <li *ngFor="let criteria of evaluation.rejectCriteria">
+            <h3 style="color:#fb0000;">{{ criteria.name }}</h3>
+            <p>{{ criteria.message }}</p>
+          </li>
+        </ul>
+      </div>
+      <ng-container *ngIf="!evaluation.rejectCriteria?.length">
+        <p>No rejected criteria.</p>
+      </ng-container>
+
+      <mat-divider class="divider-criteria"></mat-divider>
+
+      <!-- Affichage des mots existants -->
+      <div class="result-text" *ngIf="evaluation.existWords?.length">
+        <h2 class="accepted">Keywords found:</h2>
+        <div class="keywords-container p-2"  style="color:green;">
+          <span *ngFor="let word of evaluation.existWords" class="keyword">
+            {{ word }}
+          </span>
+        </div>
+      </div>
+
+      <ng-container *ngIf="!evaluation.existWords?.length">
+        <p>No keywords found.</p>
+      </ng-container>
+
+      <mat-divider class="divider-criteria"></mat-divider>
+
+      <!-- Affichage des mots non existants -->
+      <div class="result-text" *ngIf="evaluation.noExistWords?.length">
+        <h2 class="rejected">Keywords that were not found:</h2>
+        <div class="keywords-container p-2" style="color:red;">
+          <span *ngFor="let keyword of evaluation.noExistWords" class="keyword">
+          {{ keyword }}
+          </span>
+        </div>
+      </div>
+
+      <ng-container *ngIf="!evaluation.noExistWords?.length">
+        <p>No keywords exist.</p>
+      </ng-container>
+
+      <mat-divider class="divider-criteria"></mat-divider>
+
+      <!-- Affichage du score -->
+      <div class="result-text" *ngIf="evaluation.scoring?.length">
+        <h2 class="score">Scoring:</h2>
+        <ng-container *ngFor="let score of evaluation.scoring">
+          <ng-container *ngIf="score.score !== null; else noExistScore">
+            <span class="accepted"> Profile: {{score.profile}}</span>
+            <span class="score-score"
+                  [ngStyle]="{ 'color': score.score < 50 ? 'red' : 'green' }">
+              {{ score.score }}%
+            </span>
+          </ng-container>
+          <ng-template #noExistScore>
+            <p>No score found.</p>
+          </ng-template>
+          <ng-container *ngIf="score.message; else noExistMessage">
+            <p class="score-message">{{ score.message }}</p>
+          </ng-container>
+          <ng-template #noExistMessage>
+            <p>No message found.</p>
+          </ng-template>
+        </ng-container>
+      </div>
+    </div>
+  </div>
 </ng-container>
 
-
-<!--<app-example-pdf-viewer></app-example-pdf-viewer>-->
 
 
 

@@ -15,6 +15,8 @@ import {FileDB, ResultCriteria, ResultKeywords, Scoring} from "../../../Models/F
 import {MatDialog} from "@angular/material/dialog";
 import {PdfViewerComponent} from "../../Dialog/pdf-viewer/pdf-viewer.component";
 import {AddFolderComponent} from "../../Dialog/add-folder/add-folder.component";
+import {MatSort} from "@angular/material/sort";
+import {EvaluationDto} from "../../../Models/EvaluationDto";
 
 export interface PdfFile {
   name: string;
@@ -33,12 +35,13 @@ export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked {
   inOperation: boolean = false;
   error: string = '';
 
-  displayedColumns: string[] = ['select', 'name', 'type', 'folder', 'dateCreation', 'results', 'action'];
+  displayedColumns: string[] = ['select', 'name', 'type', 'folder', 'dateCreation', 'results','criteria', 'keyword','scoring', 'action'];
   dataSource = new MatTableDataSource<FileDB>();
   selection: number[] = [];
   dataLoaded: boolean = false;
 
   @ViewChild(MatPaginator, {static: false}) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   @Input() data: FileDB[] | null = [];
   @Input() folderId!: number;
@@ -86,6 +89,9 @@ export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked {
     if (this.paginator && this.dataSource.paginator !== this.paginator) {
       this.dataSource.paginator = this.paginator;
     }
+    if (this.sort && this.dataSource.sort !== this.sort) {
+      this.dataSource.sort = this.sort;
+    }
   }
 
 
@@ -130,9 +136,6 @@ export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked {
           next: (files: FileDB[]) => {
             this.dataSource.data = files;
             this.isLoading = false;
-
-            //this.dataSource.data = [...files];
-            //this.dataSource._updateChangeSubscription();
           },
           error: (error) => {
             this.error = 'Error fetching files: ' + error.message;
@@ -197,6 +200,9 @@ export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked {
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
 
   deleteSelection() {
@@ -267,6 +273,22 @@ export class ListViewComponent implements OnInit, OnChanges, AfterViewChecked {
     this.resultData = undefined;
     this.resultKeyword = undefined;
     this.resultScoring = undefined;
+  }
+
+  //Evaluation Infos:
+  evaluation!: EvaluationDto;
+  evaluationInfos(file: number) {
+    this._fileService.getEvaluationInfos(file).subscribe({
+      next: (response: EvaluationDto) => {
+        this.evaluation = response;
+        this.viewFile(file);
+        console.log("=======================EvaluationDto  "+JSON.stringify(response, null, 2));
+      },
+      error: (error) => {
+        this.error = 'Error fetching evaluation infos: ' + error.message;
+      }
+    });
+    this.isResult = true;
   }
 
   //Real File

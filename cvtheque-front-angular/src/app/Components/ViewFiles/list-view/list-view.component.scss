@@ -65,6 +65,18 @@ table {
   width: 100px;
 }
 
+.evaluation-btn {
+  width: 100%;
+  //color: #007f41;
+  mat-icon{
+    width: auto;
+    height: auto;
+    margin-left: 5px;
+    font-size: 25px;
+    //color: #007f41;
+  }
+}
+
 .action-btn {
   width: 100%;
   mat-icon{
@@ -74,6 +86,7 @@ table {
     color: #004b87;
   }
 }
+
 
 // spinner and error message
 .mat-mdc-progress-spinner{
@@ -251,6 +264,26 @@ ngx-extended-pdf-viewer{
   }
 }
 
+
+//Evaluation
+.keywords-container {
+  display: flex;
+  flex-wrap: wrap; /* Permet aux éléments de passer à la ligne si nécessaire */
+  gap: 10px; /* Espacement entre les mots */
+}
+
+.keyword {
+  background-color: #f0f0f0; /* Couleur de fond pour les mots */
+  padding: 5px 10px; /* Espacement autour des mots */
+  border-radius: 4px; /* Coins arrondis */
+  //color: #007e40; /* Couleur du texte pour les mots trouvés */
+  //font-weight: bold; /* Mettre le texte en gras */
+}
+
+/* Spécifique pour les mots non trouvés */
+.rejected .keyword {
+  color: #fb0000; /* Couleur du texte pour les mots non trouvés */
+}
 
 
 

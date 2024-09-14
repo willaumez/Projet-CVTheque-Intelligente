@@ -1,8 +1,7 @@
 package org.sid.cvthequespringboot.services.ProfileServices;
 
-import org.sid.cvthequespringboot.dtos.CriteriaDTO;
+import org.sid.cvthequespringboot.dtos.CriteriaProfileDto;
 import org.sid.cvthequespringboot.dtos.ProfileDto;
-import org.sid.cvthequespringboot.entities.CriteriaDB;
 import org.sid.cvthequespringboot.entities.Profile;
 import org.sid.cvthequespringboot.exceptions.CriteriaAlreadyExistsException;
 import org.sid.cvthequespringboot.exceptions.CriteriaDeletionException;
@@ -17,7 +16,7 @@ public interface ProfileServices {
     List<ProfileDto> getProfiles();
 
     //Criteria
-    List<CriteriaDTO> getCriteriaByProfileId(Long profileId);
-    CriteriaDTO addCriteriaToProfile(Long profileId, String description) throws CriteriaAlreadyExistsException;
+    List<CriteriaProfileDto> getCriteriaByProfileId(Long profileId);
+    CriteriaProfileDto addCriteriaToProfile(Long profileId, String description) throws CriteriaAlreadyExistsException;
     boolean deleteCriteria(Long id) throws CriteriaDeletionException;
 }

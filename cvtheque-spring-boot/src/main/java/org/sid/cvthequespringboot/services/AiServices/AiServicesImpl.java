@@ -3,11 +3,12 @@ package org.sid.cvthequespringboot.services.AiServices;
 import com.google.common.collect.Lists;
 import jakarta.transaction.Transactional;
 import org.sid.cvthequespringboot.dtos.FileAiResults;
-import org.sid.cvthequespringboot.entities.FileDB;
-import org.sid.cvthequespringboot.entities.FileVectorStore;
+import org.sid.cvthequespringboot.entities.*;
+import org.sid.cvthequespringboot.enums.Status;
 import org.sid.cvthequespringboot.record.CriteriaEvaluation;
 import org.sid.cvthequespringboot.record.KeywordsEvaluation;
 import org.sid.cvthequespringboot.record.ScoringEvaluation;
+import org.sid.cvthequespringboot.repositories.EvaluationRepository;
 import org.sid.cvthequespringboot.repositories.FileStoreRepository;
 import org.sid.cvthequespringboot.repositories.FilesRepository;
 import org.springframework.ai.chat.client.ChatClient;
@@ -26,6 +27,8 @@ public class AiServicesImpl implements AiServices {
     private final ChatClient chatClient;
     private final FileStoreRepository fileStoreRepository;
     private final FilesRepository filesRepository;
+    private final EvaluationRepository evaluationRepository;
+
     //Prompts
     @Value("classpath:/prompts/prompt-general-chat.st")
     private Resource promptGeneralChat;
@@ -40,10 +43,11 @@ public class AiServicesImpl implements AiServices {
     private Resource promptScoring;
 
 
-    public AiServicesImpl(ChatClient.Builder builder, FileStoreRepository fileStoreRepository, FilesRepository filesRepository) {
+    public AiServicesImpl(ChatClient.Builder builder, FileStoreRepository fileStoreRepository, FilesRepository filesRepository, EvaluationRepository evaluationRepository) {
         this.chatClient = builder.build();
         this.fileStoreRepository = fileStoreRepository;
         this.filesRepository = filesRepository;
+        this.evaluationRepository = evaluationRepository;
     }
 
     @Override
@@ -66,14 +70,14 @@ public class AiServicesImpl implements AiServices {
     @Transactional
     public List<FileAiResults> selectedCriteria(List<String> selectedCriteria, String jobDescription) {
         List<FileVectorStore> documents = fileStoreRepository.findAll();
-        return processElectedCriteria(documents, selectedCriteria, jobDescription);
+        return processSelectedCriteria(documents, selectedCriteria, jobDescription);
     }
 
     @Transactional
     @Override
     public List<FileAiResults> selectedCriteria(List<String> selectedCriteria, String jobDescription, Long folderId) {
         List<FileVectorStore> documents = fileStoreRepository.findAllByFolderId(folderId);
-        return processElectedCriteria(documents, selectedCriteria, jobDescription);
+        return processSelectedCriteria(documents, selectedCriteria, jobDescription);
     }
 
     //TODO: Implement Keywords
@@ -124,6 +128,9 @@ public class AiServicesImpl implements AiServices {
                 scoringEvaluations = chatClient.prompt()
                         .system(promptResource)
                         .call().entity(ScoringEvaluation[].class);
+                for (ScoringEvaluation scor: scoringEvaluations) {
+                    System.out.println("===================================0 Scoring evaluations: " + scor.scoringDto().getMessage());
+                }
             } catch (Exception e) {
                 throw new RuntimeException("Erreur lors de l'appel au service AI", e);
             }
@@ -131,13 +138,40 @@ public class AiServicesImpl implements AiServices {
                 FileAiResults fileAiResults = new FileAiResults();
                 FileDB fileDB = filesRepository.findById(evaluation.fileId())
                         .orElseThrow(() -> new RuntimeException("Fichier introuvable pour l'ID: " + evaluation.fileId()));
+
+                // Chercher si une évaluation existe déjà pour ce fichier
+                Evaluation existingEvaluation = evaluationRepository.findByFileDB_Id(fileDB.getId());
+                if (existingEvaluation == null) {
+                    existingEvaluation = new Evaluation();
+                    existingEvaluation.setCreatedAt(new Date());
+                    existingEvaluation.setFileDB(fileDB);
+                }
+                System.out.println("===================================0 existingEvaluation evaluations: " + existingEvaluation.getScoring());
+
+                Scoring newScoring = Scoring.builder()
+                        .profile(evaluation.scoringDto().getProfile())
+                        .score(evaluation.scoringDto().getScore())
+                        .message(evaluation.scoringDto().getMessage())
+                        .createdAt(new Date())
+                        .build();
+                System.out.println("===================================0 Score evaluations: " + newScoring.getScore());
+
+                // Ajouter le nouveau Scoring à la liste existante
+                if (existingEvaluation.getScoring() == null) {
+                    existingEvaluation.setScoring(new ArrayList<>());
+                }
+                existingEvaluation.getScoring().add(newScoring);
+                evaluationRepository.save(existingEvaluation);
+
+                // Remplir les résultats
+
                 fileAiResults.setId(fileDB.getId());
                 fileAiResults.setName(fileDB.getName());
                 fileAiResults.setType(fileDB.getType());
                 fileAiResults.setCreatedAt(fileDB.getCreatedAt());
                 fileAiResults.setFolderId(fileDB.getFolder().getId());
                 fileAiResults.setFolderName(fileDB.getFolder().getName());
-                fileAiResults.setScoring(evaluation.scoring());
+                fileAiResults.setScoringDto(evaluation.scoringDto());
                 fileAiResultsList.add(fileAiResults);
             }
         }
@@ -174,6 +208,30 @@ public class AiServicesImpl implements AiServices {
                 FileAiResults fileAiResults = new FileAiResults();
                 FileDB fileDB = filesRepository.findById(evaluation.fileId())
                         .orElseThrow(() -> new RuntimeException("Fichier introuvable pour l'ID: " + evaluation.fileId()));
+
+                // Chercher si une évaluation existe déjà pour ce fichier
+                Evaluation existingEvaluation = evaluationRepository.findByFileDB_Id(fileDB.getId());
+
+                if (existingEvaluation == null) {
+                    existingEvaluation = new Evaluation();
+                    existingEvaluation.setCreatedAt(new Date());
+                    existingEvaluation.setFileDB(fileDB);
+                    existingEvaluation.setExistWords(new ArrayList<>());
+                    existingEvaluation.setNoExistWords(new ArrayList<>());
+                } else {
+                    if (existingEvaluation.getExistWords() == null) {
+                        existingEvaluation.setExistWords(new ArrayList<>());
+                    }
+                    if (existingEvaluation.getNoExistWords() == null) {
+                        existingEvaluation.setNoExistWords(new ArrayList<>());
+                    }
+                    existingEvaluation.getExistWords().addAll(evaluation.existWords());
+                    existingEvaluation.getNoExistWords().addAll(evaluation.noExistWords());
+                }
+                evaluationRepository.save(existingEvaluation);
+
+
+                // Remplir les résultats
                 fileAiResults.setId(fileDB.getId());
                 fileAiResults.setName(fileDB.getName());
                 fileAiResults.setType(fileDB.getType());
@@ -188,7 +246,10 @@ public class AiServicesImpl implements AiServices {
         return fileAiResultsList;
     }
 
-    @Transactional
+
+
+
+    /*@Transactional
     public List<FileAiResults> processElectedCriteria(List<FileVectorStore> documents, List<String> selectedCriteria, String jobDescription){
         List<List<FileVectorStore>> partitionedDocuments = Lists.partition(documents, 2);
         List<FileAiResults> fileAiResultsList = new ArrayList<>();
@@ -230,7 +291,90 @@ public class AiServicesImpl implements AiServices {
             }
         }
         return fileAiResultsList;
+    }*/
+    @Transactional
+    public List<FileAiResults> processSelectedCriteria(List<FileVectorStore> documents, List<String> selectedCriteria, String jobDescription) {
+        List<List<FileVectorStore>> partitionedDocuments = Lists.partition(documents, 2);
+        List<FileAiResults> fileAiResultsList = new ArrayList<>();
+
+        for (List<FileVectorStore> batch : partitionedDocuments) {
+            List<String> context = batch.stream()
+                    .map(doc -> "| FileDBId: " + doc.getFileDB().getId() +
+                            " | Content: " + doc.getContent())
+                    .collect(Collectors.toList());
+
+            PromptTemplate promptTemplate = new PromptTemplate(promptCriteria);
+            Prompt prompt = promptTemplate.create(Map.of(
+                    "context", context,
+                    "selectedCriteria", String.join(", ", selectedCriteria),
+                    "jobDescription", jobDescription));
+
+            Resource promptResource = new ByteArrayResource(prompt.getContents().getBytes());
+            CriteriaEvaluation[] criteriaEvaluation;
+
+            try {
+                criteriaEvaluation = chatClient.prompt()
+                        .system(promptResource)
+                        .call().entity(CriteriaEvaluation[].class);
+            } catch (Exception e) {
+                throw new RuntimeException("Erreur lors de l'appel au service AI", e);
+            }
+
+            for (CriteriaEvaluation evaluation : criteriaEvaluation) {
+                // Récupérer le fichier associé
+                FileDB fileDB = filesRepository.findById(evaluation.fileId())
+                        .orElseThrow(() -> new RuntimeException("Fichier introuvable pour l'ID: " + evaluation.fileId()));
+
+                // Chercher si une évaluation existe déjà pour ce fichier
+                Evaluation existingEvaluation = evaluationRepository.findByFileDB_Id(fileDB.getId());
+                if (existingEvaluation == null) {
+                    // Créer une nouvelle évaluation si elle n'existe pas
+                    existingEvaluation = new Evaluation();
+                    existingEvaluation.setCreatedAt(new Date());
+                    existingEvaluation.setFileDB(fileDB);
+                }
+
+                // Mettre à jour l'évaluation
+                existingEvaluation.setAcceptRejectCriteria(evaluation.acceptCriteria().stream()
+                        .map(c -> {
+                            CriteriaEval criteriaEval = new CriteriaEval();
+                            criteriaEval.setCreatedAt(new Date());
+                            criteriaEval.setName(c.getName());
+                            criteriaEval.setMessage(c.getMessage());
+                            criteriaEval.setStatus(Status.ACCEPTED);
+                            return criteriaEval;
+                        }) // Convertir Criteria pour CriteriaEval
+                        .collect(Collectors.toList()));
+
+                existingEvaluation.setAcceptRejectCriteria(evaluation.rejectCriteria().stream()
+                        .map(c -> {
+                            CriteriaEval criteriaEval = new CriteriaEval();
+                            criteriaEval.setName(c.getName());
+                            criteriaEval.setMessage(c.getMessage());
+                            criteriaEval.setStatus(Status.REJECTED);
+                            return criteriaEval;
+                        }) // Convertir Criteria pour CriteriaEval
+                        .collect(Collectors.toList()));
+
+                // Sauvegarder l'évaluation dans la base de données
+                evaluationRepository.save(existingEvaluation);
+
+                // Remplir les résultats
+                FileAiResults fileAiResults = new FileAiResults();
+                fileAiResults.setId(fileDB.getId());
+                fileAiResults.setName(fileDB.getName());
+                fileAiResults.setType(fileDB.getType());
+                fileAiResults.setCreatedAt(fileDB.getCreatedAt());
+                fileAiResults.setFolderId(fileDB.getFolder().getId());
+                fileAiResults.setFolderName(fileDB.getFolder().getName());
+                fileAiResults.setAcceptCriteria(evaluation.acceptCriteria());
+                fileAiResults.setRejectCriteria(evaluation.rejectCriteria());
+                fileAiResultsList.add(fileAiResults);
+            }
+        }
+        return fileAiResultsList;
     }
+
 
 
 }

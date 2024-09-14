@@ -4,7 +4,7 @@ package org.sid.cvthequespringboot.web;
 import lombok.AllArgsConstructor;
 import org.sid.cvthequespringboot.dtos.Criteria;
 import org.sid.cvthequespringboot.dtos.FileAiResults;
-import org.sid.cvthequespringboot.dtos.Scoring;
+import org.sid.cvthequespringboot.dtos.ScoringDto;
 import org.sid.cvthequespringboot.services.AiServices.AiServices;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +40,6 @@ public class AiRestController {
     }*/
 
 
-/*
     @PostMapping("/criteria")
     public ResponseEntity<?> selectedCriteria(
             @RequestParam("selectedCriteria") List<String> selectedCriteria,
@@ -55,6 +54,7 @@ public class AiRestController {
                 fileAiCriteria = aiService.selectedCriteria(selectedCriteria, jobDescription);
             }
 
+            System.out.println("===================00000 fileAiCriteria = " + fileAiCriteria);
             return ResponseEntity.ok(fileAiCriteria);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error transferring files: " + e.getMessage());
@@ -73,7 +73,7 @@ public class AiRestController {
             } else {
                 fileAiCriteria = aiService.selectedKeywords(keywords);
             }
-
+            System.out.println("===================00000 fileAiCriteria = " + fileAiCriteria);
             return ResponseEntity.ok(fileAiCriteria);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error transferring files: " + e.getMessage());
@@ -90,16 +90,16 @@ public class AiRestController {
             } else {
                 fileAiCriteria = aiService.selectedScoring(jobDescription);
             }
-
+            System.out.println("===================00000 fileAiCriteria = " + fileAiCriteria);
             return ResponseEntity.ok(fileAiCriteria);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error transferring files: " + e.getMessage());
         }
     }
 
-    */
 
 
+/*
     @PostMapping("/criteria")
     public ResponseEntity<?> selectedCriteria(
             @RequestParam("selectedCriteria") List<String> selectedCriteria,
@@ -201,9 +201,9 @@ public class AiRestController {
             List<FileAiResults> fileAiResultsList = new ArrayList<>();
             for (int i = 1; i <= 20; i++) {
                 // Créer des critères d'acceptation
-                Scoring scoring = new Scoring();
-                scoring.setScore(ThreadLocalRandom.current().nextLong(0, 101));
-                scoring.setMessage("Scoring comment " +
+                ScoringDto scoringDto = new ScoringDto();
+                scoringDto.setScore(ThreadLocalRandom.current().nextLong(0, 101));
+                scoringDto.setMessage("Scoring comment " +
                         "Scoring comment " +
                         "Scoring comment " +
                         "Scoring comment " +
@@ -223,7 +223,7 @@ public class AiRestController {
                 fileAiResults.setCreatedAt(new Date());
                 fileAiResults.setFolderId(100L + i);
                 fileAiResults.setFolderName("Folder " + i);
-                fileAiResults.setScoring(scoring);
+                fileAiResults.setScoringDto(scoringDto);
 
                 // Ajouter l'objet à la liste
                 fileAiResultsList.add(fileAiResults);
@@ -235,5 +235,6 @@ public class AiRestController {
         }
     }
 
+*/
 
 }
