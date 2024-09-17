@@ -3,6 +3,7 @@ package org.sid.cvthequespringboot.web;
 
 import lombok.AllArgsConstructor;
 import org.sid.cvthequespringboot.dtos.Criteria;
+import org.sid.cvthequespringboot.dtos.EvaluationDto;
 import org.sid.cvthequespringboot.dtos.FileAiResults;
 import org.sid.cvthequespringboot.dtos.ScoringDto;
 import org.sid.cvthequespringboot.services.AiServices.AiServices;
@@ -47,17 +48,14 @@ public class AiRestController {
             @RequestParam(value = "folderId", required = false) Long folderId) {
 
         try {
-            List<FileAiResults> fileAiCriteria;
             if (folderId != null) {
-                fileAiCriteria = aiService.selectedCriteria(selectedCriteria, jobDescription, folderId);
+                aiService.selectedCriteria(selectedCriteria, jobDescription, folderId);
             } else {
-                fileAiCriteria = aiService.selectedCriteria(selectedCriteria, jobDescription);
+                aiService.selectedCriteria(selectedCriteria, jobDescription);
             }
-
-            System.out.println("===================00000 fileAiCriteria = " + fileAiCriteria);
-            return ResponseEntity.ok(fileAiCriteria);
+            return ResponseEntity.ok("Criteria done successfully");
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error transferring files: " + e.getMessage());
+            return ResponseEntity.status(500).body("Error evaluation by Criteria: " + e.getMessage());
         }
     }
 
@@ -67,16 +65,14 @@ public class AiRestController {
             @RequestParam(value = "folderId", required = false) Long folderId) {
 
         try {
-            List<FileAiResults> fileAiCriteria;
             if (folderId != null) {
-                fileAiCriteria = aiService.selectedKeywords(keywords, folderId);
+                aiService.selectedKeywords(keywords, folderId);
             } else {
-                fileAiCriteria = aiService.selectedKeywords(keywords);
+                aiService.selectedKeywords(keywords);
             }
-            System.out.println("===================00000 fileAiCriteria = " + fileAiCriteria);
-            return ResponseEntity.ok(fileAiCriteria);
+            return ResponseEntity.ok("Keywords done successfully");
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error transferring files: " + e.getMessage());
+            return ResponseEntity.status(500).body("Error evaluation by Keywords: " + e.getMessage());
         }
     }
     @PostMapping("/scoring")
@@ -84,16 +80,14 @@ public class AiRestController {
             @RequestParam("jobDescription") String jobDescription,
             @RequestParam(value = "folderId", required = false) Long folderId) {
         try {
-            List<FileAiResults> fileAiCriteria;
             if (folderId != null) {
-                fileAiCriteria = aiService.selectedScoring(jobDescription, folderId);
+                aiService.selectedScoring(jobDescription, folderId);
             } else {
-                fileAiCriteria = aiService.selectedScoring(jobDescription);
+                aiService.selectedScoring(jobDescription);
             }
-            System.out.println("===================00000 fileAiCriteria = " + fileAiCriteria);
-            return ResponseEntity.ok(fileAiCriteria);
+            return ResponseEntity.ok("Scoring done successfully");
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error transferring files: " + e.getMessage());
+            return ResponseEntity.status(500).body("Error evaluation by Scoring: " + e.getMessage());
         }
     }
 

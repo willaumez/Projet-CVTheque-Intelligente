@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpEvent} from "@angular/common/http";
-import {Observable, throwError} from "rxjs";
+import {HttpClient, HttpErrorResponse, HttpEvent, HttpParams} from "@angular/common/http";
+import {Observable, of, throwError} from "rxjs";
 import {catchError, map} from "rxjs/operators";
 import {CVStatsDTO, FileDB, Folder} from "../../Models/FileDB";
 import {environment} from "../../../environments/environment";
@@ -100,13 +100,61 @@ export class FilesService {
   }
 
   //Stats
-  getCvCountPerMonth(): Observable<any> {
-    return this.http.get<CVStatsDTO[]>(environment.backEndHost + "/file/count-per-month");
+  getAllHomeDta(): Observable<any> {
+    return this.http.get<CVStatsDTO[]>(environment.backEndHost + "/file/getStats");
   }
 
   //Get Evaluation
   getEvaluationInfos(file: number) {
     return this.http.get<EvaluationDto>(environment.backEndHost + `/file/evaluation/${file}`);
+  }
+  //Delete Evaluation
+  deleteEvaluation(evaluationId: number) {
+    return this.http.delete(environment.backEndHost + `/file/evaluation/${evaluationId}`).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 409) {
+          return throwError(() => new Error(error.error));
+        } else if (error.status === 404) {
+          return throwError(() => new Error('Evaluation not found'));
+        } else if (error.status >= 400 && error.status < 600) {
+          return throwError(() => new Error('An unexpected error occurred: ' + error.message));
+        } else {
+          return of(null);
+        }
+      })
+    );
+  }
+  //Delete all evaluations
+  /*deleteAllEvaluation(selection: number[]) {
+    return this.http.delete(environment.backEndHost + "/file/evaluation/delete/" + selection)
+      .pipe(
+        catchError(error => {
+          return throwError(error);
+        })
+      );
+  }*/
+
+  deleteAllEvaluation(selection: number[]) {
+    let params = new HttpParams();
+    selection.forEach(id => {
+      params = params.append('selection', id.toString());
+    });
+    console.log('Params: ', params);
+
+    return this.http.delete(environment.backEndHost+"/file/evaluation/delete", { params })
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          if (error.status === 409) {
+            return throwError(() => new Error(error.error));
+          } else if (error.status === 404) {
+            return throwError(() => new Error('Evaluation not found'));
+          } else if (error.status >= 400 && error.status < 600) {
+            return throwError(() => new Error('An unexpected error occurred: ' + error.message));
+          } else {
+            return of(null);
+          }
+        })
+      );
   }
 
 

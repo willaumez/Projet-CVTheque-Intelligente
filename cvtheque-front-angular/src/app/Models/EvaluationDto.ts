@@ -19,6 +19,7 @@ export interface ScoringDto {
   profile: string;
   score: number;
   message: string;
+  createdAt: Date;
 }
 export enum Status {
   ACCEPTED = 'ACCEPTED',

@@ -30,7 +30,7 @@ public class FileDB {
     @JoinColumn(name = "folder_id")
     private Folder folder;
 
-    @OneToOne()
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "evaluation_id")
     private Evaluation evaluation;
 }

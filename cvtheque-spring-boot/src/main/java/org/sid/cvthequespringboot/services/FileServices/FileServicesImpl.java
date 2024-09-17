@@ -179,8 +179,29 @@ public class FileServicesImpl implements FileServices {
     }
 
     @Override
-    public List<CVStatsDTO> getCvStats() {
-        return filesRepository.countCVsByMonthAndFolder();
+    public CVStatsDTO getCvStats() {
+        List<GraphData> cvStatsDTOList=  filesRepository.countCVsByMonthAndFolder();
+
+        long totalFiles = filesRepository.getTotalFiles();
+        long totalFolders = filesRepository.getTotalFolders();
+        long totalProfiles = filesRepository.getTotalProfiles();
+        long totalEvaluated = filesRepository.getTotalEvaluatedFiles();
+        long totalNotEvaluated = filesRepository.getTotalNotEvaluatedFiles();
+
+        HeaderData headerData = HeaderData.builder()
+                .totalFiles(totalFiles)
+                .totalFolders(totalFolders)
+                .totalProfiles(totalProfiles)
+                .totalEvaluated(totalEvaluated)
+                .totalNotEvaluated(totalNotEvaluated)
+                .build();
+
+
+        //HeaderData headerData = filesRepository.getCVStats();
+        return CVStatsDTO.builder()
+                .graphData(cvStatsDTOList)
+                .headerData(headerData)
+                .build();
     }
 
     @Override
@@ -190,6 +211,29 @@ public class FileServicesImpl implements FileServices {
             return fileMappers.fromEvaluation(evaluation);
         }
         return null;
+    }
+
+    @Override
+    public boolean deleteEvaluation(Long evaluationId) {
+        try {
+            evaluationRepository.deleteById(evaluationId);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @Transactional
+    @Override
+    public boolean deleteEvaluationByFileId(List<Long> selection) {
+        try {
+            evaluationRepository.deleteAllByFileDB_IdIn(selection);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 

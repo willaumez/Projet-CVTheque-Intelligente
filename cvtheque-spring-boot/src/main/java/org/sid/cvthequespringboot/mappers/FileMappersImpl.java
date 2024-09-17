@@ -7,6 +7,7 @@ import org.sid.cvthequespringboot.repositories.EvaluationRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -164,6 +165,39 @@ public class FileMappersImpl implements FileMappers {
         EvaluationDto evaluationDto = new EvaluationDto();
         evaluationDto.setId(evaluation.getId());
 
+        // Récupération des critères d'évaluation
+        List<CriteriaEval> allCriteria = evaluation.getAcceptRejectCriteria();
+
+        // Assurez-vous que allCriteria est non null et qu'il est bien de type List<CriteriaEval>
+        if (allCriteria != null) {
+            List<CriteriaEval> acceptedCriteria = allCriteria.stream()
+                    .filter(criteria -> criteria != null && Status.ACCEPTED.equals(criteria.getStatus()))
+                    .collect(Collectors.toList());
+            List<CriteriaEval> rejectedCriteria = allCriteria.stream()
+                    .filter(criteria -> criteria != null && Status.REJECTED.equals(criteria.getStatus()))
+                    .collect(Collectors.toList());
+
+            // Définition des critères acceptés et rejetés dans le DTO
+            evaluationDto.setAcceptCriteria(acceptedCriteria);
+            evaluationDto.setRejectCriteria(rejectedCriteria);
+        } else {
+            // Gestion des cas où allCriteria est null
+            evaluationDto.setAcceptCriteria(Collections.emptyList());
+            evaluationDto.setRejectCriteria(Collections.emptyList());
+        }
+
+        // Définition des autres propriétés dans le DTO
+        evaluationDto.setCreatedAt(evaluation.getCreatedAt());
+        evaluationDto.setExistWords(evaluation.getExistWords() != null ? evaluation.getExistWords() : Collections.emptyList());
+        evaluationDto.setNoExistWords(evaluation.getNoExistWords() != null ? evaluation.getNoExistWords() : Collections.emptyList());
+        evaluationDto.setScoring(fromScoring(evaluation.getScoring() != null ? evaluation.getScoring() : Collections.emptyList()));
+
+        return evaluationDto;
+    }
+    /*public EvaluationDto fromEvaluation(Evaluation evaluation) {
+        EvaluationDto evaluationDto = new EvaluationDto();
+        evaluationDto.setId(evaluation.getId());
+
         List<CriteriaEval> allCriteria = evaluation.getAcceptRejectCriteria();
         List<CriteriaEval> acceptedCriteria = allCriteria.stream()
                 .filter(criteria -> Status.ACCEPTED.equals(criteria.getStatus()))
@@ -175,13 +209,12 @@ public class FileMappersImpl implements FileMappers {
         evaluationDto.setAcceptCriteria(acceptedCriteria);
         evaluationDto.setRejectCriteria(rejectedCriteria);
 
-
         evaluationDto.setCreatedAt(evaluation.getCreatedAt());
         evaluationDto.setExistWords(evaluation.getExistWords());
         evaluationDto.setNoExistWords(evaluation.getNoExistWords());
         evaluationDto.setScoring(fromScoring(evaluation.getScoring()));
         return evaluationDto;
-    }
+    }*/
 
     @Override
     public Evaluation fromEvaluationDto(EvaluationDto evaluationDto) {
@@ -194,6 +227,7 @@ public class FileMappersImpl implements FileMappers {
         for (Scoring score : scoring) {
             ScoringDto scoringDto1 = new ScoringDto();
             scoringDto1.setProfile(score.getProfile());
+            scoringDto1.setCreatedAt(score.getCreatedAt());
             scoringDto1.setScore(score.getScore());
             scoringDto1.setMessage(score.getMessage());
             scoringDto.add(scoringDto1);

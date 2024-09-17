@@ -23,7 +23,11 @@ public interface FileServices {
     FileDB updateFile(FileDB fileDB);
 
     //Stats
-    List<CVStatsDTO> getCvStats();
+    CVStatsDTO getCvStats();
 
     EvaluationDto getEvaluationByFileId(Long fileId);
+
+    boolean deleteEvaluation(Long evaluationId);
+
+    boolean deleteEvaluationByFileId(List<Long> selection);
 }

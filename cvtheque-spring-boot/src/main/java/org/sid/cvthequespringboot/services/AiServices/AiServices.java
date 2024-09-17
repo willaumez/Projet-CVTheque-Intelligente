@@ -1,18 +1,16 @@
 package org.sid.cvthequespringboot.services.AiServices;
 
-import org.sid.cvthequespringboot.dtos.FileAiResults;
-
 import java.util.List;
 
 public interface AiServices {
     String generalChat(String question);
 
-    List<FileAiResults> selectedCriteria(List<String> selectedCriteria, String jobDescription);
-    List<FileAiResults> selectedCriteria(List<String> selectedCriteria, String jobDescription, Long folderId);
+    void selectedCriteria(List<String> selectedCriteria, String jobDescription);
+    void selectedCriteria(List<String> selectedCriteria, String jobDescription, Long folderId);
 
-    List<FileAiResults> selectedKeywords(List<String> keywords, Long folderId);
-    List<FileAiResults> selectedKeywords(List<String> keywords);
+    void selectedKeywords(List<String> keywords, Long folderId);
+    void selectedKeywords(List<String> keywords);
 
-    List<FileAiResults> selectedScoring(String jobDescription);
-    List<FileAiResults> selectedScoring(String jobDescription, Long folderId);
+    void selectedScoring(String jobDescription);
+    void selectedScoring(String jobDescription, Long folderId);
 }

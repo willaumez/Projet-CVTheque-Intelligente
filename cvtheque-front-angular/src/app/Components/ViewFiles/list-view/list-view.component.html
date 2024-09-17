@@ -181,31 +181,6 @@
 
   <div *ngIf="!isLoading && dataSource && dataSource.data && dataSource.data.length > 0 && !error"
        class="container-fluid">
-    <!--<div class="header d-flex align-items-center justify-content-between">
-      <mat-form-field appearance="outline" class="filter-field">
-        <mat-label>Filter</mat-label>
-        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. name" #input>
-      </mat-form-field>
-
-      <div class="action-container d-flex" *ngIf="selection.length  !==0 ">
-        <button mat-button (click)="deleteSelection()">
-          <mat-icon class="delete-icon">delete_forever</mat-icon>
-        </button>
-        <button mat-button (click)="transferSelection()">
-          <mat-icon class="action-icon first-icon">subdirectory_arrow_right</mat-icon>
-          <mat-icon class="action-icon">folder_special</mat-icon>
-        </button>
-      </div>
-
-      <div *ngIf="isRenameFile" class="filter-field-rename d-flex align-items-center">
-        <mat-form-field appearance="outline" class="flex-grow-1">
-          <mat-label>Rename file</mat-label>
-          <input matInput [(ngModel)]="renameFileDB!.name" placeholder="Ex. ium" (keyup.enter)="renameFileSubmit()">
-        </mat-form-field>
-        <mat-icon style="margin-top: -20px" (click)="resetRename()">cancel</mat-icon>
-      </div>
-    </div>-->
-
     <div class="header row d-flex align-items-center justify-content-between">
       <div class="col-12 col-md-6 col-lg-4 mb-2 mb-md-0">
         <mat-form-field appearance="outline" class="w-100 filter-field">
@@ -214,15 +189,24 @@
         </mat-form-field>
       </div>
 
-      <div class="action-container col-12 col-md-6 col-lg-4 mb-2 mb-md-0 d-flex justify-content-end"
+      <div class="action-container col-12 col-md-6 col-lg-4 mb-2 mb-md-0 d-flex justify-content-between"
            *ngIf="selection.length  !==0 ">
-        <button mat-button (click)="deleteSelection()">
-          <mat-icon class="delete-icon">delete_forever</mat-icon>
-        </button>
-        <button mat-button (click)="transferSelection()">
-          <mat-icon class="action-icon first-icon">subdirectory_arrow_right</mat-icon>
-          <mat-icon class="action-icon">folder_special</mat-icon>
-        </button>
+        <div style="border-right: 2px solid #203863">
+          <button mat-button (click)="deleteAllEvaluation()" style="color: red"
+                  matTooltip="Remove evaluation">
+            <mat-icon class="delete-icon">delete_forever</mat-icon>
+            Delete all evaluation
+          </button>
+        </div>
+        <div>
+          <button mat-button (click)="deleteSelection()">
+            <mat-icon class="delete-icon">delete_forever</mat-icon>
+          </button>
+          <button mat-button (click)="transferSelection()">
+            <mat-icon class="action-icon first-icon">subdirectory_arrow_right</mat-icon>
+            <mat-icon class="action-icon">folder_special</mat-icon>
+          </button>
+        </div>
       </div>
 
       <div *ngIf="isRenameFile && selection.length === 0"
@@ -283,7 +267,7 @@
       <ng-container matColumnDef="dateCreation">
         <th mat-header-cell *matHeaderCellDef mat-sort-header="createdAt"> Date Creation</th>
         <td mat-cell *matCellDef="let element" class="align-middle">
-          {{ element.createdAt | date: 'yyyy-MM-dd' }} | {{ element.createdAt | date: 'HH:mm:ss' }}
+          {{ element.createdAt | date: 'dd-MM-yyyy' }} | {{ element.createdAt | date: 'HH:mm:ss' }}
         </td>
       </ng-container>
 
@@ -364,117 +348,131 @@
   </ng-container>
 </ng-container>
 
-
-
 <ng-container *ngIf="isResult">
-  <div class="body-viewer">
-    <div class="pdf-viewer">
-      <ngx-extended-pdf-viewer
-        [src]="pdfSrc"
-        useBrowserLocale="true"
-        [textLayer]="true"
-        [showHandToolButton]="true"
-        class="ngx-viewer">
-      </ngx-extended-pdf-viewer>
-    </div>
-
-    <div class="result-container" *ngIf="evaluation">
-      <div class="return-button">
-        <button mat-raised-button (click)="returnToFilesView()">
-          <mat-icon>arrow_back</mat-icon>
-          Return
-        </button>
-      </div>
-
-      <!-- Affichage des critères acceptés -->
-      <div class="result-text" *ngIf="evaluation.acceptCriteria?.length">
-        <h2 class="accepted">Accepted Criteria:</h2>
-        <ul>
-          <li *ngFor="let criteria of evaluation.acceptCriteria">
-            <h3 style="color:#007e40;">{{ criteria.name }}</h3>
-            <p>{{ criteria.message }}</p>
-          </li>
-        </ul>
-      </div>
-      <ng-container *ngIf="!evaluation.acceptCriteria?.length">
-        <p>No accepted criteria.</p>
-      </ng-container>
-
-      <mat-divider class="divider-criteria"></mat-divider>
-
-      <!-- Affichage des critères rejetés -->
-      <div class="result-text" *ngIf="evaluation.rejectCriteria?.length">
-        <h2 class="rejected">Rejected Criteria:</h2>
-        <ul>
-          <li *ngFor="let criteria of evaluation.rejectCriteria">
-            <h3 style="color:#fb0000;">{{ criteria.name }}</h3>
-            <p>{{ criteria.message }}</p>
-          </li>
-        </ul>
-      </div>
-      <ng-container *ngIf="!evaluation.rejectCriteria?.length">
-        <p>No rejected criteria.</p>
-      </ng-container>
-
-      <mat-divider class="divider-criteria"></mat-divider>
-
-      <!-- Affichage des mots existants -->
-      <div class="result-text" *ngIf="evaluation.existWords?.length">
-        <h2 class="accepted">Keywords found:</h2>
-        <div class="keywords-container p-2"  style="color:green;">
-          <span *ngFor="let word of evaluation.existWords" class="keyword">
-            {{ word }}
-          </span>
-        </div>
-      </div>
-
-      <ng-container *ngIf="!evaluation.existWords?.length">
-        <p>No keywords found.</p>
-      </ng-container>
-
-      <mat-divider class="divider-criteria"></mat-divider>
-
-      <!-- Affichage des mots non existants -->
-      <div class="result-text" *ngIf="evaluation.noExistWords?.length">
-        <h2 class="rejected">Keywords that were not found:</h2>
-        <div class="keywords-container p-2" style="color:red;">
-          <span *ngFor="let keyword of evaluation.noExistWords" class="keyword">
-          {{ keyword }}
-          </span>
-        </div>
-      </div>
-
-      <ng-container *ngIf="!evaluation.noExistWords?.length">
-        <p>No keywords exist.</p>
-      </ng-container>
-
-      <mat-divider class="divider-criteria"></mat-divider>
-
-      <!-- Affichage du score -->
-      <div class="result-text" *ngIf="evaluation.scoring?.length">
-        <h2 class="score">Scoring:</h2>
-        <ng-container *ngFor="let score of evaluation.scoring">
-          <ng-container *ngIf="score.score !== null; else noExistScore">
-            <span class="accepted"> Profile: {{score.profile}}</span>
-            <span class="score-score"
-                  [ngStyle]="{ 'color': score.score < 50 ? 'red' : 'green' }">
-              {{ score.score }}%
-            </span>
-          </ng-container>
-          <ng-template #noExistScore>
-            <p>No score found.</p>
-          </ng-template>
-          <ng-container *ngIf="score.message; else noExistMessage">
-            <p class="score-message">{{ score.message }}</p>
-          </ng-container>
-          <ng-template #noExistMessage>
-            <p>No message found.</p>
-          </ng-template>
-        </ng-container>
-      </div>
-    </div>
+  <!-- Gestion du chargement -->
+  <div class="spinner" *ngIf="isLoading && !error">
+    <mat-spinner></mat-spinner>
   </div>
+
+  <!-- Affichage du contenu lorsque l'évaluation est présente et qu'il n'y a pas d'erreurs -->
+  <ng-container *ngIf="!isLoading && evaluation?.id && !error">
+    <ng-container *ngIf="evaluation === null">
+      <span class="error-message">No evaluation found.</span>
+    </ng-container>
+    <div class="body-viewer">
+      <div class="pdf-viewer">
+        <ngx-extended-pdf-viewer
+          [src]="pdfSrc"
+          useBrowserLocale="true"
+          [textLayer]="true"
+          [showHandToolButton]="true"
+          class="ngx-viewer">
+        </ngx-extended-pdf-viewer>
+      </div>
+
+      <div class="result-container">
+        <div class="return-button justify-content-between mt-1">
+          <button mat-raised-button (click)="deleteEvaluation(evaluation.id)" style="color: red"
+                  matTooltip="Remove evaluation of this file" *ngIf="evaluation">
+            <mat-icon>delete_forever</mat-icon>
+            Delete
+          </button>
+          <span class=" align-content-center" style="color: #004a86; font-size: 1.2rem"
+                matTooltip="Last evaluation">
+            {{evaluation.createdAt | date: 'dd-MM-yyyy'}}
+          </span>
+          <button mat-raised-button (click)="returnToFilesView()">
+            <mat-icon>arrow_back</mat-icon>
+            Return
+          </button>
+        </div>
+        <!-- Affichage des critères acceptés -->
+        <div class="result-text" *ngIf="evaluation.acceptCriteria?.length">
+          <h2 class="accepted">Accepted Criteria:</h2>
+          <ul>
+            <li *ngFor="let criteria of evaluation.acceptCriteria; let last = last">
+              <div class="accepted mt-1 d-flex justify-content-between">
+                <h3 style="color:#007e40;">{{ criteria.name }}</h3>  <span style="color: #004a86; font-size: 0.8rem">{{ criteria.createdAt | date: 'dd-MM-yyyy' }}</span>
+              </div>
+              <p>{{ criteria.message }}</p>
+              <mat-divider *ngIf="!last"></mat-divider>
+            </li>
+          </ul>
+        </div>
+        <mat-divider class="divider-criteria"></mat-divider>
+
+        <!-- Affichage des critères rejetés -->
+        <div class="result-text" *ngIf="evaluation.rejectCriteria?.length">
+          <h2 class="rejected">Rejected Criteria:</h2>
+          <ul>
+            <li *ngFor="let criteria of evaluation.rejectCriteria; let last = last">
+              <div class="accepted mt-1 d-flex justify-content-between">
+                <h3 style="color:#007e40;">{{ criteria.name }}</h3>  <span style="color: #004a86; font-size: 0.8rem">{{ criteria.createdAt | date: 'dd-MM-yyyy' }}</span>
+              </div>
+              <p>{{ criteria.message }}</p>
+              <mat-divider *ngIf="!last"></mat-divider>
+            </li>
+          </ul>
+        </div>
+        <mat-divider class="divider-criteria"></mat-divider>
+
+        <!-- Affichage des mots existants -->
+        <div class="result-text" *ngIf="evaluation.existWords?.length">
+          <h2 class="accepted">Keywords found:</h2>
+          <div class="keywords-container p-2" style="color:green;">
+            <span *ngFor="let word of evaluation.existWords" class="keyword">
+              {{ word }}
+            </span>
+          </div>
+        </div>
+        <mat-divider class="divider-criteria"></mat-divider>
+
+        <!-- Affichage des mots non existants -->
+        <div class="result-text" *ngIf="evaluation.noExistWords?.length">
+          <h2 class="rejected">Keywords that were not found:</h2>
+          <div class="keywords-container p-2" style="color:red;">
+            <span *ngFor="let keyword of evaluation.noExistWords" class="keyword">
+              {{ keyword }}
+            </span>
+          </div>
+        </div>
+        <mat-divider class="divider-criteria"></mat-divider>
+
+        <!-- Affichage du score -->
+        <div class="result-text" *ngIf="evaluation.scoring?.length">
+          <h2 class="score">Scoring:</h2>
+          <ng-container *ngFor="let score of evaluation.scoring; let last = last">
+            <ng-container *ngIf="score.score !== null; else noExistScore">
+              <div class="accepted mt-1 d-flex justify-content-between">
+                <span>{{ score.profile }}</span>  <span style="color: #004a86; font-size: 1rem">{{ score.createdAt | date: 'dd-MM-yyyy' }}</span>
+              </div>
+              <span class="score-score"
+                    [ngStyle]="{ 'color': score.score < 50 ? 'red' : 'green' }">
+                {{ score.score }}%
+              </span>
+            </ng-container>
+            <ng-template #noExistScore>
+              <p>No score found.</p>
+            </ng-template>
+            <ng-container *ngIf="score.message; else noExistMessage">
+              <p class="score-message">{{ score.message }}</p>
+            </ng-container>
+            <ng-template #noExistMessage>
+              <p>No message found.</p>
+            </ng-template>
+            <mat-divider class="divider-criteria" *ngIf="!last"></mat-divider>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Gestion des erreurs -->
+  <ng-container *ngIf="!isLoading && error">
+    <span class="error-message">{{ error }}</span>
+  </ng-container>
 </ng-container>
+
 
 
 

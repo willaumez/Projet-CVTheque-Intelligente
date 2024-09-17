@@ -50,6 +50,7 @@ public class FileRestController {
         fileServices.processAndStoreFiles(file, folderDto);
         return ResponseEntity.ok("File stored successfully");
     }
+
     //-------------------------------------------------------------------------
     //Get all files form the database FileDB
     @GetMapping("/files")
@@ -72,6 +73,7 @@ public class FileRestController {
                 .map(fileMappersImpl::fromFile)
                 .collect(Collectors.toList());
     }
+
     @GetMapping("/test2")
     public List<EvaluationDto> getEvaluationAll() {
         List<Evaluation> files = evaluationRepository.findAll();
@@ -81,12 +83,9 @@ public class FileRestController {
     }
 
 
-
-
     //Read a file from the database FileDB
     @GetMapping("/read/{fileId}")
     public ResponseEntity<Resource> readFilePdf(@PathVariable Long fileId) {
-        System.out.println("fileId: " + fileId);
         try {
             File tempFile = fileServices.saveReadFile(fileId);
             System.out.println("tempFile: " + tempFile.toString());
@@ -98,10 +97,10 @@ public class FileRestController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     //Delete all files from the database FileDB and the vectorStore
     @DeleteMapping("/delete/{filesIds}")
     public void deleteFiles(@PathVariable List<Long> filesIds) {
-        System.out.println("filesIds: " + filesIds);
         fileServices.deleteFiles(filesIds);
     }
 
@@ -116,6 +115,7 @@ public class FileRestController {
             return ResponseEntity.status(500).body("Error transferring files: " + e.getMessage());
         }
     }
+
     //Upload a file to the database FileDB
     @PutMapping("/update")
     public ResponseEntity<String> updateFile(@RequestBody FileDB fileDB) {
@@ -131,11 +131,11 @@ public class FileRestController {
             return ResponseEntity.status(500).body("Failed to update file");
         }
     }
+
     //Evaluate a file
     @GetMapping("/evaluation/{fileId}")
     public ResponseEntity<EvaluationDto> getEvaluationInfos(@PathVariable Long fileId) {
         EvaluationDto evaluationDto = fileServices.getEvaluationByFileId(fileId);
-        System.out.println("evaluationDto: " + fileId);
         if (evaluationDto != null) {
             return ResponseEntity.ok(evaluationDto);
         } else {
@@ -143,10 +143,35 @@ public class FileRestController {
         }
     }
 
+    //Delete Evaluation
+    @DeleteMapping("/evaluation/{evaluationId}")
+    public ResponseEntity<?> deleteEvaluation(@PathVariable Long evaluationId) {
+        boolean deleted = fileServices.deleteEvaluation(evaluationId);
+        if (deleted) {
+            System.out.println("======================================0Evaluation deleted successfully");
+            return ResponseEntity.ok("Evaluation deleted successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete evaluation");
+        }
+    }
+
+    //Delete all evaluations
+    @DeleteMapping("/evaluation/delete")
+    public ResponseEntity<?> deleteAllEvaluation(@RequestParam  List<Long> selection) {
+        System.out.println("======================================0selection: " + selection);
+        boolean deleted = fileServices.deleteEvaluationByFileId(selection);
+        if (deleted) {
+            return ResponseEntity.ok("All evaluations deleted successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+                    .body("Some evaluations could not be deleted.");
+        }
+    }
+
     //Stats
-    @GetMapping("/count-per-month")
-    public List<CVStatsDTO> getCvCountPerMonth() {
-        List<CVStatsDTO> statsDTOS = fileServices.getCvStats();
+    @GetMapping("/getStats")
+    public CVStatsDTO getCvCountPerMonth() {
+        CVStatsDTO statsDTOS = fileServices.getCvStats();
         //System.out.println("====================== statsDTOS: " + statsDTOS.toString());
         return statsDTOS;
     }

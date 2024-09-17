@@ -13,4 +13,6 @@ public interface EvaluationRepository extends JpaRepository<Evaluation, Long> {
     Evaluation findByFileDB_Id(Long id);
 
     void deleteByFileDB_Id(Long fileId);
+
+    void deleteAllByFileDB_IdIn(List<Long> selection);
 }

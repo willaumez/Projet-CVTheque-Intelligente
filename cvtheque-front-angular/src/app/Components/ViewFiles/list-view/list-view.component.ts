@@ -251,5 +251,45 @@ export class ListViewComponent implements OnInit, AfterViewChecked {
     this.renameFileDB = undefined;
   }
 
+  deleteEvaluation(id: number) {
+    let conf: boolean = confirm("Are you sure you want to delete the evaluation?");
+    if (!conf) return;
+    this.isLoading = true;
+    this._fileService.deleteEvaluation(id).subscribe({
+      next: () => {
+        console.log('Evaluation deleted successfully:');
+        this.isLoading = false;
+        this.isResult = false;
+        this.getAllFiles();
+      },
+      error: (error) => {
+        console.error('Error deleting evaluation:', error);
+        this.error = 'Error deleting evaluation: ' + (error.message || 'Unknown error');
+        this.isLoading = false;
+      }
+    });
+  }
+  deleteAllEvaluation() {
+    let conf: boolean = confirm("Are you sure to delete the selected evaluations?");
+    if (!conf) return;
+    this.inOperation = true; // Début de l'opération
+    if (this.selection.length > 0) {
+      this._fileService.deleteAllEvaluation(this.selection).subscribe({
+        next: (response) => {
+          this.selection = [];
+          this.getAllFiles();
+          this.inOperation = false;
+        },
+        error: (error) => {
+          this.error = 'Error deleting files: ' + error.message;
+          this.inOperation = false;
+        }
+      });
+    } else {
+      this.inOperation = false;
+    }
+  }
+
+
 
 }

@@ -29,11 +29,3 @@ public class Folder {
     private Set<FileDB> files;
 
 }
-
-    /*@ManyToMany(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinTable(
-            name = "folder_files",
-            joinColumns = @JoinColumn(name = "folder_id"),
-            inverseJoinColumns = @JoinColumn(name = "file_id")
-    )
-    private Set<FileDB> files;*/

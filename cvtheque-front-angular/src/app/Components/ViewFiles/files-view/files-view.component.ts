@@ -229,6 +229,8 @@ export class FilesViewComponent implements OnInit{
       error: (error: Error) => {
         this.error = 'Error fetching files: ' + error.message;
         this.loading = false;
+      }, complete: () => {
+        this.refreshChildViews();
       }
     });
   }

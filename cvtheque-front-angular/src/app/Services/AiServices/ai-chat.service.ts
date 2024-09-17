@@ -33,7 +33,7 @@ export class AiChatService {
     if (criteria.folderId !== undefined) {
       formData.append('folderId', criteria.folderId.toString());
     }
-    return this.http.post<Observable<FileDB[]>>(environment.backEndHost+ "/ai/criteria", formData, {
+    return this.http.post<Observable<any>>(environment.backEndHost+ "/ai/criteria", formData, {
       reportProgress: true,
       observe: 'events',
       responseType: 'text' as 'json'
@@ -49,14 +49,13 @@ export class AiChatService {
     if (keywords.folderId !== undefined) {
       formData.append('folderId', keywords.folderId.toString());
     }
-    return this.http.post<Observable<FileDB[]>>(environment.backEndHost+ "/ai/keywords", formData, {
+    return this.http.post<Observable<any>>(environment.backEndHost+ "/ai/keywords", formData, {
       reportProgress: true,
       observe: 'events',
       responseType: 'text' as 'json'
     });
 
   }
-
 
   selectByScoring(scoring: { jobDescription: string; folderId: number | undefined }) {
     const formData: FormData = new FormData();
@@ -65,7 +64,7 @@ export class AiChatService {
       formData.append('folderId', scoring.folderId.toString());
     }
     console.log('Scoring: ', scoring);
-    return this.http.post<Observable<FileDB[]>>(environment.backEndHost+"/ai/scoring", formData, {
+    return this.http.post<Observable<any>>(environment.backEndHost+"/ai/scoring", formData, {
       reportProgress: true,
       observe: 'events',
       responseType: 'text' as 'json'

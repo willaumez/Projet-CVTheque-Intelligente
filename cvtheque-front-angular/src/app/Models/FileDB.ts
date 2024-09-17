@@ -44,11 +44,23 @@ export interface Scoring{
 }
 
 
+
 //Stats
-export interface CVStatsDTO {
+export interface CVStatsDTO{
+  graphData: GraphData[];
+  headerData: HeaderData;
+}
+export interface GraphData {
   folderName: string;
   month: number;
   year: number;
   count: number;
+}
+export interface HeaderData{
+  totalFiles: number;
+  totalFolders: number;
+  totalProfiles: number;
+  totalEvaluated: number;
+  totalNotEvaluated: number;
 }
 

@@ -2,14 +2,16 @@ package org.sid.cvthequespringboot.dtos;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class CVStatsDTO {
-    private String folderName;
-    private int month;
-    private int year;
-    private long count;
+
+    private List<GraphData> graphData;
+    private HeaderData headerData;
+
 }

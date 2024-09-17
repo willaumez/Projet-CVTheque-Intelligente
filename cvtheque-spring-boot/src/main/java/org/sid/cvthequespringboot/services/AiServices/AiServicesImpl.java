@@ -1,12 +1,11 @@
 package org.sid.cvthequespringboot.services.AiServices;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import jakarta.transaction.Transactional;
-import org.sid.cvthequespringboot.dtos.FileAiResults;
 import org.sid.cvthequespringboot.entities.*;
 import org.sid.cvthequespringboot.enums.Status;
+import org.sid.cvthequespringboot.mappers.FileMappersImpl;
 import org.sid.cvthequespringboot.record.CriteriaEvaluation;
 import org.sid.cvthequespringboot.record.KeywordsEvaluation;
 import org.sid.cvthequespringboot.record.ScoringEvaluation;
@@ -30,6 +29,9 @@ public class AiServicesImpl implements AiServices {
     private final FileStoreRepository fileStoreRepository;
     private final FilesRepository filesRepository;
     private final EvaluationRepository evaluationRepository;
+    private final FileMappersImpl fileMappers;
+
+    long waitTime = 4000;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -47,11 +49,12 @@ public class AiServicesImpl implements AiServices {
     private Resource promptScoring;
 
 
-    public AiServicesImpl(ChatClient.Builder builder, FileStoreRepository fileStoreRepository, FilesRepository filesRepository, EvaluationRepository evaluationRepository) {
+    public AiServicesImpl(ChatClient.Builder builder, FileStoreRepository fileStoreRepository, FilesRepository filesRepository, EvaluationRepository evaluationRepository, FileMappersImpl fileMappersImpl) {
         this.chatClient = builder.build();
         this.fileStoreRepository = fileStoreRepository;
         this.filesRepository = filesRepository;
         this.evaluationRepository = evaluationRepository;
+        this.fileMappers = fileMappersImpl;
     }
 
     @Override
@@ -72,51 +75,50 @@ public class AiServicesImpl implements AiServices {
     //TODO: Implement Criteria
     @Override
     @Transactional
-    public List<FileAiResults> selectedCriteria(List<String> selectedCriteria, String jobDescription) {
+    public void selectedCriteria(List<String> selectedCriteria, String jobDescription) {
         List<FileVectorStore> documents = fileStoreRepository.findAll();
-        return processSelectedCriteria(documents, selectedCriteria, jobDescription);
+        processSelectedCriteria(documents, selectedCriteria, jobDescription);
     }
 
     @Transactional
     @Override
-    public List<FileAiResults> selectedCriteria(List<String> selectedCriteria, String jobDescription, Long folderId) {
+    public void selectedCriteria(List<String> selectedCriteria, String jobDescription, Long folderId) {
         List<FileVectorStore> documents = fileStoreRepository.findAllByFolderId(folderId);
-        return processSelectedCriteria(documents, selectedCriteria, jobDescription);
+        processSelectedCriteria(documents, selectedCriteria, jobDescription);
     }
 
     //TODO: Implement Keywords
     @Transactional
     @Override
-    public List<FileAiResults> selectedKeywords(List<String> keywords, Long folderId) {
+    public void selectedKeywords(List<String> keywords, Long folderId) {
         List<FileVectorStore> documents = fileStoreRepository.findAllByFolderId(folderId);
-        return processSelectedKeywords(documents, keywords);
+        processSelectedKeywords(documents, keywords);
     }
 
     @Transactional
     @Override
-    public List<FileAiResults> selectedKeywords(List<String> keywords) {
+    public void selectedKeywords(List<String> keywords) {
         List<FileVectorStore> documents = fileStoreRepository.findAll();
-        return processSelectedKeywords(documents, keywords);
+        processSelectedKeywords(documents, keywords);
     }
 
     //TODO: Implement scoring
     @Transactional
     @Override
-    public List<FileAiResults> selectedScoring(String jobDescription) {
+    public void selectedScoring(String jobDescription) {
         List<FileVectorStore> documents = fileStoreRepository.findAll();
-        return processSelectedScoring(documents, jobDescription);
+        processSelectedScoring(documents, jobDescription);
     }
 
     @Transactional
     @Override
-    public List<FileAiResults> selectedScoring(String jobDescription, Long folderId) {
+    public void selectedScoring(String jobDescription, Long folderId) {
         List<FileVectorStore> documents = fileStoreRepository.findAllByFolderId(folderId);
-        return processSelectedScoring(documents, jobDescription);
+        processSelectedScoring(documents, jobDescription);
     }
 
-    private List<FileAiResults> processSelectedScoring(List<FileVectorStore> documents, String jobDescription) {
+    private void processSelectedScoring(List<FileVectorStore> documents, String jobDescription) {
         List<List<FileVectorStore>> partitionedDocuments = Lists.partition(documents, 2);
-        List<FileAiResults> fileAiResultsList = new ArrayList<>();
         for (List<FileVectorStore> batch : partitionedDocuments) {
             List<String> context = batch.stream()
                     .map(doc -> "| FileDBId: " + doc.getFileDB().getId() +
@@ -132,11 +134,11 @@ public class AiServicesImpl implements AiServices {
                 scoringEvaluations = chatClient.prompt()
                         .system(promptResource)
                         .call().entity(ScoringEvaluation[].class);
+
             } catch (Exception e) {
                 throw new RuntimeException("Erreur lors de l'appel au service AI", e);
             }
             for (ScoringEvaluation evaluation : scoringEvaluations) {
-                FileAiResults fileAiResults = new FileAiResults();
                 FileDB fileDB = filesRepository.findById(evaluation.fileId())
                         .orElseThrow(() -> new RuntimeException("Fichier introuvable pour l'ID: " + evaluation.fileId()));
 
@@ -158,40 +160,46 @@ public class AiServicesImpl implements AiServices {
                     existingEvaluation.setScoring(new ArrayList<>());
                 }
                 existingEvaluation.getScoring().add(newScoring);
-                evaluationRepository.save(existingEvaluation);
-
-                // Remplir les résultats
-
-                fileAiResults.setId(fileDB.getId());
-                fileAiResults.setName(fileDB.getName());
-                fileAiResults.setType(fileDB.getType());
-                fileAiResults.setCreatedAt(fileDB.getCreatedAt());
-                fileAiResults.setFolderId(fileDB.getFolder().getId());
-                fileAiResults.setFolderName(fileDB.getFolder().getName());
-                fileAiResults.setScoringDto(evaluation.scoringDto());
-                fileAiResultsList.add(fileAiResults);
+                Evaluation savedEvaluation = evaluationRepository.save(existingEvaluation);
+                fileDB.setEvaluation(savedEvaluation);
+                filesRepository.save(fileDB);
+                //evaluationRepository.save(existingEvaluation);
+            }
+            try {
+                Thread.sleep(waitTime);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException("Erreur d'interruption lors de l'attente", ie);
             }
         }
-        return fileAiResultsList;
     }
 
     @Transactional
-    public List<FileAiResults> processSelectedKeywords(List<FileVectorStore> documents, List<String> keywords){
+    public void processSelectedKeywords(List<FileVectorStore> documents, List<String> keywords) {
+        // Partitionner la liste des documents en sous-listes de taille 2
         List<List<FileVectorStore>> partitionedDocuments = Lists.partition(documents, 2);
-        List<FileAiResults> fileAiResultsList = new ArrayList<>();
+
+        // Parcourir chaque partition
         for (List<FileVectorStore> batch : partitionedDocuments) {
+            // Construire le contexte à partir des documents
             List<String> context = batch.stream()
                     .map(doc -> "| FileDBId: " + doc.getFileDB().getId() +
                             " | Content: " + doc.getContent())
                     .collect(Collectors.toList());
+
+            // Préparer le prompt pour l'API
             PromptTemplate promptTemplate = new PromptTemplate(promptKeywords);
             Prompt prompt = promptTemplate.create(Map.of(
                     "context", context,
-                    "keywords", String.join(", ", keywords)));
+                    "keywords", String.join(", ", keywords)
+            ));
 
+            // Créer la ressource à partir du contenu du prompt
             Resource promptResource = new ByteArrayResource(prompt.getContents().getBytes());
+
             KeywordsEvaluation[] keywordsEvaluation;
 
+            // Appel au service AI avec gestion des exceptions
             try {
                 keywordsEvaluation = chatClient.prompt()
                         .system(promptResource)
@@ -200,8 +208,9 @@ public class AiServicesImpl implements AiServices {
                 throw new RuntimeException("Erreur lors de l'appel au service AI", e);
             }
 
+            // Parcourir les résultats de l'évaluation des mots-clés
             for (KeywordsEvaluation evaluation : keywordsEvaluation) {
-                FileAiResults fileAiResults = new FileAiResults();
+                // Récupérer le fichier correspondant à l'évaluation
                 FileDB fileDB = filesRepository.findById(evaluation.fileId())
                         .orElseThrow(() -> new RuntimeException("Fichier introuvable pour l'ID: " + evaluation.fileId()));
 
@@ -209,38 +218,40 @@ public class AiServicesImpl implements AiServices {
                 Evaluation existingEvaluation = evaluationRepository.findByFileDB_Id(fileDB.getId());
 
                 if (existingEvaluation == null) {
+                    // Créer une nouvelle évaluation si elle n'existe pas
                     existingEvaluation = new Evaluation();
                     existingEvaluation.setCreatedAt(new Date());
                     existingEvaluation.setFileDB(fileDB);
                     existingEvaluation.setExistWords(new ArrayList<>());
                     existingEvaluation.setNoExistWords(new ArrayList<>());
                 } else {
+                    // Si l'évaluation existe mais que les listes de mots sont nulles, les initialiser
                     if (existingEvaluation.getExistWords() == null) {
                         existingEvaluation.setExistWords(new ArrayList<>());
                     }
                     if (existingEvaluation.getNoExistWords() == null) {
                         existingEvaluation.setNoExistWords(new ArrayList<>());
                     }
-                    existingEvaluation.getExistWords().addAll(evaluation.existWords());
-                    existingEvaluation.getNoExistWords().addAll(evaluation.noExistWords());
                 }
-                evaluationRepository.save(existingEvaluation);
 
+                // Ajouter les mots existants et non existants
+                existingEvaluation.getExistWords().addAll(evaluation.existWords());
+                existingEvaluation.getNoExistWords().addAll(evaluation.noExistWords());
 
-                // Remplir les résultats
-                fileAiResults.setId(fileDB.getId());
-                fileAiResults.setName(fileDB.getName());
-                fileAiResults.setType(fileDB.getType());
-                fileAiResults.setCreatedAt(fileDB.getCreatedAt());
-                fileAiResults.setFolderId(fileDB.getFolder().getId());
-                fileAiResults.setFolderName(fileDB.getFolder().getName());
-                fileAiResults.setExistWords(evaluation.existWords());
-                fileAiResults.setNoExistWords(evaluation.noExistWords());
-                fileAiResultsList.add(fileAiResults);
+                // Sauvegarder l'évaluation dans la base de données
+                Evaluation savedEvaluation = evaluationRepository.save(existingEvaluation);
+                fileDB.setEvaluation(savedEvaluation);
+                filesRepository.save(fileDB);
+            }
+            try {
+                Thread.sleep(waitTime);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException("Erreur d'interruption lors de l'attente", ie);
             }
         }
-        return fileAiResultsList;
     }
+
 
     /*@Transactional
     public List<FileAiResults> processElectedCriteria(List<FileVectorStore> documents, List<String> selectedCriteria, String jobDescription){
@@ -286,10 +297,8 @@ public class AiServicesImpl implements AiServices {
         return fileAiResultsList;
     }*/
     @Transactional
-    public List<FileAiResults> processSelectedCriteria(List<FileVectorStore> documents, List<String> selectedCriteria, String jobDescription) {
+    public void processSelectedCriteria(List<FileVectorStore> documents, List<String> selectedCriteria, String jobDescription) {
         List<List<FileVectorStore>> partitionedDocuments = Lists.partition(documents, 2);
-        List<FileAiResults> fileAiResultsList = new ArrayList<>();
-
         for (List<FileVectorStore> batch : partitionedDocuments) {
             List<String> context = batch.stream()
                     .map(doc -> "| FileDBId: " + doc.getFileDB().getId() +
@@ -310,6 +319,7 @@ public class AiServicesImpl implements AiServices {
             } catch (Exception e) {
                 throw new RuntimeException("Erreur lors de l'appel au service AI", e);
             }
+            System.out.println("========  criteriaEvaluation: " + Arrays.toString(criteriaEvaluation));
             for (CriteriaEvaluation evaluation : criteriaEvaluation) {
                 FileDB fileDB = filesRepository.findById(evaluation.fileId())
                         .orElseThrow(() -> new RuntimeException("Fichier introuvable pour l'ID: " + evaluation.fileId()));
@@ -345,30 +355,17 @@ public class AiServicesImpl implements AiServices {
                         })
                         .toList());
                 existingEvaluation.setAcceptRejectCriteria(currentCriteriaEvals);
-                evaluationRepository.save(existingEvaluation);
-                /*
-                // Sauvegarder l'évaluation dans la base de données
-                String existingEvaluationJson = null;
-                try {
-                    existingEvaluationJson = objectMapper.writeValueAsString(existingEvaluation.getAcceptRejectCriteria());
-                    System.out.println("============================ existingEvaluation: " + existingEvaluationJson);
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
-                }*/
-                // Remplir les résultats
-                FileAiResults fileAiResults = new FileAiResults();
-                fileAiResults.setId(fileDB.getId());
-                fileAiResults.setName(fileDB.getName());
-                fileAiResults.setType(fileDB.getType());
-                fileAiResults.setCreatedAt(fileDB.getCreatedAt());
-                fileAiResults.setFolderId(fileDB.getFolder().getId());
-                fileAiResults.setFolderName(fileDB.getFolder().getName());
-                fileAiResults.setAcceptCriteria(evaluation.acceptCriteria());
-                fileAiResults.setRejectCriteria(evaluation.rejectCriteria());
-                fileAiResultsList.add(fileAiResults);
+                Evaluation savedEvaluation = evaluationRepository.save(existingEvaluation);
+                fileDB.setEvaluation(savedEvaluation);
+                filesRepository.save(fileDB);
+            }
+            try {
+                Thread.sleep(waitTime);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException("Erreur d'interruption lors de l'attente", ie);
             }
         }
-        return fileAiResultsList;
     }
 
 
