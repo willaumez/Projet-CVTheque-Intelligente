@@ -1,5 +1,4 @@
-markdown
-Copier le code
+
 # CVthèque Intelligente
 
 ## Description du Projet
@@ -19,10 +18,6 @@ L'objectif principal du projet est de :
 
 ### Utilisateurs
 
-- **Candidats** :
-  - Téléchargement et gestion de leur CV.
-  - Recommandations automatiques en fonction de leurs compétences.
-
 - **Recruteurs** :
   - Gestion des dossiers et des CVs.
   - Qualification automatique des CVs à partir de critères prédéfinis (ex. compétences, expérience).
@@ -30,7 +25,7 @@ L'objectif principal du projet est de :
   - Système de scoring pour les CVs.
 
 ### Administrateurs
-  - Gestion des utilisateurs, dossiers, CVs et profils de qualification.
+  - Gestion des utilisateurs.
   - Contrôle des critères de qualification et des scores.
 
 ### Sécurité
@@ -39,7 +34,7 @@ L'objectif principal du projet est de :
 
 ## Technologies Utilisées
 
-- **Backend** : Java, Spring Boot, PostgreSQL.
+- **Backend** : Java, Spring Boot, Spring AI.
 - **Frontend** : Angular, Angular Material.
 - **Authentification** : Okta.
 - **Intelligence Artificielle** : Méthode RAG (Retrieval-Augmented Generation), LLM (Large Language Models).
@@ -49,7 +44,7 @@ L'objectif principal du projet est de :
 
 1. Clonez le dépôt :
    ```bash
-   git clone https://github.com/votre-utilisateur/cvtheque-intelligente.git
+   git clone https://github.com/willaumez/Projet-CVTheque-Intelligente.git
 Installez les dépendances du backend et du frontend :
 
 Backend :
@@ -81,8 +76,3 @@ Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus de détails.
 
 Remerciements
 Je remercie particulièrement mon encadrant professionnel, Yassine TALEB, ainsi que mon encadrant pédagogique, Badr HIRCHOUA, pour leur soutien tout au long de ce projet. Merci également à l'équipe de Renault Digital Maroc pour leur collaboration.
-
-bash
-Copier le code
-
-Tu peux télécharger cette version du fichier [README.md](sandbox:/mnt/data/README.md).
