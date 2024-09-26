@@ -1,109 +1,88 @@
+markdown
+Copier le code
 # CVthèque Intelligente
 
-## Présentation du Projet
+## Description du Projet
 
-La CVthèque intelligente est une plateforme web conçue pour gérer et qualifier des CV à l'aide de l'intelligence artificielle. Ce projet a été développé dans le cadre de mon stage chez Renault Digital Maroc et constitue une solution innovante pour le recrutement, facilitant ainsi la mise en relation entre les candidats et les recruteurs.
+La CVthèque Intelligente est une plateforme web innovante développée pour centraliser et automatiser la gestion des CVs. Grâce à l'intégration de l'intelligence artificielle, ce projet permet d'analyser les compétences des candidats et de recommander les profils les plus pertinents pour les postes proposés. Il s'appuie sur la méthode RAG (Retrieval-Augmented Generation) pour améliorer la précision de l'évaluation des CVs.
 
-## Objectif
+Ce projet a été réalisé dans le cadre de mon stage de fin d'études chez Renault Digital Maroc (RDM) en vue de répondre aux besoins croissants en matière de modernisation des processus de recrutement.
 
-L'objectif principal de ce projet est de créer un système efficace pour la gestion des candidatures, permettant aux utilisateurs de :
+## Objectifs
 
-- Soumettre leur CV en ligne.
-- Être évalués automatiquement grâce à des algorithmes d'intelligence artificielle.
-- Recevoir des recommandations basées sur les compétences et les expériences professionnelles.
+L'objectif principal du projet est de :
+- Centraliser la gestion des CVs.
+- Automatiser la qualification des candidatures via l'intelligence artificielle.
+- Fournir des recommandations de candidats en adéquation avec les postes à pourvoir.
 
-## Technologies Utilisées
-
-- **Backend :**
-  - Java avec Spring Boot pour la création de l'API RESTful.
-  - Base de données PostgreSQL pour la gestion des données.
-  
-- **Frontend :**
-  - Angular pour le développement de l'interface utilisateur.
-  
-- **Authentification :**
-  - Okta pour sécuriser l'accès à la plateforme.
-
-- **Intelligence Artificielle :**
-  - Algorithmes de Machine Learning pour la qualification des CV.
-
-## Fonctionnalités
+## Fonctionnalités Principales
 
 ### Utilisateurs
 
-- **Candidats :**
-  - Inscription et connexion sécurisée.
+- **Candidats** :
   - Téléchargement et gestion de leur CV.
-  - Accès à des recommandations d'emploi personnalisées.
+  - Recommandations automatiques en fonction de leurs compétences.
 
-- **Recruteurs :**
-  - Création de profils d'entreprise.
-  - Consultation des CVs des candidats.
-  - Filtrage des CVs selon des critères spécifiques.
+- **Recruteurs** :
+  - Gestion des dossiers et des CVs.
+  - Qualification automatique des CVs à partir de critères prédéfinis (ex. compétences, expérience).
+  - Recherche avancée par mots-clés.
+  - Système de scoring pour les CVs.
 
-### Administration
+### Administrateurs
+  - Gestion des utilisateurs, dossiers, CVs et profils de qualification.
+  - Contrôle des critères de qualification et des scores.
 
-- Gestion des utilisateurs (candidats et recruteurs).
-- Suivi des candidatures et des statistiques d'utilisation de la plateforme.
+### Sécurité
+  - Gestion sécurisée des CVs et des informations personnelles.
+  - Authentification via Okta.
+
+## Technologies Utilisées
+
+- **Backend** : Java, Spring Boot, PostgreSQL.
+- **Frontend** : Angular, Angular Material.
+- **Authentification** : Okta.
+- **Intelligence Artificielle** : Méthode RAG (Retrieval-Augmented Generation), LLM (Large Language Models).
+- **Base de Données** : Oracle 23c AI pour le stockage des documents et des données vectorielles.
 
 ## Installation
-
-Pour installer et exécuter le projet sur votre machine locale, veuillez suivre les étapes ci-dessous :
 
 1. Clonez le dépôt :
    ```bash
    git clone https://github.com/votre-utilisateur/cvtheque-intelligente.git
-   ```
+Installez les dépendances du backend et du frontend :
 
-2. Accédez au répertoire du projet :
-   ```bash
-   cd cvtheque-intelligente
-   ```
+Backend :
+bash
+Copier le code
+cd backend
+./mvnw install
+./mvnw spring-boot:run
+Frontend :
+bash
+Copier le code
+cd frontend
+npm install
+ng serve
+Accédez à l'application sur http://localhost:4200.
 
-3. Configurez votre environnement (Java, PostgreSQL, etc.).
+Méthode RAG
+La méthode RAG est utilisée pour analyser et qualifier les CVs. Elle combine la recherche documentaire et les modèles génératifs pour fournir des résultats précis en fonction des données disponibles dans la base de données. L'IA évalue automatiquement les CVs selon les critères prédéfinis et attribue un score à chaque candidat.
 
-4. Exécutez le backend :
-   ```bash
-   cd backend
-   ./mvnw spring-boot:run
-   ```
+Contribuer
+Les contributions sont les bienvenues. Pour contribuer :
 
-5. Exécutez le frontend :
-   ```bash
-   cd frontend
-   npm install
-   ng serve
-   ```
+Forkez le projet.
+Créez une nouvelle branche (feature/nouvelle-fonctionnalité).
+Effectuez les modifications.
+Soumettez une Pull Request.
+Licence
+Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus de détails.
 
-6. Ouvrez votre navigateur à l'adresse `http://localhost:4200`.
+Remerciements
+Je remercie particulièrement mon encadrant professionnel, Yassine TALEB, ainsi que mon encadrant pédagogique, Badr HIRCHOUA, pour leur soutien tout au long de ce projet. Merci également à l'équipe de Renault Digital Maroc pour leur collaboration.
 
-## Contribuer
+bash
+Copier le code
 
-Les contributions sont les bienvenues ! Si vous souhaitez contribuer à ce projet, veuillez suivre les étapes suivantes :
-
-1. Forkez le projet.
-2. Créez une nouvelle branche :
-   ```bash
-   git checkout -b feature/nom-de-la-fonctionnalité
-   ```
-3. Effectuez vos modifications et commit :
-   ```bash
-   git commit -m 'Ajout d'une nouvelle fonctionnalité'
-   ```
-4. Poussez vos changements :
-   ```bash
-   git push origin feature/nom-de-la-fonctionnalité
-   ```
-5. Ouvrez une Pull Request.
-
-## Auteurs
-
-- **Votre Nom** - [Votre Profil GitHub](https://github.com/votre-utilisateur)
-
-## Licence
-
-Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de détails.
-
-## Remerciements
-
-Merci à tous ceux qui ont contribué à ce projet, ainsi qu'à mes encadrants chez Renault Digital Maroc pour leur soutien et leurs conseils.
+Tu peux télécharger cette version du fichier [README.md](sandbox:/mnt/data/README.md).
