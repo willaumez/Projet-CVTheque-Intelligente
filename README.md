@@ -2,48 +2,6 @@
 # CVthèque Intelligente
 
 ## Description du Projet
-
-La CVthèque Intelligente est une plateforme web innovante développée pour centraliser et automatiser la gestion des CVs. Grâce à l'intégration de l'intelligence artificielle, ce projet permet d'analyser les compétences des candidats et de recommander les profils les plus pertinents pour les postes proposés. Il s'appuie sur la méthode RAG (Retrieval-Augmented Generation) pour améliorer la précision de l'évaluation des CVs.
-
-Ce projet a été réalisé dans le cadre de mon stage de fin d'études chez Renault Digital Maroc (RDM) en vue de répondre aux besoins croissants en matière de modernisation des processus de recrutement.
-
-## Objectifs
-
-L'objectif principal du projet est de :
-- Centraliser la gestion des CVs.
-- Automatiser la qualification des candidatures via l'intelligence artificielle.
-- Fournir des recommandations de candidats en adéquation avec les postes à pourvoir.
-
-## Fonctionnalités Principales
-
-### Utilisateurs
-
-- **Recruteurs** :
-  - Gestion des dossiers et des CVs.
-  - Qualification automatique des CVs à partir de critères prédéfinis (ex. compétences, expérience).
-  - Recherche avancée par mots-clés.
-  - Système de scoring pour les CVs.
-
-### Administrateurs
-  - Gestion des utilisateurs.
-  - Contrôle des critères de qualification et des scores.
-
-### Sécurité
-  - Gestion sécurisée des CVs et des informations personnelles.
-  - Authentification via Okta.
-
-## Technologies Utilisées
-
-- **Backend** : Java, Spring Boot, Spring AI.
-- **Frontend** : Angular, Angular Material.
-- **Authentification** : Okta.
-- **Intelligence Artificielle** : Méthode RAG (Retrieval-Augmented Generation), LLM (Large Language Models).
-- **Base de Données** : Oracle 23c AI pour le stockage des documents et des données vectorielles.
-
-=========================================================================================================
-# CVthèque Intelligente
-
-## Description du Projet
 La CVthèque Intelligente est une plateforme web innovante développée pour centraliser et automatiser la gestion des CVs. Grâce à l'intégration de l'intelligence artificielle, ce projet permet d'analyser les compétences des candidats et de recommander les profils les plus pertinents pour les postes proposés. Il s'appuie sur la méthode RAG (Retrieval-Augmented Generation) pour améliorer la précision de l'évaluation des CVs.
 
 Ce projet a été réalisé dans le cadre de mon stage de fin d'études chez Renault Digital Maroc (RDM) en vue de répondre aux besoins croissants en matière de modernisation des processus de recrutement.
