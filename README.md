@@ -73,25 +73,51 @@ spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
 Ensuite, lancez le backend :
 
 ```bash
-cd backend
+cd cvtheque-spring-boot
 ./mvnw install
 ./mvnw spring-boot:run
 ```
 
 ### 4. Configurer et lancer le frontend
 ```bash
-cd frontend
+cd cvtheque-front-angular
 npm install
 ng serve
 ```
 
 L'application sera accessible à l'adresse : http://localhost:4200
 
-[Le reste du contenu reste inchangé]
+--------------------------------------------------------------------------
 
+## Utilisation
 
+1. Connectez-vous à l'application en utilisant vos identifiants Okta.
+2. Pour les recruteurs :
+   - Téléchargez et gérez les CVs dans l'interface.
+   - Utilisez la fonction de recherche avancée pour trouver des candidats spécifiques.
+   - Consultez les scores et recommandations générés par l'IA pour chaque CV.
+3. Pour les administrateurs :
+   - Gérez les comptes utilisateurs et les permissions.
+   - Ajustez les critères de qualification et les paramètres de scoring si nécessaire.
 
+## Méthode RAG
 
-=========================================================================================================
-Remerciements
+La méthode RAG est utilisée pour analyser et qualifier les CVs. Elle combine la recherche documentaire et les modèles génératifs pour fournir des résultats précis en fonction des données disponibles dans la base de données. L'IA évalue automatiquement les CVs selon les critères prédéfinis et attribue un score à chaque candidat.
+
+## Contribuer
+
+Les contributions sont les bienvenues. Pour contribuer :
+1. Forkez le projet.
+2. Créez une nouvelle branche (`git checkout -b feature/nouvelle-fonctionnalité`).
+3. Effectuez les modifications.
+4. Commitez vos changements (`git commit -am 'Ajout d'une nouvelle fonctionnalité'`).
+5. Poussez vers la branche (`git push origin feature/nouvelle-fonctionnalité`).
+6. Soumettez une Pull Request.
+
+## Licence
+
+Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus de détails.
+
+## Remerciements
+
 Je remercie particulièrement mon encadrant professionnel, Yassine TALEB, ainsi que mon encadrant pédagogique, Badr HIRCHOUA, pour leur soutien tout au long de ce projet. Merci également à l'équipe de Renault Digital Maroc pour leur collaboration.
