@@ -60,7 +60,9 @@ docker run -d -p 1521:1521 --name cvtheque-db willaumez/databasecvtheque
 ```
 
 ### 3. Configurer et lancer le backend
-Avant de lancer le backend, assurez-vous que votre fichier de configuration (généralement `application.properties` ou `application.yml`) contient les informations suivantes pour la connexion à la base de données :
+
+#### Configuration de la base de données et de l'API OpenAI
+Les configurations de la base de données et de l'API OpenAI sont déjà incluses dans le code du projet. Vous pouvez les trouver dans le fichier `application.properties` ou `application.yml`. Voici un rappel de ces configurations :
 
 ```properties
 # Configuration de la base de données
@@ -68,9 +70,39 @@ spring.datasource.url=jdbc:oracle:thin:@localhost:1521/FREEPDB1
 spring.datasource.username=admin
 spring.datasource.password=admin
 spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
+
+# Configuration de OpenAI
+spring.ai.openai.api-key=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
+spring.ai.openai.chat.enabled=true
+spring.ai.openai.chat.options.model=gpt-4
 ```
 
-Ensuite, lancez le backend :
+**Note importante**: L'API key fournie a un solde limité. Elle est suffisante pour quelques tests, mais pour une utilisation prolongée, vous devrez la remplacer par votre propre API key.
+
+##### Changer l'API key
+Pour changer l'API key :
+1. Allez sur [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+2. Créez une nouvelle clé ou copiez une clé existante
+3. Remplacez la valeur de `spring.ai.openai.api-key` dans le fichier de configuration avec votre nouvelle clé
+
+##### Créer une nouvelle API key OpenAI
+Si vous souhaitez créer votre propre API key pour une utilisation à long terme :
+
+1. Rendez-vous sur [OpenAI API](https://platform.openai.com/signup)
+2. Créez un compte ou connectez-vous
+3. Allez dans la section "API Keys"
+4. Cliquez sur "Create new secret key"
+5. Copiez la clé générée et remplacez-la dans votre fichier de configuration
+
+##### Vérifier le solde de votre API key
+Pour vérifier le solde restant sur votre API key :
+1. Allez sur [https://platform.openai.com/settings/organization/billing/overview](https://platform.openai.com/settings/organization/billing/overview)
+2. Vous y trouverez les informations sur votre utilisation actuelle et votre solde restant
+
+**Attention** : L'utilisation de l'API OpenAI est payante. Assurez-vous de comprendre la tarification avant de l'utiliser.
+
+#### Lancer le backend
+Une fois que vous avez vérifié les configurations, lancez le backend :
 
 ```bash
 cd cvtheque-spring-boot
