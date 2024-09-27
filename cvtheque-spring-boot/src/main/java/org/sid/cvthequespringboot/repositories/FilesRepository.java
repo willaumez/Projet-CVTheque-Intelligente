@@ -23,12 +23,6 @@ public interface FilesRepository extends JpaRepository<FileDB, Long> {
     List<FileDB> findAllByFolderId(Long fromId);
 
     //Stats
-    /*@Query("SELECT new org.sid.cvthequespringboot.dtos.CVStatsDTO(f.folder.name, extract(month from f.createdAt), count(f)) " +
-            "FROM FileDB f " +
-            "GROUP BY f.folder.name, extract(month from f.createdAt) " +
-            "ORDER BY f.folder.name, extract(month from f.createdAt)")
-    List<CVStatsDTO> countCVsByMonthAndFolder();*/
-
     @Query("SELECT new org.sid.cvthequespringboot.dtos.GraphData(f.folder.name, EXTRACT(MONTH FROM f.createdAt), EXTRACT(YEAR FROM f.createdAt), COUNT(f)) " +
             "FROM FileDB f " +
             "GROUP BY f.folder.name, EXTRACT(YEAR FROM f.createdAt), EXTRACT(MONTH FROM f.createdAt) " +

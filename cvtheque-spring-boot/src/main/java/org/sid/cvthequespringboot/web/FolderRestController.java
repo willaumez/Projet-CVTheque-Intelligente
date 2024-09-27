@@ -4,7 +4,6 @@ package org.sid.cvthequespringboot.web;
 import lombok.AllArgsConstructor;
 import org.sid.cvthequespringboot.dtos.FolderDto;
 import org.sid.cvthequespringboot.entities.Folder;
-import org.sid.cvthequespringboot.services.FolderServices.FolderServices;
 import org.sid.cvthequespringboot.services.FolderServices.FolderServicesImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +12,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-//@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/folder")
 @AllArgsConstructor
@@ -23,27 +20,12 @@ public class FolderRestController {
 
     private FolderServicesImpl folderService;
 
-    /*@PostMapping(value = "/save", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
-    public void upload(@RequestBody Folder folder) throws IOException {
-        // Process and store the folder
-        folderService.save(folder);
-        System.out.println("Folder stored successfully: " + folder.getName()+ " " + folder.getDescription());
-    }*/
-
     @PostMapping(value = "/save")
     public FolderDto upload(@RequestBody Folder folder) throws IOException {
-        // Process and store the folder
         FolderDto folderDto = folderService.save(folder);
         System.out.println("Folder stored successfully: " + folder.getName()+ " " + folder.getDescription());
         return folderDto;
     }
-
-    /*@GetMapping("/folders")
-    public List<FolderDto> getFiles() {
-        List<FolderDto> folderDtos = folderService.getFolders().stream().toList();
-        System.out.println("fileDbDtos: " + folderDtos);
-        return folderDtos;
-    }*/
 
     @GetMapping("/folders")
     public List<FolderDto> getFiles(@RequestParam(name = "kw", defaultValue = "") String kw) {
@@ -54,7 +36,6 @@ public class FolderRestController {
     public ResponseEntity<?> transferFiles(
             @RequestParam("fromId") Long fromId,
             @RequestParam("toId") Long toId) {
-        System.out.println("==================0 fromId: " + fromId + " toId: " + toId);
         try {
             folderService.transferFiles(fromId, toId);
             return ResponseEntity.ok("Files transferred successfully");
@@ -70,7 +51,6 @@ public class FolderRestController {
         if (folderId == null) {
             return ResponseEntity.badRequest().body("Folder ID must not be null.");
         }
-
         try {
             boolean isDeleted = folderService.deleteFolder(folderId);
             if (isDeleted) {
@@ -85,12 +65,10 @@ public class FolderRestController {
 
     @DeleteMapping("/deletes")
     public ResponseEntity<?> deleteFolders(@RequestParam("ids") String folderIds) {
-        // Convertir la chaîne de caractères des IDs en une liste
         List<Long> ids = Arrays.stream(folderIds.split(","))
                 .map(Long::parseLong)
                 .toList();
         try {
-            // Boucle pour supprimer chaque dossier
             for (Long id : ids) {
                 boolean isDeleted = folderService.deleteFolder(id);
                 if (!isDeleted) {
@@ -116,9 +94,4 @@ public class FolderRestController {
             return ResponseEntity.status(500).body("Error retrieving folder: " + e.getMessage());
         }
     }
-
-
-
-
-
 }

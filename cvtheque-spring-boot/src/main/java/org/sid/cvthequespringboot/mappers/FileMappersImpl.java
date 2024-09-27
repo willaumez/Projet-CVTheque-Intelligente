@@ -37,15 +37,6 @@ public class FileMappersImpl implements FileMappers {
         return fileDB;
     }
 
-    /*public FileDB fromFileDbDto(FileDbDto fileDbDto) {
-        FileDB fileDB = new FileDB();
-        fileDB.setId(fileDbDto.getId());
-        fileDB.setName(fileDbDto.getName());
-        fileDB.setType(fileDbDto.getType());
-        fileDB.setCreatedAt(fileDbDto.getCreatedAt());
-        return fileDB;
-    }*/
-
     @Override
     public FileDbDto fromFileDB(FileDB fileDB) {
         FileDbDto fileDbDto = new FileDbDto();
@@ -79,28 +70,7 @@ public class FileMappersImpl implements FileMappers {
             fileDto.setFolderName(null);
         }
         Evaluation evaluation = evaluationRepository.findByFileDB_Id(fileDB.getId());
-        /*if (evaluation != null) {
-            fileDto.setEvaluation(true);
-            EvaluationDto evaluationDto = fromEvaluation(evaluation);
-            // Calcul du pourcentage pour AcceptCriteria
-            int acceptCriteriaSize = evaluationDto.getAcceptCriteria().size();
-            int rejectCriteriaSize = evaluationDto.getRejectCriteria().size();
-            int totalCriteriaSize = acceptCriteriaSize + rejectCriteriaSize;
-            int pCriteria = (totalCriteriaSize > 0) ? (acceptCriteriaSize * 100 / totalCriteriaSize) : 0;
-            fileDto.setPCriteria((long) pCriteria);
-            // Calcul du pourcentage pour Scoring
-            int scoringSize = evaluationDto.getScoring().size();
-            long pScoring = (scoringSize > 0) ? (evaluationDto.getScoring().getLast().getScore() * 100 / scoringSize) : 0;
-            fileDto.setPScoring((long) pScoring);
-            // Calcul du pourcentage pour ExistWords
-            int existWordsSize = evaluationDto.getExistWords().size();
-            int noExistWordsSize = evaluationDto.getNoExistWords().size();
-            int totalWordsSize = existWordsSize + noExistWordsSize;
-            int pKeywords = (totalWordsSize > 0) ? (existWordsSize * 100 / totalWordsSize) : 0;
-            fileDto.setPKeywords((long) pKeywords);
-        }else {
-            fileDto.setEvaluation(false);
-        }*/
+
         if (evaluation != null) {
             fileDto.setEvaluation(true);
             EvaluationDto evaluationDto = fromEvaluation(evaluation);
@@ -120,19 +90,17 @@ public class FileMappersImpl implements FileMappers {
                 fileDto.setPCriteria(null);
             }
 
-            // Vérification et calcul du pourcentage pour Scoring
             if (evaluationDto.getScoring() != null && !evaluationDto.getScoring().isEmpty() && evaluationDto.getScoring().getLast().getScore() != null) {
                 int scoringSize = evaluationDto.getScoring().size();
                 if (scoringSize > 0) {
                     fileDto.setPScoring(evaluationDto.getScoring().getLast().getScore());
                 } else {
-                    fileDto.setPScoring(null); // Aucun score disponible, on met à null
+                    fileDto.setPScoring(null);
                 }
             } else {
-                fileDto.setPScoring(null); // Scoring non disponible ou dernier score absent
+                fileDto.setPScoring(null);
             }
 
-            // Vérification et calcul du pourcentage pour ExistWords
             if (evaluationDto.getExistWords() != null && evaluationDto.getNoExistWords() != null) {
                 int existWordsSize = evaluationDto.getExistWords().size();
                 int noExistWordsSize = evaluationDto.getNoExistWords().size();
@@ -141,12 +109,11 @@ public class FileMappersImpl implements FileMappers {
                     int pKeywords = (existWordsSize * 100 / totalWordsSize);
                     fileDto.setPKeywords((long) pKeywords);
                 } else {
-                    fileDto.setPKeywords(null); // Aucun mot, on met à null
+                    fileDto.setPKeywords(null);
                 }
             } else {
-                fileDto.setPKeywords(null); // Mots non disponibles
+                fileDto.setPKeywords(null);
             }
-
         } else {
             fileDto.setEvaluation(false);
         }
@@ -164,11 +131,7 @@ public class FileMappersImpl implements FileMappers {
     public EvaluationDto fromEvaluation(Evaluation evaluation) {
         EvaluationDto evaluationDto = new EvaluationDto();
         evaluationDto.setId(evaluation.getId());
-
-        // Récupération des critères d'évaluation
         List<CriteriaEval> allCriteria = evaluation.getAcceptRejectCriteria();
-
-        // Assurez-vous que allCriteria est non null et qu'il est bien de type List<CriteriaEval>
         if (allCriteria != null) {
             List<CriteriaEval> acceptedCriteria = allCriteria.stream()
                     .filter(criteria -> criteria != null && Status.ACCEPTED.equals(criteria.getStatus()))
@@ -177,16 +140,13 @@ public class FileMappersImpl implements FileMappers {
                     .filter(criteria -> criteria != null && Status.REJECTED.equals(criteria.getStatus()))
                     .collect(Collectors.toList());
 
-            // Définition des critères acceptés et rejetés dans le DTO
             evaluationDto.setAcceptCriteria(acceptedCriteria);
             evaluationDto.setRejectCriteria(rejectedCriteria);
         } else {
-            // Gestion des cas où allCriteria est null
             evaluationDto.setAcceptCriteria(Collections.emptyList());
             evaluationDto.setRejectCriteria(Collections.emptyList());
         }
 
-        // Définition des autres propriétés dans le DTO
         evaluationDto.setCreatedAt(evaluation.getCreatedAt());
         evaluationDto.setExistWords(evaluation.getExistWords() != null ? evaluation.getExistWords() : Collections.emptyList());
         evaluationDto.setNoExistWords(evaluation.getNoExistWords() != null ? evaluation.getNoExistWords() : Collections.emptyList());
@@ -194,27 +154,6 @@ public class FileMappersImpl implements FileMappers {
 
         return evaluationDto;
     }
-    /*public EvaluationDto fromEvaluation(Evaluation evaluation) {
-        EvaluationDto evaluationDto = new EvaluationDto();
-        evaluationDto.setId(evaluation.getId());
-
-        List<CriteriaEval> allCriteria = evaluation.getAcceptRejectCriteria();
-        List<CriteriaEval> acceptedCriteria = allCriteria.stream()
-                .filter(criteria -> Status.ACCEPTED.equals(criteria.getStatus()))
-                .collect(Collectors.toList());
-        List<CriteriaEval> rejectedCriteria = allCriteria.stream()
-                .filter(criteria -> Status.REJECTED.equals(criteria.getStatus()))
-                .collect(Collectors.toList());
-
-        evaluationDto.setAcceptCriteria(acceptedCriteria);
-        evaluationDto.setRejectCriteria(rejectedCriteria);
-
-        evaluationDto.setCreatedAt(evaluation.getCreatedAt());
-        evaluationDto.setExistWords(evaluation.getExistWords());
-        evaluationDto.setNoExistWords(evaluation.getNoExistWords());
-        evaluationDto.setScoring(fromScoring(evaluation.getScoring()));
-        return evaluationDto;
-    }*/
 
     @Override
     public Evaluation fromEvaluationDto(EvaluationDto evaluationDto) {
@@ -235,17 +174,6 @@ public class FileMappersImpl implements FileMappers {
         return scoringDto;
     }
     //=========================================================================================================
-
-    /*public FileDbDto fromFileDB(FileDB fileDB) {
-        FileDbDto fileDbDto = new FileDbDto();
-        fileDbDto.setId(fileDB.getId());
-        fileDbDto.setName(fileDB.getName());
-        fileDbDto.setType(fileDB.getType());
-        fileDbDto.setCreatedAt(fileDB.getCreatedAt());
-        fileDbDto.setFolderId(fileDB.getFolder().getId());
-        fileDbDto.setFolderName(fileDB.getFolder().getName());
-        return fileDbDto;
-    }*/
 
     @Override
     public FolderDto fromFolder(Folder folder) {
@@ -285,7 +213,6 @@ public class FileMappersImpl implements FileMappers {
         profileDto.setDescription(profile.getDescription());
         profileDto.setCreatedAt(profile.getCreatedAt());
 
-        // Tu peux aussi ajouter une logique pour convertir la liste des critères si nécessaire
         return profileDto;
     }
 
@@ -301,7 +228,6 @@ public class FileMappersImpl implements FileMappers {
         profile.setDescription(profileDto.getDescription());
         profile.setCreatedAt(profileDto.getCreatedAt());
 
-        // Ajouter une logique pour gérer la liste des critères si nécessaire
         return profile;
     }
 
@@ -324,12 +250,10 @@ public class FileMappersImpl implements FileMappers {
         if (criteriaProfileDto == null) {
             return null;
         }
-
         CriteriaProfile criteriaProfile = new CriteriaProfile();
         criteriaProfile.setDescription(criteriaProfileDto.getDescription());
         criteriaProfile.setCreatedAt(criteriaProfileDto.getCreatedAt());
 
-        // Associer le critère à un profil (cela nécessite que tu aies accès à l'entité Profile par son ID)
         Profile profile = new Profile();
         profile.setId(criteriaProfileDto.getId());
         criteriaProfile.setProfile(profile);

@@ -1,7 +1,4 @@
 
-* {
-  box-shadow: 0 0 0 1px #80a8ff inset;
-}
 .folders-container {
   .header-container {
     display: flex;
@@ -209,8 +206,8 @@
           display: block;
           width: 100%;
           font-size: 1rem;
-          word-break: break-all;
-          white-space: nowrap;        /* Empêcher les retours à la ligne pour permettre le défilement horizontal */
+          //word-break: break-all;
+          //white-space: nowrap;        /* Empêcher les retours à la ligne pour permettre le défilement horizontal */
           margin: 5px 0;
           padding: 5px;
           overflow-x: auto;           /* Permettre le défilement horizontal */

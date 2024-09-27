@@ -1,3 +1,4 @@
+/*
 create table if not exists SPRING_AI_VECTOR (
 	id        varchar2(36) default sys_guid() primary key,
 	content   clob not null,
@@ -64,3 +65,5 @@ create table VECTOR$VECTOR_INDEX_SPRING_AI_VECTORS$73117_73125_0$IVF_FLAT_CENTRO
     CENTROID_VECTOR VECTOR
 );
 /--------------------------------------------------------------------------------
+
+ */

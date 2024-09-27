@@ -36,7 +36,6 @@ public class ProfileServicesImpl implements ProfileServices {
         if (profileRepository.existsByName(profile.getName())) {
             throw new ProfileAlreadyExistsException("A profile with the name '" + profile.getName() + "' already exists.");
         }
-
         profile.setCreatedAt(new Date());
         Profile savedProfile = profileRepository.save(profile);
         return fileMappers.fromProfile(savedProfile);
@@ -72,8 +71,6 @@ public class ProfileServicesImpl implements ProfileServices {
         if (profileOpt.isPresent()) {
             try {
                 Profile profile = profileOpt.get();
-                //profileRepository.delete(profile);
-                System.out.println("==================== Profile deleted"+profile.getId());
                 criteriaProfileRepository.deleteAllByProfileId(profile.getId());
                 profileRepository.deleteById(id);
                 return true;
@@ -139,6 +136,4 @@ public class ProfileServicesImpl implements ProfileServices {
             return false;
         }
     }
-
-
 }

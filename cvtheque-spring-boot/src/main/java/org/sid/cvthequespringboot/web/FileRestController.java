@@ -21,13 +21,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
-//@CrossOrigin(origins = "http://localhost:4200")  // pour autoriser les requêtes provenant de Angular
-//@CrossOrigin(origins = "*")  // pour autoriser les requêtes provenant de n'importe quelle origine
 @RestController
 @RequestMapping("/file")
 @AllArgsConstructor
@@ -41,9 +37,7 @@ public class FileRestController {
     private final EvaluationRepository evaluationRepository;
 
     private final FileMappersImpl fileMappersImpl;
-
     //-------------------------------------------------------------------------
-
     @PostMapping(value = "/upload", produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("folder") String folderJson) throws IOException {
         FolderDto folderDto = objectMapper.readValue(folderJson, FolderDto.class);
@@ -56,7 +50,6 @@ public class FileRestController {
     @GetMapping("/files")
     public List<FileDto> getFiles(@RequestParam(value = "folderId", required = false) Long folderId) {
         List<FileDto> fileDbDtos;
-
         if (folderId != null) {
             fileDbDtos = fileServices.getFilesByFolderId(folderId).stream().toList();
         } else {
@@ -119,7 +112,6 @@ public class FileRestController {
     //Upload a file to the database FileDB
     @PutMapping("/update")
     public ResponseEntity<String> updateFile(@RequestBody FileDB fileDB) {
-        System.out.println("=========================== fileDB: " + fileDB);
         if (fileDB == null || fileDB.getId() == null) {
             return ResponseEntity.badRequest().body("Invalid file data");
         }
@@ -148,7 +140,6 @@ public class FileRestController {
     public ResponseEntity<?> deleteEvaluation(@PathVariable Long evaluationId) {
         boolean deleted = fileServices.deleteEvaluation(evaluationId);
         if (deleted) {
-            System.out.println("======================================0Evaluation deleted successfully");
             return ResponseEntity.ok("Evaluation deleted successfully");
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete evaluation");
@@ -158,7 +149,6 @@ public class FileRestController {
     //Delete all evaluations
     @DeleteMapping("/evaluation/delete")
     public ResponseEntity<?> deleteAllEvaluation(@RequestParam  List<Long> selection) {
-        System.out.println("======================================0selection: " + selection);
         boolean deleted = fileServices.deleteEvaluationByFileId(selection);
         if (deleted) {
             return ResponseEntity.ok("All evaluations deleted successfully.");
@@ -172,90 +162,7 @@ public class FileRestController {
     @GetMapping("/getStats")
     public CVStatsDTO getCvCountPerMonth() {
         CVStatsDTO statsDTOS = fileServices.getCvStats();
-        //System.out.println("====================== statsDTOS: " + statsDTOS.toString());
         return statsDTOS;
     }
-    /*@GetMapping("/count-per-month")
-    public List<CVStatsDTO> getCvCountPerMonth() {
-        List<CVStatsDTO> statsDTOS = new ArrayList<>();
-
-        // Création de données de test pour plusieurs années
-        String[] folders = {"Folder1", "Folder2", "Folder3"};
-        int[] years = {2023, 2024, 2025};
-
-        Random random = new Random();
-
-        for (String folder : folders) {
-            for (int year : years) {
-                for (int month = 1; month <= 12; month++) {
-                    long count = random.nextInt(100); // Nombre aléatoire de CVs
-                    statsDTOS.add(new CVStatsDTO(folder, month, year, count));
-                }
-            }
-        }
-
-        return statsDTOS;
-    }*/
-
-
-
-
-
-/*
-
-    @PostMapping(value = "/upload", produces = MediaType.TEXT_PLAIN_VALUE)
-    public void upload(@RequestParam("files") List<MultipartFile> files) throws IOException {
-        fileServices.processAndStoreFiles(files);
-        System.out.println("File stored successfully");
-    }
-
-*/
-
-
-/*
-    @PostMapping(value = "/upload", produces = MediaType.TEXT_PLAIN_VALUE)
-    public void upload(@RequestParam("files") List<MultipartFile> files) {
-        for (MultipartFile file : files) {
-            // Log details about the uploaded files
-            System.out.println("File name: " + file.getOriginalFilename());
-            System.out.println("File size: " + file.getSize());
-            System.out.println("File type: " + file.getContentType());
-        }
-    }*/
-/*
-    private static final String UPLOAD_DIR = "src/main/resources/pdfs/";
-
-    @PostMapping(value = "/upload", produces = MediaType.TEXT_PLAIN_VALUE)
-    public void upload(@RequestParam("files") List<MultipartFile> files) {
-        for (MultipartFile file : files) {
-            try {
-                // Check if the file is a PDF
-                if ("application/pdf".equals(file.getContentType())) {
-                    // Create the directory if it does not exist
-                    Path uploadPath = Paths.get(UPLOAD_DIR);
-                    if (!Files.exists(uploadPath)) {
-                        Files.createDirectories(uploadPath);
-                    }
-
-                    // Save the file
-                    Path filePath = uploadPath.resolve(file.getOriginalFilename());
-                    Files.write(filePath, file.getBytes());
-
-                    // Log details about the uploaded file
-                    System.out.println("File saved: " + filePath.toString());
-                    System.out.println("File name: " + file.getOriginalFilename());
-                    System.out.println("File size: " + file.getSize());
-                    System.out.println("File type: " + file.getContentType());
-                    System.out.println("File bites: " + file.getBytes().length);
-                    System.out.println("=========================================================0 ");
-                } else {
-                    System.out.println("File is not a PDF: " + file.getOriginalFilename());
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("Failed to save file: " + file.getOriginalFilename());
-            }
-        }
-    }*/
 
 }

@@ -14,10 +14,7 @@ import org.sid.cvthequespringboot.repositories.FilesRepository;
 import org.sid.cvthequespringboot.repositories.FolderRepository;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.reader.pdf.PagePdfDocumentReader;
-import org.springframework.ai.vectorstore.OracleVectorStore;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -105,7 +102,6 @@ public class FileServicesImpl implements FileServices {
     @Override
     public List<FileDto> getFilesByFolderId(Long folderId) {
         List<FileDB> fileDBS = filesRepository.findAllByFolderIdOrderByCreatedAtDesc(folderId);
-        // Conversion de FileDB à FileDbDto
         return fileDBS.stream()
                 .map(fileMappers::fromFile)
                 .collect(Collectors.toList());
@@ -142,13 +138,6 @@ public class FileServicesImpl implements FileServices {
             filesRepository.deleteById(fileId);
         }
     }
-
-    /*public void deleteFiles(List<Long> filesIds) {
-        for (Long fileId : filesIds) {
-            fileStoreRepository.deleteByFileDB_Id(fileId);
-            filesRepository.deleteById(fileId);
-        }
-    }*/
 
     @Override
     @Transactional
@@ -195,9 +184,6 @@ public class FileServicesImpl implements FileServices {
                 .totalEvaluated(totalEvaluated)
                 .totalNotEvaluated(totalNotEvaluated)
                 .build();
-
-
-        //HeaderData headerData = filesRepository.getCVStats();
         return CVStatsDTO.builder()
                 .graphData(cvStatsDTOList)
                 .headerData(headerData)
@@ -235,38 +221,5 @@ public class FileServicesImpl implements FileServices {
         }
         return false;
     }
-
-
-     /*@PostConstruct
-    public void initStore(){
-        Integer single = jdbcClient.sql("select count(*) from SPRING_AI_VECTORS")
-                .query(Integer.class).single();
-
-        if (single == 0) {
-           System.out.println("No data in vector store");
-        }
-    }*/
-
-
-
-/*    public void processAndStoreFiles(List<MultipartFile> files) throws IOException {
-        for (MultipartFile file : files) {
-            Resource resource = file.getResource();
-
-            // Use spring-ai-pdf-document-reader to read the PDF content from the Resource
-            PagePdfDocumentReader pdfDocumentReader = new PagePdfDocumentReader(resource);
-            List<Document> documents = pdfDocumentReader.get();
-
-            TextSplitter textSplitter = new TokenTextSplitter();
-            List<Document> chunks = textSplitter.split(documents);
-            vectorStore.add(chunks);
-
-            // Save the vector store to a file
-            String vectorStoreFile = this.fileStorageLocation.resolve("vectorStore.json").toString();
-            vectorStore.save(new File(vectorStoreFile));
-
-            System.out.println("=========================== Save  ==============================0 ");
-        }
-    }*/
 
 }

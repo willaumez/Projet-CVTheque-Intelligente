@@ -1,11 +1,9 @@
 package org.sid.cvthequespringboot.services.AiServices;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import jakarta.transaction.Transactional;
 import org.sid.cvthequespringboot.entities.*;
 import org.sid.cvthequespringboot.enums.Status;
-import org.sid.cvthequespringboot.mappers.FileMappersImpl;
 import org.sid.cvthequespringboot.record.CriteriaEvaluation;
 import org.sid.cvthequespringboot.record.KeywordsEvaluation;
 import org.sid.cvthequespringboot.record.ScoringEvaluation;
@@ -20,6 +18,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,11 +28,8 @@ public class AiServicesImpl implements AiServices {
     private final FileStoreRepository fileStoreRepository;
     private final FilesRepository filesRepository;
     private final EvaluationRepository evaluationRepository;
-    private final FileMappersImpl fileMappers;
 
     long waitTime = 4000;
-
-    ObjectMapper objectMapper = new ObjectMapper();
 
     //Prompts
     @Value("classpath:/prompts/prompt-general-chat.st")
@@ -49,24 +45,21 @@ public class AiServicesImpl implements AiServices {
     private Resource promptScoring;
 
 
-    public AiServicesImpl(ChatClient.Builder builder, FileStoreRepository fileStoreRepository, FilesRepository filesRepository, EvaluationRepository evaluationRepository, FileMappersImpl fileMappersImpl) {
+    public AiServicesImpl(ChatClient.Builder builder, FileStoreRepository fileStoreRepository, FilesRepository filesRepository, EvaluationRepository evaluationRepository ) {
         this.chatClient = builder.build();
         this.fileStoreRepository = fileStoreRepository;
         this.filesRepository = filesRepository;
         this.evaluationRepository = evaluationRepository;
-        this.fileMappers = fileMappersImpl;
     }
 
     @Override
     public String generalChat(String question) {
         List<FileVectorStore> documents = fileStoreRepository.findAll();
-
         List<String> context = documents.stream()
                 .map(doc -> "| Metadata: " + doc.getMetadata().toString() + "| FileDBId: " + doc.getFileDB().getId() + " | Content: " + doc.getContent())
                 .toList();
         PromptTemplate promptTemplate = new PromptTemplate(promptGeneralChat);
         Prompt prompt = promptTemplate.create(Map.of("context", context, "question", question));
-
         return chatClient.prompt(prompt)
                 .call()
                 .content();
@@ -155,7 +148,6 @@ public class AiServicesImpl implements AiServices {
                         .message(evaluation.scoringDto().getMessage())
                         .createdAt(new Date())
                         .build();
-                // Ajouter le nouveau Scoring à la liste existante
                 if (existingEvaluation.getScoring() == null) {
                     existingEvaluation.setScoring(new ArrayList<>());
                 }
@@ -163,7 +155,6 @@ public class AiServicesImpl implements AiServices {
                 Evaluation savedEvaluation = evaluationRepository.save(existingEvaluation);
                 fileDB.setEvaluation(savedEvaluation);
                 filesRepository.save(fileDB);
-                //evaluationRepository.save(existingEvaluation);
             }
             try {
                 Thread.sleep(waitTime);
@@ -176,30 +167,21 @@ public class AiServicesImpl implements AiServices {
 
     @Transactional
     public void processSelectedKeywords(List<FileVectorStore> documents, List<String> keywords) {
-        // Partitionner la liste des documents en sous-listes de taille 2
         List<List<FileVectorStore>> partitionedDocuments = Lists.partition(documents, 2);
-
-        // Parcourir chaque partition
         for (List<FileVectorStore> batch : partitionedDocuments) {
-            // Construire le contexte à partir des documents
             List<String> context = batch.stream()
                     .map(doc -> "| FileDBId: " + doc.getFileDB().getId() +
                             " | Content: " + doc.getContent())
                     .collect(Collectors.toList());
 
-            // Préparer le prompt pour l'API
             PromptTemplate promptTemplate = new PromptTemplate(promptKeywords);
             Prompt prompt = promptTemplate.create(Map.of(
                     "context", context,
                     "keywords", String.join(", ", keywords)
             ));
 
-            // Créer la ressource à partir du contenu du prompt
             Resource promptResource = new ByteArrayResource(prompt.getContents().getBytes());
-
             KeywordsEvaluation[] keywordsEvaluation;
-
-            // Appel au service AI avec gestion des exceptions
             try {
                 keywordsEvaluation = chatClient.prompt()
                         .system(promptResource)
@@ -208,24 +190,18 @@ public class AiServicesImpl implements AiServices {
                 throw new RuntimeException("Erreur lors de l'appel au service AI", e);
             }
 
-            // Parcourir les résultats de l'évaluation des mots-clés
             for (KeywordsEvaluation evaluation : keywordsEvaluation) {
-                // Récupérer le fichier correspondant à l'évaluation
                 FileDB fileDB = filesRepository.findById(evaluation.fileId())
                         .orElseThrow(() -> new RuntimeException("Fichier introuvable pour l'ID: " + evaluation.fileId()));
-
-                // Chercher si une évaluation existe déjà pour ce fichier
                 Evaluation existingEvaluation = evaluationRepository.findByFileDB_Id(fileDB.getId());
 
                 if (existingEvaluation == null) {
-                    // Créer une nouvelle évaluation si elle n'existe pas
                     existingEvaluation = new Evaluation();
                     existingEvaluation.setCreatedAt(new Date());
                     existingEvaluation.setFileDB(fileDB);
                     existingEvaluation.setExistWords(new ArrayList<>());
                     existingEvaluation.setNoExistWords(new ArrayList<>());
                 } else {
-                    // Si l'évaluation existe mais que les listes de mots sont nulles, les initialiser
                     if (existingEvaluation.getExistWords() == null) {
                         existingEvaluation.setExistWords(new ArrayList<>());
                     }
@@ -233,12 +209,8 @@ public class AiServicesImpl implements AiServices {
                         existingEvaluation.setNoExistWords(new ArrayList<>());
                     }
                 }
-
-                // Ajouter les mots existants et non existants
                 existingEvaluation.getExistWords().addAll(evaluation.existWords());
                 existingEvaluation.getNoExistWords().addAll(evaluation.noExistWords());
-
-                // Sauvegarder l'évaluation dans la base de données
                 Evaluation savedEvaluation = evaluationRepository.save(existingEvaluation);
                 fileDB.setEvaluation(savedEvaluation);
                 filesRepository.save(fileDB);
@@ -252,50 +224,6 @@ public class AiServicesImpl implements AiServices {
         }
     }
 
-
-    /*@Transactional
-    public List<FileAiResults> processElectedCriteria(List<FileVectorStore> documents, List<String> selectedCriteria, String jobDescription){
-        List<List<FileVectorStore>> partitionedDocuments = Lists.partition(documents, 2);
-        List<FileAiResults> fileAiResultsList = new ArrayList<>();
-        for (List<FileVectorStore> batch : partitionedDocuments) {
-            List<String> context = batch.stream()
-                    .map(doc -> "| FileDBId: " + doc.getFileDB().getId() +
-                            " | Content: " + doc.getContent())
-                    .collect(Collectors.toList());
-            PromptTemplate promptTemplate = new PromptTemplate(promptCriteria);
-            Prompt prompt = promptTemplate.create(Map.of(
-                    "context", context,
-                    "selectedCriteria", String.join(", ", selectedCriteria),
-                    "jobDescription", jobDescription));
-
-            Resource promptResource = new ByteArrayResource(prompt.getContents().getBytes());
-            CriteriaEvaluation[] criteriaEvaluation;
-
-            try {
-                criteriaEvaluation = chatClient.prompt()
-                        .system(promptResource)
-                        .call().entity(CriteriaEvaluation[].class);
-            } catch (Exception e) {
-                throw new RuntimeException("Erreur lors de l'appel au service AI", e);
-            }
-
-            for (CriteriaEvaluation evaluation : criteriaEvaluation) {
-                FileAiResults fileAiResults = new FileAiResults();
-                FileDB fileDB = filesRepository.findById(evaluation.fileId())
-                        .orElseThrow(() -> new RuntimeException("Fichier introuvable pour l'ID: " + evaluation.fileId()));
-                fileAiResults.setId(fileDB.getId());
-                fileAiResults.setName(fileDB.getName());
-                fileAiResults.setType(fileDB.getType());
-                fileAiResults.setCreatedAt(fileDB.getCreatedAt());
-                fileAiResults.setFolderId(fileDB.getFolder().getId());
-                fileAiResults.setFolderName(fileDB.getFolder().getName());
-                fileAiResults.setAcceptCriteria(evaluation.acceptCriteria());
-                fileAiResults.setRejectCriteria(evaluation.rejectCriteria());
-                fileAiResultsList.add(fileAiResults);
-            }
-        }
-        return fileAiResultsList;
-    }*/
     @Transactional
     public void processSelectedCriteria(List<FileVectorStore> documents, List<String> selectedCriteria, String jobDescription) {
         List<List<FileVectorStore>> partitionedDocuments = Lists.partition(documents, 2);

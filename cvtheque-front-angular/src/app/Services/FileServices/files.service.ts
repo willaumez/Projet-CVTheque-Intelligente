@@ -139,7 +139,6 @@ export class FilesService {
     selection.forEach(id => {
       params = params.append('selection', id.toString());
     });
-    console.log('Params: ', params);
 
     return this.http.delete(environment.backEndHost+"/file/evaluation/delete", { params })
       .pipe(
