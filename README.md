@@ -154,10 +154,10 @@ Si vous préférez utiliser un modèle de langage open source au lieu d'OpenAI, 
    ```properties
    spring.ai.ollama.base-url=http://localhost:11434
    spring.ai.ollama.chat.enabled=true
-   spring.ai.ollama.chat.options.model=llama2
+   spring.ai.ollama.chat.options.model=Llama3
    #spring.ai.ollama.chat.options.format=JSON
    spring.ai.ollama.embedding.enabled=true
-   spring.ai.ollama.embedding.model=llama2
+   spring.ai.ollama.embedding.model=Llama3
    ```
 
 #### Installation et configuration d'Ollama
