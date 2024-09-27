@@ -10,7 +10,6 @@ Ce projet a été réalisé dans le cadre de mon stage de fin d'études chez Ren
 L'objectif principal du projet est de :
 - Centraliser la gestion des CVs.
 - Automatiser la qualification des candidatures via l'intelligence artificielle.
-- Fournir des recommandations de candidats en adéquation avec les postes à pourvoir.
 
 ## Fonctionnalités Principales
 ### Utilisateurs
@@ -209,10 +208,6 @@ Les contributions sont les bienvenues. Pour contribuer :
 4. Commitez vos changements (`git commit -am 'Ajout d'une nouvelle fonctionnalité'`).
 5. Poussez vers la branche (`git push origin feature/nouvelle-fonctionnalité`).
 6. Soumettez une Pull Request.
-
-## Licence
-
-Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus de détails.
 
 ## Remerciements
 
