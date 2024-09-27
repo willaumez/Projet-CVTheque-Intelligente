@@ -77,7 +77,7 @@ spring.ai.openai.chat.enabled=true
 spring.ai.openai.chat.options.model=gpt-4
 ```
 
-**Note importante**: L'API key fournie a un solde limité. Elle est suffisante pour quelques tests, mais pour une utilisation prolongée, vous devrez la remplacer par votre propre API key.
+**Note importante**: *L'API key visible sur GitHub a été supprimée pour des raisons de sécurité. Vous pouvez la remplacer soit par l'API key fournie pour effectuer quelques tests, soit par votre propre clé API pour une utilisation prolongé*
 
 ##### Changer l'API key
 Pour changer l'API key :
