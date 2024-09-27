@@ -1,12 +1,10 @@
-import {ChangeDetectorRef, Component, Input, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {SelectionModel} from "@angular/cdk/collections";
 import {FileDB, ResultCriteria, ResultKeywords, Scoring} from "../../../Models/FileDB";
 import {FilesService} from "../../../Services/FileServices/files.service";
 import {AddFolderComponent} from "../../Dialog/add-folder/add-folder.component";
 import {MatDialog} from "@angular/material/dialog";
 import {PdfViewerComponent} from "../../Dialog/pdf-viewer/pdf-viewer.component";
-import {MatPaginator} from "@angular/material/paginator";
-import {MatSort} from "@angular/material/sort";
 import {EvaluationDto} from "../../../Models/EvaluationDto";
 
 @Component({
@@ -27,7 +25,6 @@ export class GridViewComponent implements OnInit {
 
   resultData: ResultCriteria | undefined;
   resultKeyword: ResultKeywords | undefined;
-  resultScoring: Scoring | undefined;
 
   selection = new SelectionModel<number>(true, []);
 
@@ -223,7 +220,6 @@ export class GridViewComponent implements OnInit {
         this.getAllFiles();
       },
       error: (error) => {
-        console.error('Error deleting evaluation:', error);
         this.error = 'Error deleting evaluation: ' + (error.message || 'Unknown error');
         this.isLoading = false;
       }

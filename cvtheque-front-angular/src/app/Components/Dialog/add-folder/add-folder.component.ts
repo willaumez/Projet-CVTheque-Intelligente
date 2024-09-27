@@ -57,21 +57,15 @@ export class AddFolderComponent implements OnInit {
       const formData = this.addFolderForm.value;
       this._folderService.saveFolder(formData).subscribe({
         next: (folder: Folder) => {
-          //console.log('Folder saved: ', folder);
           newFolder = folder;
         },
         error: (error) => {
           this.error = 'Error saving folder: ' + error.message;
         },
         complete: () => {
-          //console.log('this._dialogRef.close(newFolder);'+newFolder);
-          //affiche le nouveau dossier dans la console au format JSON
-          //console.log(JSON.stringify(newFolder, null, 2));
           this._dialogRef.close(newFolder);
         }
-
       });
-      //this._dialogRef.close();
     } else {
       this.error = 'Please fill in the required fields';
     }
@@ -138,7 +132,6 @@ export class AddFolderComponent implements OnInit {
     } else {
       this.inOperation = false;
       this.isTransfer = false;
-      //console.warn("No folder selected or no files to transfer");
     }
   }
 }

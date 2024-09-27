@@ -1,18 +1,14 @@
-import {Component, ElementRef, inject, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {NgxDropzoneChangeEvent} from "ngx-dropzone";
-import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {Observable, of, throwError} from 'rxjs';
+import {FormControl} from '@angular/forms';
+import {Observable, of} from 'rxjs';
 import {catchError, map, startWith} from 'rxjs/operators';
 import {MatDialog} from "@angular/material/dialog";
 import {AddFolderComponent} from "../Dialog/add-folder/add-folder.component";
 import {FilesService} from "../../Services/FileServices/files.service";
 import {HttpErrorResponse, HttpEventType} from "@angular/common/http";
 import {FoldersService} from "../../Services/FolderServices/folders.service";
-import {error} from "@angular/compiler-cli/src/transformers/util";
 import {Folder} from "../../Models/FileDB";
-
-//import {FileService} from "../../Services/file-service.service";
-
 
 @Component({
   selector: 'app-load-files',
@@ -22,9 +18,6 @@ import {Folder} from "../../Models/FileDB";
 export class LoadFilesComponent implements OnInit {
   //progress
   progress: number | null = null;
-
-
-  //
   files: File[] = [];
 
   folderCtrl = new FormControl<Folder | null>(null);
@@ -56,10 +49,8 @@ export class LoadFilesComponent implements OnInit {
     this.folderService.getAllFolders().subscribe({
       next: (folders: Folder[]) => {
         this.folders = folders;
-        //console.log('Folders fetched:', folders);
       },
       error: (error) => {
-        console.error('Error fetching folders:', error);
       }
     });
   }
@@ -72,11 +63,9 @@ export class LoadFilesComponent implements OnInit {
   // Ouvrir la boîte de dialogue pour ajouter un dossier
   openAddFolder() {
     this.folderCtrl.setValue(null); // Réinitialiser la valeur
-    //this.folderCtrl.disable(); // Désactiver le champ de formulaire
     const dialogRef = this._dialog.open(AddFolderComponent, {});
     dialogRef.afterClosed().subscribe(
        (val: Folder) => {
-        //console.log('Folder added:', val);
         if (val) {
           this.folders.push(val);
           this.folderCtrl.setValue(val);
@@ -101,7 +90,6 @@ export class LoadFilesComponent implements OnInit {
 /////// Upload
   uploadFiles() {
     if (this.files.length === 0 || !this.folderCtrl.value) {
-      //console.log('No files or folder data available.');
       return;
     }
 
@@ -115,20 +103,14 @@ export class LoadFilesComponent implements OnInit {
         map((event: any) => {
           switch (event.type) {
             case HttpEventType.UploadProgress:
-              // Calculer et mettre à jour la progression de l'upload
               if (event.total) {
                 const fileProgress = Math.round((100 / event.total) * event.loaded);
                 this.progress = Math.round((filesUploaded + fileProgress / 100) * 100 / nbFiles);
-                //console.log('Upload Progress:', this.progress, '%');
               }
               break;
             case HttpEventType.Response:
-              // Incrémenter le nombre de fichiers uploadés et mettre à jour la progression globale
               filesUploaded++;
               this.progress = Math.round((filesUploaded * 100) / nbFiles);
-              //console.log('File successfully uploaded:', event.body);
-
-              // Si tous les fichiers sont uploadés, réinitialiser les valeurs
               if (filesUploaded === nbFiles) {
                 this.progress = null;
                 this.files = [];
@@ -139,7 +121,6 @@ export class LoadFilesComponent implements OnInit {
         }),
         catchError((error: HttpErrorResponse) => {
           this.progress = null;
-          //console.error('Upload failed:', error.message);
           return of('Upload failed: ' + error.message);
         })
       ).subscribe();

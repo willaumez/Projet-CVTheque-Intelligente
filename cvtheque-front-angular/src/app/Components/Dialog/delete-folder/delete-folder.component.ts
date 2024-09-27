@@ -28,16 +28,12 @@ export class DeleteFolderComponent implements OnInit {
 
   deleteSubmit() {
     if (this.folderId) {
-      // Suppression du dossier
       this.folderService.delete(this.folderId).subscribe(
         (response) => {
-          // Dossier supprimé avec succès, fermer le dialogue avec la réponse
           this._dialogRef.close(response);
         },
         (error) => {
-          // Gestion des erreurs lors de la suppression du dossier
           this.error = 'Error Deleting Folder: ' + error.message;
-          //console.error("Error Deleting Folder", error);
         }
       );
     } else {
@@ -54,7 +50,6 @@ export class DeleteFolderComponent implements OnInit {
           this._dialogRef.close();
         },
         (error) => {
-          // Gestion des erreurs lors de la suppression du dossier
           this.error = 'Error Deleting Folder: ' + error.message;
         }
       );

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
-import {Folder} from "../../Models/FileDB";
 import {Observable, of, throwError} from "rxjs";
 import {environment} from "../../../environments/environment";
 import {catchError, map} from "rxjs/operators";
@@ -51,17 +50,6 @@ export class ProfileService {
     );
   }
   //Add Criteria
-  /*addCriteria(id: number, newCriteria: string) {
-    return this.http.post<CriteriaDB>(environment.backEndHost+"/profile/criteria/add", {profileId: id, description: newCriteria}).pipe(
-      catchError((error: HttpErrorResponse) => {
-        if (error.status === 409) {
-          return throwError(() => new Error(error.error));
-        } else {
-          return throwError(() => new Error('An unexpected error occurred.'));
-        }
-      })
-    );
-  }*/
   addCriteria(id: number, newCriteria: string) {
     return this.http.post<CriteriaDB>(environment.backEndHost + "/profile/criteria/add", {id: id, description: newCriteria}).pipe(
       catchError((error: HttpErrorResponse) => {

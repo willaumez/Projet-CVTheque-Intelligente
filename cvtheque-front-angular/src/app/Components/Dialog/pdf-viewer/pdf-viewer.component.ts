@@ -23,19 +23,18 @@ export class PdfViewerComponent implements OnInit{
 
   getFile(data:any){
     this.isLoading = false;
-    this._fileService.readFile(this.data).subscribe(
-      (response) => {
+    this._fileService.readFile(this.data).subscribe({
+      next: (response: any) => {
         let blob: Blob = response.body as Blob;
-        let url = window.URL.createObjectURL(blob);
-        this.pdfSrc= url;
+        this.pdfSrc= window.URL.createObjectURL(blob);
 
         this.isLoading = false;
-      }, (error) => {
+      },
+      error: (error) => {
         this.error = 'Error fetching files ' + error.message;
         this.isLoading = false;
       }
-
-    );
+  });
   }
 
 }

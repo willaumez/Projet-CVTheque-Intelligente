@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {Conversation, Message, Sender} from "../../Models/Conversation";
 import {CdkTextareaAutosize} from "@angular/cdk/text-field";
 import {AiChatService} from "../../Services/AiServices/ai-chat.service";
@@ -9,7 +9,7 @@ import {AiChatService} from "../../Services/AiServices/ai-chat.service";
   styleUrl: './chat-ai.component.scss'
 })
 
-export class ChatAIComponent implements OnInit{
+export class ChatAIComponent{
   @ViewChild('autosize') autosize: CdkTextareaAutosize | undefined;
 
   // Définir la conversation utilisant le modèle
@@ -26,29 +26,10 @@ export class ChatAIComponent implements OnInit{
     this.conversation.messages.push(newMessage);
   }
 
-  // Exemple d'initialisation de la conversation
-  ngOnInit() {
-    console.log("user message", this.userMessage);
-   // this.addMessage(Sender.USER, 'Bonjour, comment allez-vous ?');
-    //this.addMessage(Sender.BOT, 'Bonjour ! Je vais bien, merci. Et vous ?');
-  }
   constructor(private aiChatService: AiChatService) {
   }
 
   // Méthode pour envoyer un message
- /* sendMessage() {
-    console.log("user message", this.userMessage);
-    if (this.userMessage.trim()) {
-      this.addMessage(Sender.USER, this.userMessage);
-      this.userMessage = '';
-
-      // Réponse automatique de l'IA
-      setTimeout(() => {
-        this.addMessage(Sender.BOT, 'Je suis une IA. Comment puis-je vous aider ?');
-      }, 1000);
-    }
-  }*/
-
   sendMessage() {
     console.log("user message", this.userMessage);
     if (this.userMessage.trim()) {
@@ -63,7 +44,6 @@ export class ChatAIComponent implements OnInit{
         },
         error => console.error('Error sending message', error)
       );
-
       // Réinitialiser le champ de saisie
       this.userMessage = '';
     }

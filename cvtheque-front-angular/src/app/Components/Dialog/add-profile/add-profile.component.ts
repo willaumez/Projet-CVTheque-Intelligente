@@ -1,6 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Folder} from "../../../Models/FileDB";
 import {ProfileService} from "../../../Services/ProfileServices/profile.service";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Profile} from "../../../Models/Profile";
@@ -33,7 +32,6 @@ export class AddProfileComponent implements OnInit {
         createdAt: this.data.createdAt,
         listCriteria: null
       });
-      console.log(JSON.stringify(this.addProfileForm.value));
     }
   }
 
@@ -49,12 +47,10 @@ export class AddProfileComponent implements OnInit {
         }
       });
     } else {
-      console.log('Invalid form');
     }
   }
 
   // Méthode pour vérifier si le formulaire est valide
-
   isFormValid(): boolean {
     return this.addProfileForm.valid;
   }

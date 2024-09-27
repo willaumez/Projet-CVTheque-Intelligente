@@ -1,46 +1,9 @@
-<!--<div class="function-container">
-  <div class="function-content">
-    <div class="function-content-content">
-
-    </div>
-  </div>
-
-  <div class="function-menu">
-    <div mat-subheader class="function-menu-title">Evaluation</div>
-    <mat-list>
-      <mat-list-item>
-        <button matListItemTitle class="list-button" mat-button>
-          Criteria
-        </button>
-      </mat-list-item>
-
-      <mat-list-item>
-        <button matListItemTitle class="list-button" mat-button>
-          keywords
-        </button>
-      </mat-list-item>
-
-      <mat-list-item>
-        <button matListItemTitle class="list-button" mat-button>
-          Scoring
-        </button>
-      </mat-list-item>
-
-    </mat-list>
-  </div>
-</div>-->
-
 <div class="spinner" *ngIf="isLoading && !errorMessage">
   <mat-spinner></mat-spinner>
 </div>
 <div *ngIf="errorMessage.length" class="w-100 d-flex justify-content-center">
   <span class="alert alert-danger text-wrap">{{ errorMessage }}</span>
 </div>
-
-<!--<ng-container *ngIf="!isLoading && dataSource && dataSource.data && dataSource.data.length === 0">
-  <span class="alert alert-danger fs-5 text-wrap">No data available</span>
-</ng-container>-->
-<!--*ngIf="!isLoading && dataSource && dataSource.data && dataSource.data.length > 0 && !errorMessage"-->
 <div *ngIf="!isLoading && dataSource && dataSource.data && !errorMessage">
   <div class="container-fluid row d-flex align-items-center justify-content-between flex-wrap">
     <div class="col-12 col-md-6 col-lg-4 mb-2 mb-md-0">
@@ -91,9 +54,6 @@
         </div>
       </mat-list>
     </div>
-
-
-
 
     <div *ngIf="selectedProfile" class="w-100">
       <ng-container *ngIf="selectedProfile?.listCriteria">

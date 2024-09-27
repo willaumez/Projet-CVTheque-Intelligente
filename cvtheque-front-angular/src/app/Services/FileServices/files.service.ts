@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse, HttpEvent, HttpParams} from "@angular/common/http";
+import {HttpClient, HttpErrorResponse, HttpParams} from "@angular/common/http";
 import {Observable, of, throwError} from "rxjs";
-import {catchError, map} from "rxjs/operators";
-import {CVStatsDTO, FileDB, Folder} from "../../Models/FileDB";
+import {catchError} from "rxjs/operators";
+import {CVStatsDTO, FileDB} from "../../Models/FileDB";
 import {environment} from "../../../environments/environment";
 import {EvaluationDto} from "../../Models/EvaluationDto";
 
@@ -16,22 +16,6 @@ export class FilesService {
   }
 
   //upload files
-
- /* uploadFiles(files: File[], folder: any): Observable<any> {
-    const formData: FormData = new FormData();
-    files.forEach(file => formData.append('files', file));
-    formData.append('folder', JSON.stringify(folder));
-    // @ts-ignore
-    return this.http.post<HttpEvent<any>>(`${this.baseUrl}/file/upload`, formData, {
-      reportProgress: true,
-      observe: 'events'
-    }).pipe(
-      map((response) => {
-        return response;
-      })
-    );
-  }*/
-
   uploadFile(file: File, folder: any): Observable<any> {
     const formData: FormData = new FormData();
     formData.append('file', file);
@@ -125,14 +109,6 @@ export class FilesService {
     );
   }
   //Delete all evaluations
-  /*deleteAllEvaluation(selection: number[]) {
-    return this.http.delete(environment.backEndHost + "/file/evaluation/delete/" + selection)
-      .pipe(
-        catchError(error => {
-          return throwError(error);
-        })
-      );
-  }*/
 
   deleteAllEvaluation(selection: number[]) {
     let params = new HttpParams();

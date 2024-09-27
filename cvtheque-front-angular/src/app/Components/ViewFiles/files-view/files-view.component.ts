@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -6,7 +6,7 @@ import {
 } from '@angular/cdk/drag-drop';
 import {AiChatService} from "../../../Services/AiServices/ai-chat.service";
 import {FileDB, Folder} from "../../../Models/FileDB";
-import {BehaviorSubject, Observable, Subject} from "rxjs";
+import {Observable} from "rxjs";
 import {HttpEventType} from "@angular/common/http";
 import {ActivatedRoute} from "@angular/router";
 import {FoldersService} from "../../../Services/FolderServices/folders.service";
@@ -81,8 +81,6 @@ export class FilesViewComponent implements OnInit{
       this.folderId = +id;
       this.getFolderById();
     }
-
-    //profile
     this.getAllProfiles();
   }
 

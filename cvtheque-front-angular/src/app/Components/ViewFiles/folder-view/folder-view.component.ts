@@ -1,8 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {FileDB, Folder} from "../../../Models/FileDB";
+import { Folder} from "../../../Models/FileDB";
 import {SelectionModel} from "@angular/cdk/collections";
 import {FoldersService} from "../../../Services/FolderServices/folders.service";
-import {FilesService} from "../../../Services/FileServices/files.service";
 import {AddFolderComponent} from "../../Dialog/add-folder/add-folder.component";
 import {MatDialog} from "@angular/material/dialog";
 import {DeleteFolderComponent} from "../../Dialog/delete-folder/delete-folder.component";

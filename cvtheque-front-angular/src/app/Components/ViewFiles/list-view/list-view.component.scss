@@ -117,7 +117,6 @@ table {
   display: flex;
   justify-content: center;
   align-items: center;
-  //background-color: rgba(0, 0, 0, 0.29); /* Semi-transparent pour obscurcir le reste de la page */
   z-index: 1000; /* Au-dessus des autres composants */
   pointer-events: all; /* Permet de capturer les clics */
 }
