@@ -121,6 +121,81 @@ L'application sera accessible à l'adresse : http://localhost:4200
 
 --------------------------------------------------------------------------
 
+
+#### Passer d'OpenAI à Ollama (LLM open source)
+
+Si vous préférez utiliser un modèle de langage open source au lieu d'OpenAI, vous pouvez passer à Ollama. Voici comment procéder :
+
+1. Modifier le fichier `pom.xml` :
+   Remplacez la dépendance OpenAI :
+   ```xml
+   <dependency>
+       <groupId>org.springframework.ai</groupId>
+       <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
+   </dependency>
+   ```
+   par la dépendance Ollama (déjà commentée au-dessus) :
+   ```xml
+   <dependency>
+       <groupId>org.springframework.ai</groupId>
+       <artifactId>spring-ai-ollama-spring-boot-starter</artifactId>
+   </dependency>
+   ```
+
+2. Modifier le fichier `src/main/resources/application.properties` :
+   Remplacez la configuration OpenAI :
+   ```properties
+   # Configuration de OpenAI
+   spring.ai.openai.api-key=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
+   spring.ai.openai.chat.enabled=true
+   spring.ai.openai.chat.options.model=gpt-4
+   ```
+   par la configuration Ollama (déjà commentée au-dessus) :
+   ```properties
+   spring.ai.ollama.base-url=http://localhost:11434
+   spring.ai.ollama.chat.enabled=true
+   spring.ai.ollama.chat.options.model=llama2
+   #spring.ai.ollama.chat.options.format=JSON
+   spring.ai.ollama.embedding.enabled=true
+   spring.ai.ollama.embedding.model=llama2
+   ```
+
+#### Installation et configuration d'Ollama
+
+1. Installer Ollama :
+   - Rendez-vous sur [le site officiel d'Ollama](https://ollama.ai/download) pour télécharger et installer Ollama pour votre système d'exploitation.
+
+2. Installer les modèles recommandés :
+   
+   a. Llama3 70B :
+   ```bash
+   ollama run llama3:70b
+   ```
+   Pour plus d'informations sur ce modèle : [Llama3 70B](https://ollama.com/library/llama3:70b)
+
+   b. Command-R :
+   ```bash
+   ollama run command-r
+   ```
+   Pour plus d'informations sur ce modèle : [Command-R](https://ollama.com/library/command-r)
+
+   c. Command-R-Plus :
+   ```bash
+   ollama run command-r-plus
+   ```
+   Pour plus d'informations sur ce modèle : [Command-R-Plus](https://ollama.com/library/command-r-plus)
+
+3. Changer le modèle dans la configuration :
+   - Dans le fichier `application.properties`, modifiez la ligne :
+     ```properties
+     spring.ai.ollama.chat.options.model=llama2
+     ```
+   - Remplacez `llama2` par le nom du modèle que vous souhaitez utiliser (par exemple, `llama3:70b`, `command-r`, ou `command-r-plus`).
+
+**Note** : Assurez-vous que le serveur Ollama est en cours d'exécution lorsque vous lancez l'application. Le téléchargement et l'installation de ces modèles peuvent prendre un certain temps en fonction de votre connexion internet et des ressources de votre machine.
+
+--------------------------------------------------------------------------
+
 ## Utilisation
 
 1. Connectez-vous à l'application en utilisant vos identifiants Okta.
