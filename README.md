@@ -154,10 +154,10 @@ Si vous préférez utiliser un modèle de langage open source au lieu d'OpenAI, 
    ```properties
    spring.ai.ollama.base-url=http://localhost:11434
    spring.ai.ollama.chat.enabled=true
-   spring.ai.ollama.chat.options.model=Llama3
+   spring.ai.ollama.chat.options.model=llama3
    #spring.ai.ollama.chat.options.format=JSON
    spring.ai.ollama.embedding.enabled=true
-   spring.ai.ollama.embedding.model=Llama3
+   spring.ai.ollama.embedding.model=llama3
    ```
 
 #### Installation et configuration d'Ollama
@@ -188,24 +188,13 @@ Si vous préférez utiliser un modèle de langage open source au lieu d'OpenAI, 
 3. Changer le modèle dans la configuration :
    - Dans le fichier `application.properties`, modifiez la ligne :
      ```properties
-     spring.ai.ollama.chat.options.model=llama2
+     spring.ai.ollama.chat.options.model=llama3
      ```
-   - Remplacez `llama2` par le nom du modèle que vous souhaitez utiliser (par exemple, `llama3:70b`, `command-r`, ou `command-r-plus`).
+   - Remplacez `llama3` par le nom du modèle que vous souhaitez utiliser (par exemple, `llama3:70b`, `command-r`, ou `command-r-plus`).
 
 **Note** : Assurez-vous que le serveur Ollama est en cours d'exécution lorsque vous lancez l'application. Le téléchargement et l'installation de ces modèles peuvent prendre un certain temps en fonction de votre connexion internet et des ressources de votre machine.
 
 --------------------------------------------------------------------------
-
-## Utilisation
-
-1. Connectez-vous à l'application en utilisant vos identifiants Okta.
-2. Pour les recruteurs :
-   - Téléchargez et gérez les CVs dans l'interface.
-   - Utilisez la fonction de recherche avancée pour trouver des candidats spécifiques.
-   - Consultez les scores et recommandations générés par l'IA pour chaque CV.
-3. Pour les administrateurs :
-   - Gérez les comptes utilisateurs et les permissions.
-   - Ajustez les critères de qualification et les paramètres de scoring si nécessaire.
 
 ## Méthode RAG
 
